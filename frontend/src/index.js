@@ -12,4 +12,4 @@ class Greetings extends React.Component{
 }
 
 const root = ReactDom.createRoot (document.getElementById("root"));
-root.render(<Greetings/>)
+root.render(<Greetings/>);
