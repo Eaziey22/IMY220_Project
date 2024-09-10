@@ -1,0 +1,86 @@
+/* SideNavBar.css */
+
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+}
+
+.sideNav {
+    width: 250px;
+    height: 100vh; /* Full height of the viewport */
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #ECF6F6; /* Dark blue-gray background */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Slight shadow for depth */
+    padding: 20px;
+}
+
+.logoContainer {
+    margin-bottom: 30px;
+    width: 100%;
+}
+
+.logo {
+    width: 60px;
+    height: auto;
+    margin:10px
+}
+
+.logoName{
+    font-family: 'Poppins', sans-serif;
+    margin-right: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #37D0D6;
+    text-decoration: none;
+}
+
+.navLinks {
+    list-style-type: none; 
+    padding: 0;
+    width: 100%;
+}
+
+.navItem {
+    width: 85%;
+    height: 80px;
+    /*margin-left: 15px;
+    margin-bottom: 15px;*/
+    margin: 20px;
+}
+
+.navItem a {
+    text-decoration: none;
+    color: black;
+    display: block;
+    padding: 15px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+    border-radius: 10px;
+}
+
+.navItem a:hover {
+    background-color: #37D0D6; /* Light green background on hover */
+    color: white;
+}
+
+.icon{
+    margin-left: 10px;
+    margin-right: 10px;
+}
+/*
+.sideNav .navLinks .navItem a.active {
+    background-color: #37D0D6; 
+}
+
+.navItem a:hover, .nav-item a.active {
+    color: black;
+    font-weight: bold;
+}*/

@@ -1,0 +1,78 @@
+
+body, html {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.formContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px; 
+    padding: 80px; 
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    background-color: white;
+    border-radius: 8px;
+}
+
+.form {
+    width: 100%;
+    padding-left:0px;
+    padding-right: 0px;
+    border-radius: 4px;
+    background-color: white;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.error {
+    color: red;
+    font-size: 0.71em;
+    margin-bottom: 5px;
+    padding: 0;
+    min-height: 1em; /* Reserve space for the error message */
+    visibility: hidden; /* Hide the error message by default */
+}
+
+.error.visible {
+    visibility: visible; /* Show error when it occurs */
+}
+
+.loginHeaderContainer {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.formgroup {
+    margin-bottom: 10px;
+    min-height: 30px;
+    /*display: flex;
+    flex-direction: column;
+    justify-content: space-between;*/
+}
+
+.formCheckInput {
+    margin-right: 10px;
+}
+
+.btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #30B4B9;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    font-weight: bold;
+    font-weight: 15px;
+    border: 2px solid #30B4B9;
+    
+}
+
+.btn:hover {
+    background-color: white; 
+    color: #30B4B9; 
+    border: 2px solid #30B4B9;
+}
