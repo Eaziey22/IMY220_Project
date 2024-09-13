@@ -1,0 +1,32 @@
+.feed{
+    /*margin-top: 100px;*/
+    padding: 40px;
+    width: 100%;
+    /*border: 1px solid orange;*/
+    margin: 0;
+    background-color: #ECF6F6;
+    
+} 
+
+.header{
+    font-family: 'Poppins', sans-serif;
+    font-weight: bold;
+    color: #121212;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    
+}
+
+.playlists{
+    margin-bottom: 40px;
+}
+
+.playlistsContainer{
+    border: 1px solid #1a1a1a;
+    background-color: #1e1e1e;
+    width: 100%;
+    min-height: 250px;
+    border-radius: 10px;
+    box-shadow: 2px 0 15px rgba(0, 0, 0, 0.3);
+    
+}

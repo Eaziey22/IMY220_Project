@@ -5,6 +5,6 @@ const app = express();
 //SERVE A STATIC PAGE IN THE PUBLIC DIRECTORY
 app.use(express.static(path.join(__dirname, '../../frontend/public')));
 //PORT TO LISTEN TO
-app.listen(1337, () => {
-console.log("Listening on localhost:1337");
+app.listen(3001, () => {
+console.log("Listening on localhost:3001");
 });
