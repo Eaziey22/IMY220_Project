@@ -4,11 +4,12 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 //pages
 import { SplashPage } from './pages/SplashPage';
 import { HomePage } from './pages/HomePage';
-import { PlaylistPage } from './pages/PlaylistPage';
-
+import { ProfilePage } from './pages/ProfilePage';
+import { PlaylistsPage } from './pages/PlaylistsPage';
 //components
 import {Login} from './components/Login';
 import { SignUp } from './components/SignUp';
+import { OnePlaylist } from './pages/OnePlaylist';
 
 
 const router = createBrowserRouter([
@@ -33,8 +34,18 @@ const router = createBrowserRouter([
         errorElement: <div>404 Not Found</div>
     },
     {
+        path:"/playlists",
+        element: <PlaylistsPage/>,
+        errorElement: <div>404 Not Found</div>
+    },
+    {
+        path:"/profile",
+        element: <ProfilePage/>,
+        errorElement: <div>404 Not Found</div>
+    },
+    {
         path:"/playlist",
-        element: <PlaylistPage/>,
+        element: <OnePlaylist/>,
         errorElement: <div>404 Not Found</div>
     }
 ]);
@@ -42,7 +53,9 @@ const router = createBrowserRouter([
 class App extends React.Component{
     render(){
         return(
-            <RouterProvider router={router}></RouterProvider>
+            <div style={{width: '100%', height : '100%'}}>
+                <RouterProvider router={router}></RouterProvider>
+            </div>
         );
     };
 }

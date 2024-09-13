@@ -1,42 +1,68 @@
-body, html {
+/*body, html {
     height: 100%;
     margin: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-}
+}*/
 
 .formContainer {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
-    max-width: 1200px; 
-    padding: 40px;
+    padding: 80px;
     box-shadow: 0 0 15px rgba(240, 236, 236, 0.3); 
-    background-color: white;
-    border-radius: 8px;
+    background-color: #121212;
+    height: 100vh;
 }
 
 .form {
-    width: 100%;
-    padding: 20px;
-    border-radius: 4px;
+    width: 40%;
+    padding: 40px;
+    border-radius: 8px;
     background-color: white;
+    margin-left: 0;
+    margin-right: 0;
 }
 
 .error {
     color: red;
-    font-size: 0.875em;
+    font-size: 0.71em;
+    margin-bottom: 5px;
+    padding: 0;
+    min-height: 5px; 
+    visibility: hidden;
+}
+
+.error.visible {
+    visibility: visible; 
 }
 
 .loginHeaderContainer {
     text-align: center;
+    margin-bottom: 40px;
+    margin-top: 20px;
+}
+
+.logo{
+    width: 100%;
+}
+
+.loginLogoContainer {
+    text-align: center;
     margin-bottom: 20px;
+    margin-top: 10px;
+    width: 80px;
+    height: 80px;
+    align-self: center;
+    margin-left: 200px;
+    
 }
 
 .formgroup {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
+    min-height: 30px;
 }
 
 .formCheckInput {
@@ -44,7 +70,7 @@ body, html {
 }
 
 .btn {
-    width: 100%;
+    width: 80%;
     padding: 10px;
     background-color: #30B4B9;
     color: white;
@@ -52,10 +78,18 @@ body, html {
     font-weight: bold;
     font-weight: 15px;
     border: 2px solid #30B4B9;
+    margin-left:50px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .btn:hover {
     background-color: white; 
     color: #30B4B9; 
     border: 2px solid #30B4B9;
+}
+
+.link {
+    text-decoration: none;
+    color: #37D0D6;
 }

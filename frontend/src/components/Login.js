@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import * as styles from '../styles/login.module.css';
+import Logo from '../../public/assets/images/logo_no_background.png';
 
 export class Login extends React.Component {
   constructor(props) {
@@ -74,11 +75,14 @@ export class Login extends React.Component {
     return (
       <div className={styles.formContainer}>
         <form className={styles.form} onSubmit={this.handleSubmit}>
+          {/*<div className={styles.loginLogoContainer}>
+            <img className={styles.logo} alt="tunetrail logo" src={Logo} />
+          </div>*/}
           <div className={styles.loginHeaderContainer}>
             <h2>Login</h2>
           </div>
           <div className={styles.formgroup}>
-            <label htmlFor="emailAddress">Email Address</label>
+            <label htmlFor="emailAddress">Email Address:</label>
             <input
               type="text"
               className="form-control"
@@ -87,39 +91,45 @@ export class Login extends React.Component {
               required
               value={this.state.emailAddress}
               onChange={this.handleInputChange}
+              placeholder='Email Address'
             />
-            <span className={`${styles.error} ${this.state.formErrors.emailAddress ? 'visible' : ''}`}>{this.state.formErrors.emailAddress}</span>
+            <span className={`${styles.error} ${this.state.formErrors.emailAddress ? 'visible' : ''}`} style={{margin: '10px'}}>{this.state.formErrors.emailAddress}</span>
           </div>
           <div className={styles.formgroup}>
             <label htmlFor="password">Password:</label>
             <input
               type="password"
-              className="form-control"
+              className={` ${styles.formControl} form-control`}
               id="password"
               name="password"
               required
               value={this.state.password}
               onChange={this.handleInputChange}
+              placeholder='Password'
             />
-            <span className={`${styles.error} ${this.state.formErrors.password ? 'visible' : ''}`}>{this.state.formErrors.password}</span>
+            <span className={`${styles.error} ${this.state.formErrors.password ? 'visible' : ''}`} style={{margin: '10px'}}>{this.state.formErrors.password}</span>
           </div>
-          <div className={styles.formgroup}>
-            <input 
-              type="checkbox" 
-              className={styles.formCheckInput} 
-              id="rememberMe" 
-              name="rememberMe"
-              checked={this.state.rememberMe}
-              onChange={(e) => this.setState({ rememberMe: e.target.checked })} />
-            <label htmlFor="rememberMe">Remember me</label>
-          </div>
-          <div>
-            <Link to="" ><p>Forgot Password?</p></Link>
+          <div className="row align-items-center">
+            <div className="col-auto">
+              <div className={styles.formgroup}>
+                <input 
+                  type="checkbox" 
+                  className={styles.formCheckInput} 
+                  id="rememberMe" 
+                  name="rememberMe"
+                  checked={this.state.rememberMe}
+                  onChange={(e) => this.setState({ rememberMe: e.target.checked })} />
+                <label htmlFor="rememberMe">Remember me</label>
+              </div>
+            </div>
+            <div className="col-auto">
+              <Link to="" className={styles.link} ><p style={{marginLeft: '150px'}}>Forgot Password?</p></Link>
+            </div>
           </div>
           <button type="submit" className={`${styles.btn} btn`} disabled={!this.state.formValid}>Login</button>
           <hr />
           <div>
-            <p>Don't have an account? <Link to="/signUp">Sign Up</Link></p>
+            <p>Don't have an account? <Link to="/signUp" className={styles.link}>Sign Up</Link></p>
           </div>
         </form>
       </div>

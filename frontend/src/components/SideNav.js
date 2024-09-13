@@ -4,7 +4,7 @@ import Logo from '../../public/assets/images/logo_no_background.png';
 import { Link , NavLink} from 'react-router-dom';
 import * as styles from '../styles/SideNav.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHome, faHeart, faMusic } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faHeart, faMusic, faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 export class SideNavBar extends React.Component {
@@ -23,15 +23,16 @@ export class SideNavBar extends React.Component {
                             <FontAwesomeIcon icon={faHome} className={styles.icon} /> Home
                         </NavLink>
                     </li>
-
-                    <li className={styles.navItem} >
-                        <NavLink to="/home" style = {({isActive}) => {return {backgroundColor: isActive? '#37D0D6': '', color: isActive? 'white' : '' }}} >
-                            <FontAwesomeIcon icon={faHeart} className={styles.icon} />Liked Songs
+                    
+                    <li className={styles.navItem}>
+                        <NavLink to="/playlists" style = {({isActive}) => {return {backgroundColor: isActive? '#37D0D6': '', color: isActive? 'white' : '' }}} >
+                            <FontAwesomeIcon icon={faMusic} className={styles.icon} />Playlists
                         </NavLink>
                     </li>
-                    <li className={styles.navItem}>
-                        <NavLink to="/playlist" style = {({isActive}) => {return {backgroundColor: isActive? '#37D0D6': '', color: isActive? 'white' : '' }}} >
-                            <FontAwesomeIcon icon={faMusic} className={styles.icon} />Playlist
+
+                    <li className={styles.navItem} >
+                        <NavLink to="/profile" style = {({isActive}) => {return {backgroundColor: isActive? '#37D0D6': '', color: isActive? 'white' : '' }}} >
+                            <FontAwesomeIcon icon={faUserCircle} className={styles.icon} />Profile
                         </NavLink>
                     </li>
                 </ul>

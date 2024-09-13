@@ -1,0 +1,245 @@
+.feed{
+    /*margin-top: 100px;*/
+    padding: 40px;
+    width: 100%;
+    /*border: 1px solid orange;*/
+    margin: 0;
+    background-color: #ECF6F6;
+    
+}
+
+.header{
+    font-family: 'Poppins', sans-serif;
+    font-weight: bold;
+    color: #121212;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    
+}
+
+.playlist{
+    border: 1px solid #1a1a1a;
+    background-color: #1e1e1e;
+    width: 100%;
+    height: 200px;
+    border-radius: 10px;
+    box-shadow: 2px 0 15px rgba(0, 0, 0, 0.3);
+    padding: 10px;
+    
+}
+
+.playlistContainer{
+    width: 100%;
+    height: 200px;
+    border-radius: 10px;
+    padding: 10px;
+    position: relative;
+    display: flex; /* Flexbox for alignment */
+    align-items: center; /* Center items vertically */
+}
+
+.playlistInfo{
+    color: white;
+    flex:1;
+}
+
+.playlistPictureContainer{
+    border: 1px solid #ECF6F6;
+    background-color: #ECF6F6;
+    width: 150px;
+    height: 150px;
+    border-radius: 10px;
+    box-shadow: 2px 0 5px rgba(255, 253, 253, 0.753);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.icon{
+    font-size: 80px;
+}
+
+
+
+.menuButton {
+    position: absolute;
+    top: 10px; 
+    right: 0;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.menu {
+    position: absolute;
+    top: 40px; 
+    right: 0;
+    background-color: #333;
+    border: 1px solid #1a1a1a;
+    border-radius: 5px;
+    box-shadow: 2px 0 15px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+}
+
+.menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 10px;
+}
+
+.menu ul li {
+    color: white;
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.menu ul li:hover {
+    background-color: #444;
+}
+
+.editFormOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.editFormContainer {
+    background: #1e1e1e;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    width: 400px;
+    max-width: 100%;
+    color: white;
+}
+
+.formGroup {
+    margin-bottom: 20px;
+}
+
+.formGroup label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.formControl {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    background-color: #333;
+    color: white;
+}
+
+.formActions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.saveButton {
+    background-color: #37D0D6;
+    color: white;
+    padding: 10px 20px; 
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.cancelButton {
+    background-color: #444;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.playlistImage {
+    width: 150px;
+    height: 150px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+.playlistSongsContainer{
+    border: 1px solid #1a1a1a;
+    background-color: #1e1e1e;
+    width: 100%;
+    min-height: 250px;
+    border-radius: 10px;
+    box-shadow: 2px 0 15px rgba(0, 0, 0, 0.3);
+    padding: 10px;
+}
+
+.playlistSongs{
+    margin-top: 50px;
+}
+
+
+.searchContainer{
+    padding: 10px;
+    margin-bottom: 40px;
+}
+
+.tableContainer {
+    overflow: hidden; /* To ensure the border radius affects the entire table */
+    border-radius: 10px; /* Example radius for the whole table */
+}
+
+.table {
+    border-collapse: collapse; /* Ensure that the borders are separated so the radius can be applied */
+    width: 100%; /* Ensure the table takes up the full width of the container */
+}
+
+.table thead {
+    border-top-left-radius: 10px; /* Apply the radius to the top of the table */
+    border-top-right-radius: 10px;
+}
+
+.table thead th:first-child {
+    border-top-left-radius: 10px; /* Top left corner of the first column */
+}
+
+.table thead th:last-child {
+    border-top-right-radius: 10px; /* Top right corner of the last column */
+}
+
+.table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 10px; /* Bottom left corner of the last row */
+}
+
+.table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 10px; /* Bottom right corner of the last row */
+}
+
+.table tbody tr {
+    background-color: #ECF6F6; /* Default row background color */
+}
+
+.table tbody tr:nth-child(odd) {
+    background-color: #37D0D6; /* Alternate row background color */
+}
+
+.table tbody tr:hover {
+    background-color: white; /* Row color on hover */
+}
+
+.table thead {
+    background-color: #37D0D6; /* Change the background color of the entire thead */
+}
+
+.table tbody td {
+    padding: 15px 0; /* Adjust the padding to increase row height */
+}

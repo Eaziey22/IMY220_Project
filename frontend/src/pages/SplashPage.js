@@ -6,7 +6,6 @@ import * as styles from '../styles/SplashPage.module.css';
 export class SplashPage extends React.Component{
     
     render(){
-        console.log(styles);
         return(
             <div className={styles.container}>
                 <div className={styles.logoContainer}>

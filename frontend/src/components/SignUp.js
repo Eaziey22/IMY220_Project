@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, Navigate } from 'react-router-dom';
-
+import Logo from '../../public/assets/images/logo_no_background.png'
 import * as styles from "../styles/signUp.module.css"
 
 export class SignUp extends React.Component{
@@ -82,9 +82,13 @@ export class SignUp extends React.Component{
         return(
             <div className={styles.formContainer}>
               <form className={`${styles.form} mt-5`} onSubmit={this.handleSubmit}>
-                  <div className={styles.loginHeaderContainer}>
-                      <h2>Sign Up</h2>
-                  </div>
+                {/*<div className={styles.loginLogoContainer}>
+                  <img className={styles.logo} alt="tunetrail logo" src={Logo} />
+                </div>*/}
+                <div className={styles.loginHeaderContainer}>
+                  <h2>Sign Up</h2>
+                </div>
+
                   <div className={styles.formgroup}>
                     <label htmlFor="emailAddress">Email Address:</label>
                     <input 
@@ -95,7 +99,7 @@ export class SignUp extends React.Component{
                       value={this.state.emailAddress}
                       onChange={this.handleInputChange} 
                       required />
-                    <span className={styles.error}>{this.state.formErrors.emailAddress}</span>
+                    <span className={`${styles.error} ${this.state.formErrors.emailAddress ? 'visible' : ''}`} style={{margin: '10px'}}>{this.state.formErrors.emailAddress}</span>
                   </div>
                   <div className={styles.formgroup}>
                     <label htmlFor="password">Password:</label>
@@ -107,7 +111,7 @@ export class SignUp extends React.Component{
                       value={this.state.password}
                       onChange={this.handleInputChange}
                       required />
-                    <span className={styles.error}>{this.state.formErrors.password}</span>
+                    <span className={`${styles.error} ${this.state.formErrors.password ? 'visible' : ''}`} style={{margin: '10px'}}>{this.state.formErrors.password}</span>
                   </div>
                   <div className={styles.formgroup}>
                     <label htmlFor="confirmPassword">Confirm Password:</label>
@@ -119,7 +123,7 @@ export class SignUp extends React.Component{
                       value={this.state.confirmPassword}
                       onChange={this.handleInputChange}
                       required />
-                    <span className={styles.error}>{this.state.formErrors.confirmPassword}</span>
+                    <span className={`${styles.error} ${this.state.formErrors.confirmPassword ? 'visible' : ''}`} style={{margin: '10px'}}>{this.state.formErrors.confirmPassword}</span>
                   </div>
                   <div className={styles.formgroup}>
                     <input 
@@ -135,7 +139,7 @@ export class SignUp extends React.Component{
                   <button type="submit" className={`${styles.btn} btn`} disabled={!this.state.formValid}>Sign Up</button>
                   <hr></hr>
                   <div>
-                      Already have an account? <Link to='/login' >Login</Link>
+                      Already have an account? <Link to='/login' className={styles.link}>Login</Link>
                   </div>
               </form>
             </div>
