@@ -8,6 +8,7 @@ require('dotenv').config();
 
 import { userModel } from "./userModel";
 import { playlistModel } from "./playlistModel";
+import { songModel } from "./songModel";
 
 const connectionString = process.env.MONGO_URI
 const client = new MongoClient(connectionString);
@@ -28,6 +29,7 @@ client.connect().then(() => {
         db = client.db("Project_DB");
         User = new userModel(db);
         Playlist = new playlistModel(db);
+        Song = new songModel(db);
     }
 ).catch((error) => {
     console.error(`Error connecting to MongoDB: ${error}`);
@@ -45,17 +47,26 @@ app.post("/register", async (req, res) =>{
         const userEmailExists = await User.userExists(email);
 
         if(userEmailExists){
-            return res.status(409).json({ error: `User with Email: ${email} already exists` });
+            return res.status(409).json({
+                status: "error", 
+                message: `User with Email: ${email} already exists` 
+            });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = await User.createUser(username,email, hashedPassword );
 
-        res.status(201).json(user);
+        res.status(201).json({
+            status: "success",
+            message: "user registered successfully" ,
+            data : {userId : user._id} });
     }
-    catch(error){
+    catch(err){
         console.log(`Error registering user: ${error}`);
-        res.status(500).json({error: "Error registering user"});
+        res.status(500).json({ 
+            status: "error",
+            error: "Internal server error"
+        });
     }
 });
 
@@ -66,22 +77,35 @@ app.post("/login", async(req, res) => {
         const user = await User.login(email);
 
         if(!user){
-            return res.status(404).json({message: "User not found"});
+            return res.status(404).json({
+                status: "error", 
+                message: "User not found"
+            });
         }
 
         const isPwValid = await bcrypt.compare(password, user.password);
 
         if(!isPwValid){
-            return res.status(401).json({message: "Invalid password"});
+            return res.status(401).json({
+                status: "error", 
+                message: "Invalid password"
+            });
         }
 
 
-        return res.status(200).json({message: "Login successful", userId: user._id});
+        return res.status(200).json({
+            status: "success",
+            message: "Login successful", 
+            data :{userId: user._id}
+        });
 
     }
     catch(error){
         console.error(`could not login user: ${error}`);
-        res.status(500).json({ message: "Internal server error" });
+        res.status(500).json({ 
+            status: "error", 
+            message: "Internal server error" 
+        });
     }
 });
 
@@ -91,22 +115,35 @@ app.get("/getUser/:id", async (req, res) =>{
 
     try{
 
-        /*
+        
         if (!ObjectId.isValid(id)) {
-            return res.status(400).json({ message: "Invalid user ID format" });
-        }*/
+            return res.status(400).json({ 
+                status: "error", 
+                message: "Invalid user ID format" 
+            });
+        }
 
         const usr = await User.getUserById(id);
 
         if(!usr){
-            return res.status(404).json({message: "User not found"});
+            return res.status(404).json({
+                status: "error", 
+                message: "User not found"
+            });
         }
 
-        return res.status(200).json({message : `User with userId: ${id} retrieved successfully`, user: usr});
+        return res.status(200).json({
+            status: "success", 
+            message : `User with userId: ${id} retrieved successfully`, 
+            data : {userId: usr._id, username: usr.username}
+        });
     }
     catch(error){
         console.log(`Error getting user by id: ${error}`);
-        res.status(500).json({error: "Error getting user"});
+        res.status(500).json({
+            status: "error", 
+            error: "Internal server error"
+        });
     }
     
 });
@@ -117,21 +154,33 @@ app.put("/updateUser/:id", async (req, res) =>{
     try{
 
         if (!ObjectId.isValid(id)) {
-            return res.status(400).json({ message: "Invalid user ID format" });
+            return res.status(400).json({
+                status: "error", 
+                 message: "Invalid user ID format" 
+            });
         }
 
         const result = await User.updateUser(id , req.body);
 
         if(!result){
-            return res.status(404).json({message: "Unable to update user"});
+            return res.status(404).json({
+                status: "error", 
+                message: "Unable to update user"
+            });
         }
 
-        return res.status(200).json({message: `User with id: ${id} updated`, result });
+        return res.status(200).json({
+            status: "success", 
+            message: `User with id: ${id} updated`, 
+            data: {modifiedCount: result} });
 
     }
     catch(error){
         console.log(`Error updating user: ${error}`);
-        res.status(500).json({error: "Error updating user"});
+        res.status(500).json({
+            status: "error", 
+            message: "Internal server error"
+        });
     }
 });
 
@@ -141,45 +190,156 @@ app.delete("/deleteUser/:id", async (req, res) =>{
     try{
 
         if (!ObjectId.isValid(id)) {
-            return res.status(400).json({ message: "Invalid user ID format" });
+            return res.status(400).json({
+                status: "error", 
+                message: "Invalid user ID format" });
         }
 
         const result = await User.deleteUser(id);
-
-        if(!result){
-            return res.status(404).json({message: "Unable to delete user"});
+        if(result === 0){
+            
+            return res.status(404).json({
+                status: "error", 
+                message: "Unable to delete user"
+            });
         }
 
-        const pl = await Playlist.deleteUserPlaylists(id)
-
-        if(!pl){
-            return res.status(404).json({message: "Unable to delete user's playlists"});
+        const pl = await Playlist.deleteUserPlaylists(id);
+        if(pl === 0){
+            return res.status(404).json({
+                status: "error", 
+                message: "Unable to delete user's playlists"});
         }
 
-        return res.status(200).json({message: `User with id: ${id} deleted`, result });
+        const sngs = await Song.deleteUserSongs(id);
+        if(sngs === 0){
+            return res.status(404).json({
+                status: "error", 
+                message: "Unable to delete user's songs"});
+        }
+
+        return res.status(200).json({
+            status: "success",
+            message: `User with id: ${id} deleted`, 
+            data: {deletedCount: result}
+        });
+        
+
 
     }
     catch(error){
         console.log(`Error deleting user: ${error}`);
-        res.status(500).json({error: "Error deleting user"});
+        res.status(500).json({
+            status: "error", 
+            message: "Internal server error"
+        });
     }
 });
 
-app.post("/createPlaylist", async (req, res) =>{
+app.put("user/:userId/addFriend/:friendId", async (req, res) =>{
+
+    const {userId, friendId} = req.params;
+
+    try{
+
+        if (!ObjectId.isValid(userId) || !ObjectId.isValid(friendId) ) {
+            return res.status(400).json({
+                status: "error", 
+                message: "Invalid user or friend ID format" });
+        }
+
+        const result = await User.addFriend(userId, friendId);
+        if(result === 0){
+            
+            return res.status(404).json({
+                status: "error", 
+                message: "Unable to add friend"
+            });
+        }
+
+        const updatedUser = await User.getUserById(userId);
+
+        return res.status(200).json({
+            status: "success",
+            message: `Friend with id: ${friendId} added to friends`, 
+            data: {updatedCount: result, user: updatedUser}
+        });
+
+
+    }
+    catch(error){
+        console.log(`Error adding friend: ${error}`);
+        res.status(500).json({
+            status: "error", 
+            message: "Internal server error"
+        });
+    }
+});
+
+app.put("user/:userId/removeFriend/:friendId", async (req, res) =>{
+
+    const {userId, friendId} = req.params;
+
+    try{
+
+        if (!ObjectId.isValid(userId) || !ObjectId.isValid(friendId) ) {
+            return res.status(400).json({
+                status: "error", 
+                message: "Invalid user or friend ID format" });
+        }
+
+        const result = await User.removeFriend(userId, friendId);
+        if(result === 0){
+            
+            return res.status(404).json({
+                status: "error", 
+                message: "Unable to remove friend"
+            });
+        }
+
+        const updatedUser = await User.getUserById(userId);
+
+        return res.status(200).json({
+            status: "success",
+            message: `Friend with id: ${friendId} removed from friends`, 
+            data: {updatedCount: result, user: updatedUser}
+        });
+
+
+    }
+    catch(error){
+        console.log(`Error removing friend: ${error}`);
+        res.status(500).json({
+            status: "error", 
+            message: "Internal server error"
+        });
+    }
+});
+
+app.post("/playlists/createPlaylist", async (req, res) =>{
 
     try{
         const {playlistName,ownerId, songs } = req.body;
-        const playlist = await Playlist.createPlaylist(playlistName,ownerId, songs );
+        const pl = await Playlist.createPlaylist(playlistName,ownerId, songs );
 
-        res.status(201).json(playlist);
+        await User.addPlaylistToPlaylists(ownerId, pl._id);
+
+        res.status(201).json({
+            status: "success", 
+            message: "playlist created successfully",
+            data: {playlist: pl}
+        });
     }
     catch(error){
         console.log(`Error creating a new playlist: ${error}`);
-        res.status(500).json({error: "Error creating a new playlist"});
+        res.status(500).json({
+            status: "error", 
+            message: "Internal server error"
+        });
     }
 });
 
-app.get("/getPlaylist/:id", async (req, res) =>{
+app.get("/playlists/getPlaylist/:id", async (req, res) =>{
 
     const id = req.params.id;
 
@@ -187,25 +347,37 @@ app.get("/getPlaylist/:id", async (req, res) =>{
 
         
         if (!ObjectId.isValid(id)) {
-            return res.status(400).json({ message: "Invalid playlist ID format" });
+            return res.status(400).json({ 
+                status: "error", 
+                message: "Invalid playlist ID format" 
+            });
         }
 
         const pl = await Playlist.getPlaylistById(id);
 
         if(!pl){
-            return res.status(404).json({message: "Playlist not found"});
+            return res.status(404).json({
+                status: "error", 
+                message: "Playlist not found"});
         }
 
-        return res.status(200).json({message : `Playlist with playlistId: ${id} retrieved successfully`, playlist: pl});
+        return res.status(200).json({
+            status: "success", 
+            message : `Playlist with playlistId: ${id} retrieved successfully`, 
+            data: {playlist: pl}
+        });
     }
     catch(error){
         console.log(`Error getting playlist by id: ${error}`);
-        res.status(500).json({error: "Error getting playlist"});
+        res.status(500).json({
+            status: "error", 
+            message: "Internal server error"
+        });
     }
     
 });
 
-app.get("/getPlaylists/:id", async (req, res) =>{
+app.get("/playlists/getUserPlaylists/:id", async (req, res) =>{
 
     const userId = req.params.id;
 
@@ -213,90 +385,294 @@ app.get("/getPlaylists/:id", async (req, res) =>{
 
         
         if (!ObjectId.isValid(userId)) {
-            return res.status(400).json({ message: "Invalid user ID format" });
+            return res.status(400).json({ 
+                status: "error", 
+                message: "Invalid user ID format" });
         }
 
         const pl = await Playlist.getUserPlaylists(userId);
 
         if(!pl){
-            return res.status(404).json({message: "Playlists not found"});
+            return res.status(404).json({
+                status: "error", 
+                message: "Playlists not found"});
         }
 
-        return res.status(200).json({message : `User with userId: ${userId}'s playlists retrieved successfully`, playlists: pl});
+        return res.status(200).json({
+            status: "success", 
+            message : `User with userId: ${userId}'s playlists retrieved successfully`, 
+            data: {playlists: pl}
+        });
     }
     catch(error){
         console.log(`Error getting user's playlists: ${error}`);
-        res.status(500).json({error: "Error getting user's playlists"});
+        res.status(500).json({
+            status: "error", 
+            message: "Internal server error"});
     }
     
 });
 
-app.put("/updatePlaylist/:id", async (req, res) =>{
+app.put("/playlists/updatePlaylist/:id", async (req, res) =>{
     const id = req.params.id;
 
     try{
 
         if (!ObjectId.isValid(id)) {
-            return res.status(400).json({ message: "Invalid playlist ID format" });
+            return res.status(400).json({ 
+                status: "error", 
+                message: "Invalid playlist ID format" });
         }
 
         const result = await Playlist.updatePlaylist(id , req.body);
 
         if(!result){
-            return res.status(404).json({message: "Unable to update playlist"});
+            return res.status(404).json({
+                status: "error", 
+                message: "Unable to update playlist"});
         }
 
-        return res.status(200).json({message: `Playlist with id: ${id} updated`, result });
+        return res.status(200).json({
+            status: "success", 
+            message: `Playlist with id: ${id} updated`, 
+            data: {updateCount: result} 
+        });
 
     }
     catch(error){
         console.log(`Error updating playlist: ${error}`);
-        res.status(500).json({error: "Error updating playlist"});
+        res.status(500).json({
+            status: "error", 
+            message: "Internal server error"});
     }
 });
 
-app.put("/playlists/:playlistId/songs/:songId", async (req, res) => {
+app.put("/playlists/addSong/:playlistId/songs/:songId", async (req, res) => {
     const { playlistId, songId } = req.params;
 
     try {
         const modifiedCount = await User.addSongToPlaylist(playlistId, songId);
 
         if (modifiedCount === 0) {
-            return res.status(404).json({ message: "Playlist not found or song already exists." });
+            return res.status(404).json({ 
+                status: "error", 
+                message: "Playlist not found or song already exists." });
         }
 
-        return res.status(200).json({ message: "Song added to playlist successfully." });
+        return res.status(200).json({
+            status: "success", 
+            message: "Song added to playlist successfully.",
+            data: {UpdatedCount : modifiedCount}
+         });
     } catch (error) {
         console.log(`Error adding song to playlist: ${error}`);
-        res.status(500).json({ error: "Error adding song to playlist." });
+        res.status(500).json({ 
+            status: "error", 
+            message: "Internal server error" 
+        });
     }
 });
 
-app.delete("/deletePlaylist/:id", async (req, res) =>{
-    const PlaylistId = req.params.id;
+app.put("/playlists/removeSong/:playlistId/songs/:songId", async (req, res) => {
+    const { playlistId, songId } = req.params;
+
+    try {
+        const modifiedCount = await User.removeSongFromPlaylist(playlistId, songId);
+
+        if (modifiedCount === 0) {
+            return res.status(404).json({ 
+                status: "error", 
+                message: "Playlist not found or song not found." 
+            });
+        }
+
+        return res.status(200).json({ 
+            status: "success", 
+            message: "Song removed from playlist successfully.",
+            data: {updateCount: modifiedCount}
+         });
+    } catch (error) {
+        console.log(`Error removing song from playlist: ${error}`);
+        res.status(500).json({ 
+            status: "error", 
+            message: "Internal server error" 
+        });
+    }
+});
+
+app.delete("/playlists/deletePlaylist/:ownerId/:id", async (req, res) =>{
+    const {ownerId, id} = req.params;
 
     try{
 
-        if (!ObjectId.isValid(PlaylistId)) {
-            return res.status(400).json({ message: "Invalid playlist ID format" });
+        if (!ObjectId.isValid(id) || !ObjectId.isValid(ownerId)) {
+            return res.status(400).json({
+                status: "error", 
+                message: "Invalid playlist or User ID format" 
+            });
         }
 
-        const result = await Playlist.deletePlaylist(PlaylistId);
+        
+        const result = await Playlist.deletePlaylist(id);
 
         if(!result){
-            return res.status(404).json({message: "Unable to delete playlist"});
+            return res.status(404).json({
+                status: "error", 
+                message: "Unable to delete playlist"});
         }
 
-        return res.status(200).json({message: `Playlist with id: ${PlaylistId} deleted`, result });
+
+        await User.removePlaylistFromPlaylists(ownerId, id);
+
+        return res.status(200).json({
+            status: "success", 
+            message: `Playlist with id: ${id} deleted`, 
+            data: {deletedCount :result} 
+        });
 
     }
     catch(error){
         console.log(`Error deleting playlist: ${error}`);
-        res.status(500).json({error: "Error deleting playlist"});
+        res.status(500).json({
+            status: "error", 
+            message: "Internal server error"});
     }
 });
 
+app.post("/songs/addSong", async (req, res) =>{
+    const {name, artistName, genre, album, song, ownerId} = req.body;
 
+    try{
+
+        const addedSong = await Song.addSong(name, artistName, genre, album, song, ownerId);
+
+        await User.addSongToSongs(ownerId, addedSong._id);
+
+        return res.status(201).json({
+            status: "success", 
+            message: "song added to your songs" , 
+            data : {song : addedSong}
+        });
+    }
+    catch(error){
+        console.log(`Error adding song: ${error}`);
+        res.status(500).json({
+            status: "error", 
+            message: "Internal server error"
+        });
+    }
+
+});
+
+app.delete("/songs/deleteSong/:ownerId/:songId",async(req, res) => {
+    const { ownerId, songId } = req.params;
+
+    try{
+
+        if(!ObjectId.isValid(songId) || !ObjectId.isValid(ownerId)){
+            return res.status(400).json({
+                status: "error",
+                message: "Invalid song or owner ID format" });
+        }
+
+        const dCount = await Song.deleteSong(songId);
+
+        if(dCount === 0){
+            return res.status(404).json({
+                status: "error", 
+                message: 'song not found or already deleted'
+            });
+
+
+        }
+
+        await User.removeSongFromSongs(ownerId, songId);
+
+        return res.status(200).json({
+            status: "success", 
+            message: "song deleted from your Songs",
+            data: {deletedCount : dCount}
+        });
+
+    }catch(error){
+        console.log(`Error deleting song: ${error}`);
+        res.status(500).json({
+            status: "error", 
+            message: "Internal server error"});
+    }
+});
+
+app.get("/songs/getSong/:id", async (req, res) =>{
+
+    const id = req.params.id;
+
+    try{
+
+        
+        if (!ObjectId.isValid(id)) {
+            return res.status(400).json({
+                status: "error", 
+                message: "Invalid song ID format" });
+        }
+
+        const sng = await Song.getSongById(id);
+
+        if(!sng){
+            return res.status(404).json({
+                status: "error", 
+                message: "Song not found"});
+        }
+
+        return res.status(200).json({
+            status: "success", 
+            message : `Song with songId: ${id} retrieved successfully`, 
+            data : {song: sng}
+        });
+    }
+    catch(error){
+        console.log(`Error getting song by id: ${error}`);
+        res.status(500).json({
+            status: "error", 
+            message: "Internal server error"
+        });
+    }
+    
+});
+
+app.get("/songs/getUserSongs/:userId", async (req, res) =>{
+
+    const {userId} = req.params;
+
+    try{
+
+        if (!ObjectId.isValid(userId)) {
+            return res.status(400).json({
+                status: "error", 
+                message: "Invalid song ID format" });
+        }
+
+        const sngs = await Song.getUserSongs(userId);
+
+        if(!sngs){
+            return res.status(404).json({
+                status: "error", 
+                message: "User Songs not found"});
+        }
+
+        return res.status(200).json({
+            status: "success", 
+            message : `User Songs retrieved successfully`, 
+            data: {songs: sngs}
+        });
+    }
+    catch(error){
+        console.log(`Error getting user songs: ${error}`);
+        res.status(500).json({
+            status: "error", 
+            message: "Internal server error"});
+    }
+    
+});
 
 //PORT TO LISTEN TO
 app.listen(3001, () => {

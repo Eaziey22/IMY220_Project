@@ -210,5 +210,191 @@ var userModel = exports.userModel = /*#__PURE__*/function () {
       }
       return deleteUser;
     }()
+  }, {
+    key: "addFriend",
+    value: function () {
+      var _addFriend = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee8(userId, friendId) {
+        var result;
+        return _regeneratorRuntime().wrap(function _callee8$(_context8) {
+          while (1) switch (_context8.prev = _context8.next) {
+            case 0:
+              _context8.next = 2;
+              return this.collection.updateOne({
+                _id: new ObjectId(userId)
+              }, {
+                $addToSet: {
+                  friends: new ObjectId(friendId)
+                }
+              });
+            case 2:
+              result = _context8.sent;
+              console.log("friend added to friends");
+              return _context8.abrupt("return", result.modifiedCount);
+            case 5:
+            case "end":
+              return _context8.stop();
+          }
+        }, _callee8, this);
+      }));
+      function addFriend(_x10, _x11) {
+        return _addFriend.apply(this, arguments);
+      }
+      return addFriend;
+    }()
+  }, {
+    key: "removeFriend",
+    value: function () {
+      var _removeFriend = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee9(userId, friendId) {
+        var result;
+        return _regeneratorRuntime().wrap(function _callee9$(_context9) {
+          while (1) switch (_context9.prev = _context9.next) {
+            case 0:
+              _context9.next = 2;
+              return this.collection.updateOne({
+                _id: new ObjectId(userId)
+              }, {
+                $pull: {
+                  friends: new ObjectId(friendId)
+                }
+              });
+            case 2:
+              result = _context9.sent;
+              console.log("friend removed from friends");
+              return _context9.abrupt("return", result.modifiedCount);
+            case 5:
+            case "end":
+              return _context9.stop();
+          }
+        }, _callee9, this);
+      }));
+      function removeFriend(_x12, _x13) {
+        return _removeFriend.apply(this, arguments);
+      }
+      return removeFriend;
+    }()
+  }, {
+    key: "addSongToSongs",
+    value: function () {
+      var _addSongToSongs = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee10(userId, songId) {
+        var result;
+        return _regeneratorRuntime().wrap(function _callee10$(_context10) {
+          while (1) switch (_context10.prev = _context10.next) {
+            case 0:
+              _context10.next = 2;
+              return this.collection.updateOne({
+                _id: new ObjectId(userId)
+              }, {
+                $addToSet: {
+                  songs: new ObjectId(songId)
+                }
+              });
+            case 2:
+              result = _context10.sent;
+              console.log("song added to songs");
+              return _context10.abrupt("return", result.modifiedCount);
+            case 5:
+            case "end":
+              return _context10.stop();
+          }
+        }, _callee10, this);
+      }));
+      function addSongToSongs(_x14, _x15) {
+        return _addSongToSongs.apply(this, arguments);
+      }
+      return addSongToSongs;
+    }()
+  }, {
+    key: "removeSongFromSongs",
+    value: function () {
+      var _removeSongFromSongs = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee11(userId, songId) {
+        var result;
+        return _regeneratorRuntime().wrap(function _callee11$(_context11) {
+          while (1) switch (_context11.prev = _context11.next) {
+            case 0:
+              _context11.next = 2;
+              return this.collection.updateOne({
+                _id: new ObjectId(userId)
+              }, {
+                $pull: {
+                  songs: new ObjectId(songId)
+                }
+              });
+            case 2:
+              result = _context11.sent;
+              console.log("song removed from songs");
+              return _context11.abrupt("return", result.modifiedCount);
+            case 5:
+            case "end":
+              return _context11.stop();
+          }
+        }, _callee11, this);
+      }));
+      function removeSongFromSongs(_x16, _x17) {
+        return _removeSongFromSongs.apply(this, arguments);
+      }
+      return removeSongFromSongs;
+    }()
+  }, {
+    key: "addplaylistToPlaylists",
+    value: function () {
+      var _addplaylistToPlaylists = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee12(userId, playlistId) {
+        var result;
+        return _regeneratorRuntime().wrap(function _callee12$(_context12) {
+          while (1) switch (_context12.prev = _context12.next) {
+            case 0:
+              _context12.next = 2;
+              return this.collection.updateOne({
+                _id: new ObjectId(userId)
+              }, {
+                $addToSet: {
+                  playlists: new ObjectId(playlistId)
+                }
+              });
+            case 2:
+              result = _context12.sent;
+              console.log("playlist added to Playlists");
+              return _context12.abrupt("return", result.modifiedCount);
+            case 5:
+            case "end":
+              return _context12.stop();
+          }
+        }, _callee12, this);
+      }));
+      function addplaylistToPlaylists(_x18, _x19) {
+        return _addplaylistToPlaylists.apply(this, arguments);
+      }
+      return addplaylistToPlaylists;
+    }()
+  }, {
+    key: "removePlaylistFromPlaylists",
+    value: function () {
+      var _removePlaylistFromPlaylists = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee13(userId, playlistId) {
+        var result;
+        return _regeneratorRuntime().wrap(function _callee13$(_context13) {
+          while (1) switch (_context13.prev = _context13.next) {
+            case 0:
+              _context13.next = 2;
+              return this.collection.updateOne({
+                _id: new ObjectId(userId)
+              }, {
+                $pull: {
+                  playlists: new ObjectId(playlistId)
+                }
+              });
+            case 2:
+              result = _context13.sent;
+              console.log("playlist removed from playlists");
+              return _context13.abrupt("return", result.modifiedCount);
+            case 5:
+            case "end":
+              return _context13.stop();
+          }
+        }, _callee13, this);
+      }));
+      function removePlaylistFromPlaylists(_x20, _x21) {
+        return _removePlaylistFromPlaylists.apply(this, arguments);
+      }
+      return removePlaylistFromPlaylists;
+    }()
   }]);
 }();

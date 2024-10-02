@@ -60,9 +60,106 @@ export class userModel{
     }
 
     async deleteUser(userId){
-        const result = await this.collection.deleteOne({_id: new ObjectId(userId)});
+        const result = await this.collection.deleteOne(
+            {_id: new ObjectId(userId)}
+        );
 
         return result.deletedCount;
     }
+
+    async addFriend(userId, friendId){
+
+        const result = await this.collection.updateOne(
+            {_id : new ObjectId(userId)},
+            {
+                $addToSet: {friends: new ObjectId(friendId)}
+            }
+        );
+
+        console.log(`friend added to friends`);
+
+        return result.modifiedCount;
+
+    }
+
+    async removeFriend(userId, friendId){
+
+        const result = await this.collection.updateOne(
+            {
+                _id : new ObjectId(userId)
+            },
+            {
+                $pull: {friends: new ObjectId(friendId)}
+            }
+        );
+
+        console.log(`friend removed from friends`);
+
+        return result.modifiedCount;
+    }
+
+    
+    async addSongToSongs(userId, songId){
+
+        const result = await this.collection.updateOne(
+            {_id : new ObjectId(userId)},
+            {
+                $addToSet: {songs: new ObjectId(songId)}
+            }
+        );
+
+        console.log(`song added to songs`);
+
+        return result.modifiedCount;
+
+    }
+
+    async removeSongFromSongs(userId, songId){
+
+        const result = await this.collection.updateOne(
+            {
+                _id : new ObjectId(userId)
+            },
+            {
+                $pull: {songs: new ObjectId(songId)}
+            }
+        );
+
+        console.log(`song removed from songs`);
+
+        return result.modifiedCount;
+    }
+
+    async addplaylistToPlaylists(userId, playlistId){
+
+        const result = await this.collection.updateOne(
+            {_id : new ObjectId(userId)},
+            {
+                $addToSet: {playlists: new ObjectId(playlistId)}
+            }
+        );
+
+        console.log(`playlist added to Playlists`);
+
+        return result.modifiedCount;
+
+    }
+
+    async removePlaylistFromPlaylists(userId, playlistId){
+
+        const result = await this.collection.updateOne(
+            {
+                _id : new ObjectId(userId)
+            },
+            {
+                $pull: {playlists: new ObjectId(playlistId)}
+            }
+        );
+
+        console.log(`playlist removed from playlists`);
+
+        return result.modifiedCount;
+    }
+
 
 }

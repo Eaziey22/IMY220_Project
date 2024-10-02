@@ -85,7 +85,7 @@ var playlistModel = exports.playlistModel = /*#__PURE__*/function () {
             case 0:
               _context3.next = 2;
               return this.collection.find({
-                ownerId: userId
+                ownerId: new ObjectId(userId)
               }).toArray();
             case 2:
               playlists = _context3.sent;
@@ -194,12 +194,14 @@ var playlistModel = exports.playlistModel = /*#__PURE__*/function () {
               return this.collection.updateOne({
                 _id: new ObjectId(playlistId)
               }, {
-                $addToSet: new ObjectId(songId)
+                $addToSet: {
+                  songs: new ObjectId(songId)
+                }
               });
             case 2:
               result = _context7.sent;
               console.log("song added to playlist");
-              return _context7.abrupt("return", result);
+              return _context7.abrupt("return", result.modifiedCount);
             case 5:
             case "end":
               return _context7.stop();
@@ -210,6 +212,36 @@ var playlistModel = exports.playlistModel = /*#__PURE__*/function () {
         return _addSongToPlaylist.apply(this, arguments);
       }
       return addSongToPlaylist;
+    }()
+  }, {
+    key: "removeSongFromPlaylist",
+    value: function () {
+      var _removeSongFromPlaylist = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee8(playlistId, songId) {
+        var result;
+        return _regeneratorRuntime().wrap(function _callee8$(_context8) {
+          while (1) switch (_context8.prev = _context8.next) {
+            case 0:
+              _context8.next = 2;
+              return this.collection.updateOne({
+                _id: new ObjectId(playlistId)
+              }, {
+                $pull: {
+                  songs: songId
+                }
+              });
+            case 2:
+              result = _context8.sent;
+              return _context8.abrupt("return", result.modifiedCount);
+            case 4:
+            case "end":
+              return _context8.stop();
+          }
+        }, _callee8, this);
+      }));
+      function removeSongFromPlaylist(_x12, _x13) {
+        return _removeSongFromPlaylist.apply(this, arguments);
+      }
+      return removeSongFromPlaylist;
     }()
   }]);
 }();

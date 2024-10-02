@@ -26,7 +26,7 @@ export class playlistModel{
     }
 
     async getUserPlaylists(userId){
-        const playlists = await this.collection.find({ownerId : userId}).toArray();
+        const playlists = await this.collection.find({ownerId : new ObjectId(userId)}).toArray();
 
         return playlists;
     }
@@ -38,7 +38,9 @@ export class playlistModel{
     }
 
     async deleteUserPlaylists(userId){
-        const result = await this.collection.deleteMany({ownerId: new ObjectId(userId)});
+        const result = await this.collection.deleteMany(
+            {ownerId: new ObjectId(userId)}
+        );
 
         return result.deletedCount;
     }
@@ -63,12 +65,21 @@ export class playlistModel{
                 _id : new ObjectId(playlistId)
             },
             {
-                $addToSet: new ObjectId(songId)
+                $addToSet: {songs: new ObjectId(songId)}
             }
         );
 
         console.log(`song added to playlist`);
 
-        return result;
+        return result.modifiedCount;
+    }
+
+    async removeSongFromPlaylist(playlistId, songId){
+        const result = await this.collection.updateOne(
+            {_id : new ObjectId(playlistId)},
+            { $pull : {songs: songId}}
+        );
+
+        return result.modifiedCount;
     }
 }

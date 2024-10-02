@@ -6,6 +6,7 @@ var _mongodb = require("mongodb");
 var _bcrypt = _interopRequireDefault(require("bcrypt"));
 var _userModel = require("./userModel");
 var _playlistModel = require("./playlistModel");
+var _songModel = require("./songModel");
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { "default": e }; }
 function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return e; }; var t, e = {}, r = Object.prototype, n = r.hasOwnProperty, o = Object.defineProperty || function (t, e, r) { t[e] = r.value; }, i = "function" == typeof Symbol ? Symbol : {}, a = i.iterator || "@@iterator", c = i.asyncIterator || "@@asyncIterator", u = i.toStringTag || "@@toStringTag"; function define(t, e, r) { return Object.defineProperty(t, e, { value: r, enumerable: !0, configurable: !0, writable: !0 }), t[e]; } try { define({}, ""); } catch (t) { define = function define(t, e, r) { return t[e] = r; }; } function wrap(t, e, r, n) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype), c = new Context(n || []); return o(a, "_invoke", { value: makeInvokeMethod(t, r, c) }), a; } function tryCatch(t, e, r) { try { return { type: "normal", arg: t.call(e, r) }; } catch (t) { return { type: "throw", arg: t }; } } e.wrap = wrap; var h = "suspendedStart", l = "suspendedYield", f = "executing", s = "completed", y = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var p = {}; define(p, a, function () { return this; }); var d = Object.getPrototypeOf, v = d && d(d(values([]))); v && v !== r && n.call(v, a) && (p = v); var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p); function defineIteratorMethods(t) { ["next", "throw", "return"].forEach(function (e) { define(t, e, function (t) { return this._invoke(e, t); }); }); } function AsyncIterator(t, e) { function invoke(r, o, i, a) { var c = tryCatch(t[r], t, o); if ("throw" !== c.type) { var u = c.arg, h = u.value; return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) { invoke("next", t, i, a); }, function (t) { invoke("throw", t, i, a); }) : e.resolve(h).then(function (t) { u.value = t, i(u); }, function (t) { return invoke("throw", t, i, a); }); } a(c.arg); } var r; o(this, "_invoke", { value: function value(t, n) { function callInvokeWithMethodAndArg() { return new e(function (e, r) { invoke(t, n, e, r); }); } return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(e, r, n) { var o = h; return function (i, a) { if (o === f) throw Error("Generator is already running"); if (o === s) { if ("throw" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var c = n.delegate; if (c) { var u = maybeInvokeDelegate(c, n); if (u) { if (u === y) continue; return u; } } if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) { if (o === h) throw o = s, n.arg; n.dispatchException(n.arg); } else "return" === n.method && n.abrupt("return", n.arg); o = f; var p = tryCatch(e, r, n); if ("normal" === p.type) { if (o = n.done ? s : l, p.arg === y) continue; return { value: p.arg, done: n.done }; } "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg); } }; } function maybeInvokeDelegate(e, r) { var n = r.method, o = e.iterator[n]; if (o === t) return r.delegate = null, "throw" === n && e.iterator["return"] && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y; var i = tryCatch(o, e.iterator, r.arg); if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y; var a = i.arg; return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y); } function pushTryEntry(t) { var e = { tryLoc: t[0] }; 1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e); } function resetTryEntry(t) { var e = t.completion || {}; e.type = "normal", delete e.arg, t.completion = e; } function Context(t) { this.tryEntries = [{ tryLoc: "root" }], t.forEach(pushTryEntry, this), this.reset(!0); } function values(e) { if (e || "" === e) { var r = e[a]; if (r) return r.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) { var o = -1, i = function next() { for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next; return next.value = t, next.done = !0, next; }; return i.next = i; } } throw new TypeError(_typeof(e) + " is not iterable"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), o(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) { var e = "function" == typeof t && t.constructor; return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name)); }, e.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t; }, e.awrap = function (t) { return { __await: t }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () { return this; }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(wrap(t, r, n, o), i); return e.isGeneratorFunction(r) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () { return this; }), define(g, "toString", function () { return "[object Generator]"; }), e.keys = function (t) { var e = Object(t), r = []; for (var n in e) r.push(n); return r.reverse(), function next() { for (; r.length;) { var t = r.pop(); if (t in e) return next.value = t, next.done = !1, next; } return next.done = !0, next; }; }, e.values = values, Context.prototype = { constructor: Context, reset: function reset(e) { if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0].completion; if ("throw" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(e) { if (this.done) throw e; var r = this; function handle(n, o) { return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o; } for (var o = this.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i.completion; if ("root" === i.tryLoc) return handle("end"); if (i.tryLoc <= this.prev) { var c = n.call(i, "catchLoc"), u = n.call(i, "finallyLoc"); if (c && u) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } else if (c) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); } else { if (!u) throw Error("try statement without catch or finally"); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } } } }, abrupt: function abrupt(t, e) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var o = this.tryEntries[r]; if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) { var i = o; break; } } i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null); var a = i ? i.completion : {}; return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a); }, complete: function complete(t, e) { if ("throw" === t.type) throw t.arg; return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y; }, finish: function finish(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y; } }, "catch": function _catch(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.tryLoc === t) { var n = r.completion; if ("throw" === n.type) { var o = n.arg; resetTryEntry(r); } return o; } } throw Error("illegal catch attempt"); }, delegateYield: function delegateYield(e, r, n) { return this.delegate = { iterator: values(e), resultName: r, nextLoc: n }, "next" === this.method && (this.arg = t), y; } }, e; }
 function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
@@ -29,6 +30,7 @@ client.connect().then(function () {
   db = client.db("Project_DB");
   User = new _userModel.userModel(db);
   Playlist = new _playlistModel.playlistModel(db);
+  Song = new _songModel.songModel(db);
 })["catch"](function (error) {
   console.error("Error connecting to MongoDB: ".concat(error));
 });
@@ -52,7 +54,8 @@ app.post("/register", /*#__PURE__*/function () {
             break;
           }
           return _context.abrupt("return", res.status(409).json({
-            error: "User with Email: ".concat(email, " already exists")
+            status: "error",
+            message: "User with Email: ".concat(email, " already exists")
           }));
         case 7:
           _context.next = 9;
@@ -63,15 +66,22 @@ app.post("/register", /*#__PURE__*/function () {
           return User.createUser(username, email, hashedPassword);
         case 12:
           user = _context.sent;
-          res.status(201).json(user);
+          res.status(201).json({
+            status: "success",
+            message: "user registered successfully",
+            data: {
+              userId: user._id
+            }
+          });
           _context.next = 20;
           break;
         case 16:
           _context.prev = 16;
           _context.t0 = _context["catch"](0);
-          console.log("Error registering user: ".concat(_context.t0));
+          console.log("Error registering user: ".concat(error));
           res.status(500).json({
-            error: "Error registering user"
+            status: "error",
+            error: "Internal server error"
           });
         case 20:
         case "end":
@@ -100,6 +110,7 @@ app.post("/login", /*#__PURE__*/function () {
             break;
           }
           return _context2.abrupt("return", res.status(404).json({
+            status: "error",
             message: "User not found"
           }));
         case 7:
@@ -112,18 +123,23 @@ app.post("/login", /*#__PURE__*/function () {
             break;
           }
           return _context2.abrupt("return", res.status(401).json({
+            status: "error",
             message: "Invalid password"
           }));
         case 12:
           return _context2.abrupt("return", res.status(200).json({
+            status: "success",
             message: "Login successful",
-            userId: user._id
+            data: {
+              userId: user._id
+            }
           }));
         case 15:
           _context2.prev = 15;
           _context2.t0 = _context2["catch"](0);
           console.error("could not login user: ".concat(_context2.t0));
           res.status(500).json({
+            status: "error",
             message: "Internal server error"
           });
         case 19:
@@ -144,34 +160,49 @@ app.get("/getUser/:id", /*#__PURE__*/function () {
         case 0:
           id = req.params.id;
           _context3.prev = 1;
-          _context3.next = 4;
-          return User.getUserById(id);
+          if (_mongodb.ObjectId.isValid(id)) {
+            _context3.next = 4;
+            break;
+          }
+          return _context3.abrupt("return", res.status(400).json({
+            status: "error",
+            message: "Invalid user ID format"
+          }));
         case 4:
+          _context3.next = 6;
+          return User.getUserById(id);
+        case 6:
           usr = _context3.sent;
           if (usr) {
-            _context3.next = 7;
+            _context3.next = 9;
             break;
           }
           return _context3.abrupt("return", res.status(404).json({
+            status: "error",
             message: "User not found"
           }));
-        case 7:
+        case 9:
           return _context3.abrupt("return", res.status(200).json({
+            status: "success",
             message: "User with userId: ".concat(id, " retrieved successfully"),
-            user: usr
+            data: {
+              userId: usr._id,
+              username: usr.username
+            }
           }));
-        case 10:
-          _context3.prev = 10;
+        case 12:
+          _context3.prev = 12;
           _context3.t0 = _context3["catch"](1);
           console.log("Error getting user by id: ".concat(_context3.t0));
           res.status(500).json({
-            error: "Error getting user"
+            status: "error",
+            error: "Internal server error"
           });
-        case 14:
+        case 16:
         case "end":
           return _context3.stop();
       }
-    }, _callee3, null, [[1, 10]]);
+    }, _callee3, null, [[1, 12]]);
   }));
   return function (_x5, _x6) {
     return _ref3.apply(this, arguments);
@@ -190,6 +221,7 @@ app.put("/updateUser/:id", /*#__PURE__*/function () {
             break;
           }
           return _context4.abrupt("return", res.status(400).json({
+            status: "error",
             message: "Invalid user ID format"
           }));
         case 4:
@@ -202,19 +234,24 @@ app.put("/updateUser/:id", /*#__PURE__*/function () {
             break;
           }
           return _context4.abrupt("return", res.status(404).json({
+            status: "error",
             message: "Unable to update user"
           }));
         case 9:
           return _context4.abrupt("return", res.status(200).json({
+            status: "success",
             message: "User with id: ".concat(id, " updated"),
-            result: result
+            data: {
+              modifiedCount: result
+            }
           }));
         case 12:
           _context4.prev = 12;
           _context4.t0 = _context4["catch"](1);
           console.log("Error updating user: ".concat(_context4.t0));
           res.status(500).json({
-            error: "Error updating user"
+            status: "error",
+            message: "Internal server error"
           });
         case 16:
         case "end":
@@ -228,7 +265,7 @@ app.put("/updateUser/:id", /*#__PURE__*/function () {
 }());
 app["delete"]("/deleteUser/:id", /*#__PURE__*/function () {
   var _ref5 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee5(req, res) {
-    var id, result, pl;
+    var id, result, pl, sngs;
     return _regeneratorRuntime().wrap(function _callee5$(_context5) {
       while (1) switch (_context5.prev = _context5.next) {
         case 0:
@@ -239,6 +276,7 @@ app["delete"]("/deleteUser/:id", /*#__PURE__*/function () {
             break;
           }
           return _context5.abrupt("return", res.status(400).json({
+            status: "error",
             message: "Invalid user ID format"
           }));
         case 4:
@@ -246,11 +284,12 @@ app["delete"]("/deleteUser/:id", /*#__PURE__*/function () {
           return User.deleteUser(id);
         case 6:
           result = _context5.sent;
-          if (result) {
+          if (!(result === 0)) {
             _context5.next = 9;
             break;
           }
           return _context5.abrupt("return", res.status(404).json({
+            status: "error",
             message: "Unable to delete user"
           }));
         case 9:
@@ -258,168 +297,218 @@ app["delete"]("/deleteUser/:id", /*#__PURE__*/function () {
           return Playlist.deleteUserPlaylists(id);
         case 11:
           pl = _context5.sent;
-          if (pl) {
+          if (!(pl === 0)) {
             _context5.next = 14;
             break;
           }
           return _context5.abrupt("return", res.status(404).json({
+            status: "error",
             message: "Unable to delete user's playlists"
           }));
         case 14:
-          return _context5.abrupt("return", res.status(200).json({
-            message: "User with id: ".concat(id, " deleted"),
-            result: result
+          _context5.next = 16;
+          return Song.deleteUserSongs(id);
+        case 16:
+          sngs = _context5.sent;
+          if (!(sngs === 0)) {
+            _context5.next = 19;
+            break;
+          }
+          return _context5.abrupt("return", res.status(404).json({
+            status: "error",
+            message: "Unable to delete user's songs"
           }));
-        case 17:
-          _context5.prev = 17;
+        case 19:
+          return _context5.abrupt("return", res.status(200).json({
+            status: "success",
+            message: "User with id: ".concat(id, " deleted"),
+            data: {
+              deletedCount: result
+            }
+          }));
+        case 22:
+          _context5.prev = 22;
           _context5.t0 = _context5["catch"](1);
           console.log("Error deleting user: ".concat(_context5.t0));
           res.status(500).json({
-            error: "Error deleting user"
+            status: "error",
+            message: "Internal server error"
           });
-        case 21:
+        case 26:
         case "end":
           return _context5.stop();
       }
-    }, _callee5, null, [[1, 17]]);
+    }, _callee5, null, [[1, 22]]);
   }));
   return function (_x9, _x10) {
     return _ref5.apply(this, arguments);
   };
 }());
-app.post("/createPlaylist", /*#__PURE__*/function () {
+app.put("user/:userId/addFriend/:friendId", /*#__PURE__*/function () {
   var _ref6 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee6(req, res) {
-    var _req$body3, playlistName, ownerId, songs, playlist;
+    var _req$params, userId, friendId, result, updatedUser;
     return _regeneratorRuntime().wrap(function _callee6$(_context6) {
       while (1) switch (_context6.prev = _context6.next) {
         case 0:
-          _context6.prev = 0;
-          _req$body3 = req.body, playlistName = _req$body3.playlistName, ownerId = _req$body3.ownerId, songs = _req$body3.songs;
-          _context6.next = 4;
-          return Playlist.createPlaylist(playlistName, ownerId, songs);
+          _req$params = req.params, userId = _req$params.userId, friendId = _req$params.friendId;
+          _context6.prev = 1;
+          if (!(!_mongodb.ObjectId.isValid(userId) || !_mongodb.ObjectId.isValid(friendId))) {
+            _context6.next = 4;
+            break;
+          }
+          return _context6.abrupt("return", res.status(400).json({
+            status: "error",
+            message: "Invalid user or friend ID format"
+          }));
         case 4:
-          playlist = _context6.sent;
-          res.status(201).json(playlist);
-          _context6.next = 12;
-          break;
-        case 8:
-          _context6.prev = 8;
-          _context6.t0 = _context6["catch"](0);
-          console.log("Error creating a new playlist: ".concat(_context6.t0));
+          _context6.next = 6;
+          return User.addFriend(userId, friendId);
+        case 6:
+          result = _context6.sent;
+          if (!(result === 0)) {
+            _context6.next = 9;
+            break;
+          }
+          return _context6.abrupt("return", res.status(404).json({
+            status: "error",
+            message: "Unable to add friend"
+          }));
+        case 9:
+          _context6.next = 11;
+          return User.getUserById(userId);
+        case 11:
+          updatedUser = _context6.sent;
+          return _context6.abrupt("return", res.status(200).json({
+            status: "success",
+            message: "Friend with id: ".concat(friendId, " added to friends"),
+            data: {
+              updatedCount: result,
+              user: updatedUser
+            }
+          }));
+        case 15:
+          _context6.prev = 15;
+          _context6.t0 = _context6["catch"](1);
+          console.log("Error adding friend: ".concat(_context6.t0));
           res.status(500).json({
-            error: "Error creating a new playlist"
+            status: "error",
+            message: "Internal server error"
           });
-        case 12:
+        case 19:
         case "end":
           return _context6.stop();
       }
-    }, _callee6, null, [[0, 8]]);
+    }, _callee6, null, [[1, 15]]);
   }));
   return function (_x11, _x12) {
     return _ref6.apply(this, arguments);
   };
 }());
-app.get("/getPlaylist/:id", /*#__PURE__*/function () {
+app.put("user/:userId/removeFriend/:friendId", /*#__PURE__*/function () {
   var _ref7 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee7(req, res) {
-    var id, pl;
+    var _req$params2, userId, friendId, result, updatedUser;
     return _regeneratorRuntime().wrap(function _callee7$(_context7) {
       while (1) switch (_context7.prev = _context7.next) {
         case 0:
-          id = req.params.id;
+          _req$params2 = req.params, userId = _req$params2.userId, friendId = _req$params2.friendId;
           _context7.prev = 1;
-          if (_mongodb.ObjectId.isValid(id)) {
+          if (!(!_mongodb.ObjectId.isValid(userId) || !_mongodb.ObjectId.isValid(friendId))) {
             _context7.next = 4;
             break;
           }
           return _context7.abrupt("return", res.status(400).json({
-            message: "Invalid playlist ID format"
+            status: "error",
+            message: "Invalid user or friend ID format"
           }));
         case 4:
           _context7.next = 6;
-          return Playlist.getPlaylistById(id);
+          return User.removeFriend(userId, friendId);
         case 6:
-          pl = _context7.sent;
-          if (pl) {
+          result = _context7.sent;
+          if (!(result === 0)) {
             _context7.next = 9;
             break;
           }
           return _context7.abrupt("return", res.status(404).json({
-            message: "Playlist not found"
+            status: "error",
+            message: "Unable to remove friend"
           }));
         case 9:
+          _context7.next = 11;
+          return User.getUserById(userId);
+        case 11:
+          updatedUser = _context7.sent;
           return _context7.abrupt("return", res.status(200).json({
-            message: "Playlist with playlistId: ".concat(id, " retrieved successfully"),
-            playlist: pl
+            status: "success",
+            message: "Friend with id: ".concat(friendId, " removed from friends"),
+            data: {
+              updatedCount: result,
+              user: updatedUser
+            }
           }));
-        case 12:
-          _context7.prev = 12;
+        case 15:
+          _context7.prev = 15;
           _context7.t0 = _context7["catch"](1);
-          console.log("Error getting playlist by id: ".concat(_context7.t0));
+          console.log("Error removing friend: ".concat(_context7.t0));
           res.status(500).json({
-            error: "Error getting playlist"
+            status: "error",
+            message: "Internal server error"
           });
-        case 16:
+        case 19:
         case "end":
           return _context7.stop();
       }
-    }, _callee7, null, [[1, 12]]);
+    }, _callee7, null, [[1, 15]]);
   }));
   return function (_x13, _x14) {
     return _ref7.apply(this, arguments);
   };
 }());
-app.get("/getPlaylists/:id", /*#__PURE__*/function () {
+app.post("/playlists/createPlaylist", /*#__PURE__*/function () {
   var _ref8 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee8(req, res) {
-    var userId, pl;
+    var _req$body3, playlistName, ownerId, songs, pl;
     return _regeneratorRuntime().wrap(function _callee8$(_context8) {
       while (1) switch (_context8.prev = _context8.next) {
         case 0:
-          userId = req.params.id;
-          _context8.prev = 1;
-          if (_mongodb.ObjectId.isValid(userId)) {
-            _context8.next = 4;
-            break;
-          }
-          return _context8.abrupt("return", res.status(400).json({
-            message: "Invalid user ID format"
-          }));
+          _context8.prev = 0;
+          _req$body3 = req.body, playlistName = _req$body3.playlistName, ownerId = _req$body3.ownerId, songs = _req$body3.songs;
+          _context8.next = 4;
+          return Playlist.createPlaylist(playlistName, ownerId, songs);
         case 4:
-          _context8.next = 6;
-          return Playlist.getUserPlaylists(userId);
-        case 6:
           pl = _context8.sent;
-          if (pl) {
-            _context8.next = 9;
-            break;
-          }
-          return _context8.abrupt("return", res.status(404).json({
-            message: "Playlists not found"
-          }));
-        case 9:
-          return _context8.abrupt("return", res.status(200).json({
-            message: "User with userId: ".concat(userId, "'s playlists retrieved successfully"),
-            playlists: pl
-          }));
-        case 12:
-          _context8.prev = 12;
-          _context8.t0 = _context8["catch"](1);
-          console.log("Error getting user's playlists: ".concat(_context8.t0));
-          res.status(500).json({
-            error: "Error getting user's playlists"
+          _context8.next = 7;
+          return User.addPlaylistToPlaylists(ownerId, pl._id);
+        case 7:
+          res.status(201).json({
+            status: "success",
+            message: "playlist created successfully",
+            data: {
+              playlist: pl
+            }
           });
-        case 16:
+          _context8.next = 14;
+          break;
+        case 10:
+          _context8.prev = 10;
+          _context8.t0 = _context8["catch"](0);
+          console.log("Error creating a new playlist: ".concat(_context8.t0));
+          res.status(500).json({
+            status: "error",
+            message: "Internal server error"
+          });
+        case 14:
         case "end":
           return _context8.stop();
       }
-    }, _callee8, null, [[1, 12]]);
+    }, _callee8, null, [[0, 10]]);
   }));
   return function (_x15, _x16) {
     return _ref8.apply(this, arguments);
   };
 }());
-app.put("/updatePlaylist/:id", /*#__PURE__*/function () {
+app.get("/playlists/getPlaylist/:id", /*#__PURE__*/function () {
   var _ref9 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee9(req, res) {
-    var id, result;
+    var id, pl;
     return _regeneratorRuntime().wrap(function _callee9$(_context9) {
       while (1) switch (_context9.prev = _context9.next) {
         case 0:
@@ -430,31 +519,37 @@ app.put("/updatePlaylist/:id", /*#__PURE__*/function () {
             break;
           }
           return _context9.abrupt("return", res.status(400).json({
+            status: "error",
             message: "Invalid playlist ID format"
           }));
         case 4:
           _context9.next = 6;
-          return Playlist.updatePlaylist(id, req.body);
+          return Playlist.getPlaylistById(id);
         case 6:
-          result = _context9.sent;
-          if (result) {
+          pl = _context9.sent;
+          if (pl) {
             _context9.next = 9;
             break;
           }
           return _context9.abrupt("return", res.status(404).json({
-            message: "Unable to update playlist"
+            status: "error",
+            message: "Playlist not found"
           }));
         case 9:
           return _context9.abrupt("return", res.status(200).json({
-            message: "Playlist with id: ".concat(id, " updated"),
-            result: result
+            status: "success",
+            message: "Playlist with playlistId: ".concat(id, " retrieved successfully"),
+            data: {
+              playlist: pl
+            }
           }));
         case 12:
           _context9.prev = 12;
           _context9.t0 = _context9["catch"](1);
-          console.log("Error updating playlist: ".concat(_context9.t0));
+          console.log("Error getting playlist by id: ".concat(_context9.t0));
           res.status(500).json({
-            error: "Error updating playlist"
+            status: "error",
+            message: "Internal server error"
           });
         case 16:
         case "end":
@@ -466,64 +561,80 @@ app.put("/updatePlaylist/:id", /*#__PURE__*/function () {
     return _ref9.apply(this, arguments);
   };
 }());
-app.put("/playlists/:playlistId/songs/:songId", /*#__PURE__*/function () {
+app.get("/playlists/getUserPlaylists/:id", /*#__PURE__*/function () {
   var _ref10 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee10(req, res) {
-    var _req$params, playlistId, songId, modifiedCount;
+    var userId, pl;
     return _regeneratorRuntime().wrap(function _callee10$(_context10) {
       while (1) switch (_context10.prev = _context10.next) {
         case 0:
-          _req$params = req.params, playlistId = _req$params.playlistId, songId = _req$params.songId;
+          userId = req.params.id;
           _context10.prev = 1;
-          _context10.next = 4;
-          return User.addSongToPlaylist(playlistId, songId);
+          if (_mongodb.ObjectId.isValid(userId)) {
+            _context10.next = 4;
+            break;
+          }
+          return _context10.abrupt("return", res.status(400).json({
+            status: "error",
+            message: "Invalid user ID format"
+          }));
         case 4:
-          modifiedCount = _context10.sent;
-          if (!(modifiedCount === 0)) {
-            _context10.next = 7;
+          _context10.next = 6;
+          return Playlist.getUserPlaylists(userId);
+        case 6:
+          pl = _context10.sent;
+          if (pl) {
+            _context10.next = 9;
             break;
           }
           return _context10.abrupt("return", res.status(404).json({
-            message: "Playlist not found or song already exists."
+            status: "error",
+            message: "Playlists not found"
           }));
-        case 7:
+        case 9:
           return _context10.abrupt("return", res.status(200).json({
-            message: "Song added to playlist successfully."
+            status: "success",
+            message: "User with userId: ".concat(userId, "'s playlists retrieved successfully"),
+            data: {
+              playlists: pl
+            }
           }));
-        case 10:
-          _context10.prev = 10;
+        case 12:
+          _context10.prev = 12;
           _context10.t0 = _context10["catch"](1);
-          console.log("Error adding song to playlist: ".concat(_context10.t0));
+          console.log("Error getting user's playlists: ".concat(_context10.t0));
           res.status(500).json({
-            error: "Error adding song to playlist."
+            status: "error",
+            message: "Internal server error"
           });
-        case 14:
+        case 16:
         case "end":
           return _context10.stop();
       }
-    }, _callee10, null, [[1, 10]]);
+    }, _callee10, null, [[1, 12]]);
   }));
   return function (_x19, _x20) {
     return _ref10.apply(this, arguments);
   };
 }());
-app["delete"]("/deletePlaylist/:id", /*#__PURE__*/function () {
+app.put("/playlists/updatePlaylist/:id", /*#__PURE__*/function () {
   var _ref11 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee11(req, res) {
-    var PlaylistId, result;
+    var id, result;
     return _regeneratorRuntime().wrap(function _callee11$(_context11) {
       while (1) switch (_context11.prev = _context11.next) {
         case 0:
-          PlaylistId = req.params.id;
+          id = req.params.id;
           _context11.prev = 1;
-          if (_mongodb.ObjectId.isValid(PlaylistId)) {
+          if (_mongodb.ObjectId.isValid(id)) {
             _context11.next = 4;
             break;
           }
           return _context11.abrupt("return", res.status(400).json({
+            status: "error",
             message: "Invalid playlist ID format"
           }));
         case 4:
           _context11.next = 6;
-          return Playlist.deletePlaylist(PlaylistId);
+          return Playlist.updatePlaylist(id, req.body);
         case 6:
           result = _context11.sent;
           if (result) {
@@ -531,19 +642,24 @@ app["delete"]("/deletePlaylist/:id", /*#__PURE__*/function () {
             break;
           }
           return _context11.abrupt("return", res.status(404).json({
-            message: "Unable to delete playlist"
+            status: "error",
+            message: "Unable to update playlist"
           }));
         case 9:
           return _context11.abrupt("return", res.status(200).json({
-            message: "Playlist with id: ".concat(PlaylistId, " deleted"),
-            result: result
+            status: "success",
+            message: "Playlist with id: ".concat(id, " updated"),
+            data: {
+              updateCount: result
+            }
           }));
         case 12:
           _context11.prev = 12;
           _context11.t0 = _context11["catch"](1);
-          console.log("Error deleting playlist: ".concat(_context11.t0));
+          console.log("Error updating playlist: ".concat(_context11.t0));
           res.status(500).json({
-            error: "Error deleting playlist"
+            status: "error",
+            message: "Internal server error"
           });
         case 16:
         case "end":
@@ -553,6 +669,364 @@ app["delete"]("/deletePlaylist/:id", /*#__PURE__*/function () {
   }));
   return function (_x21, _x22) {
     return _ref11.apply(this, arguments);
+  };
+}());
+app.put("/playlists/addSong/:playlistId/songs/:songId", /*#__PURE__*/function () {
+  var _ref12 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee12(req, res) {
+    var _req$params3, playlistId, songId, modifiedCount;
+    return _regeneratorRuntime().wrap(function _callee12$(_context12) {
+      while (1) switch (_context12.prev = _context12.next) {
+        case 0:
+          _req$params3 = req.params, playlistId = _req$params3.playlistId, songId = _req$params3.songId;
+          _context12.prev = 1;
+          _context12.next = 4;
+          return User.addSongToPlaylist(playlistId, songId);
+        case 4:
+          modifiedCount = _context12.sent;
+          if (!(modifiedCount === 0)) {
+            _context12.next = 7;
+            break;
+          }
+          return _context12.abrupt("return", res.status(404).json({
+            status: "error",
+            message: "Playlist not found or song already exists."
+          }));
+        case 7:
+          return _context12.abrupt("return", res.status(200).json({
+            status: "success",
+            message: "Song added to playlist successfully.",
+            data: {
+              UpdatedCount: modifiedCount
+            }
+          }));
+        case 10:
+          _context12.prev = 10;
+          _context12.t0 = _context12["catch"](1);
+          console.log("Error adding song to playlist: ".concat(_context12.t0));
+          res.status(500).json({
+            status: "error",
+            message: "Internal server error"
+          });
+        case 14:
+        case "end":
+          return _context12.stop();
+      }
+    }, _callee12, null, [[1, 10]]);
+  }));
+  return function (_x23, _x24) {
+    return _ref12.apply(this, arguments);
+  };
+}());
+app.put("/playlists/removeSong/:playlistId/songs/:songId", /*#__PURE__*/function () {
+  var _ref13 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee13(req, res) {
+    var _req$params4, playlistId, songId, modifiedCount;
+    return _regeneratorRuntime().wrap(function _callee13$(_context13) {
+      while (1) switch (_context13.prev = _context13.next) {
+        case 0:
+          _req$params4 = req.params, playlistId = _req$params4.playlistId, songId = _req$params4.songId;
+          _context13.prev = 1;
+          _context13.next = 4;
+          return User.removeSongFromPlaylist(playlistId, songId);
+        case 4:
+          modifiedCount = _context13.sent;
+          if (!(modifiedCount === 0)) {
+            _context13.next = 7;
+            break;
+          }
+          return _context13.abrupt("return", res.status(404).json({
+            status: "error",
+            message: "Playlist not found or song not found."
+          }));
+        case 7:
+          return _context13.abrupt("return", res.status(200).json({
+            status: "success",
+            message: "Song removed from playlist successfully.",
+            data: {
+              updateCount: modifiedCount
+            }
+          }));
+        case 10:
+          _context13.prev = 10;
+          _context13.t0 = _context13["catch"](1);
+          console.log("Error removing song from playlist: ".concat(_context13.t0));
+          res.status(500).json({
+            status: "error",
+            message: "Internal server error"
+          });
+        case 14:
+        case "end":
+          return _context13.stop();
+      }
+    }, _callee13, null, [[1, 10]]);
+  }));
+  return function (_x25, _x26) {
+    return _ref13.apply(this, arguments);
+  };
+}());
+app["delete"]("/playlists/deletePlaylist/:ownerId/:id", /*#__PURE__*/function () {
+  var _ref14 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee14(req, res) {
+    var _req$params5, ownerId, id, result;
+    return _regeneratorRuntime().wrap(function _callee14$(_context14) {
+      while (1) switch (_context14.prev = _context14.next) {
+        case 0:
+          _req$params5 = req.params, ownerId = _req$params5.ownerId, id = _req$params5.id;
+          _context14.prev = 1;
+          if (!(!_mongodb.ObjectId.isValid(id) || !_mongodb.ObjectId.isValid(ownerId))) {
+            _context14.next = 4;
+            break;
+          }
+          return _context14.abrupt("return", res.status(400).json({
+            status: "error",
+            message: "Invalid playlist or User ID format"
+          }));
+        case 4:
+          _context14.next = 6;
+          return Playlist.deletePlaylist(id);
+        case 6:
+          result = _context14.sent;
+          if (result) {
+            _context14.next = 9;
+            break;
+          }
+          return _context14.abrupt("return", res.status(404).json({
+            status: "error",
+            message: "Unable to delete playlist"
+          }));
+        case 9:
+          _context14.next = 11;
+          return User.removePlaylistFromPlaylists(ownerId, id);
+        case 11:
+          return _context14.abrupt("return", res.status(200).json({
+            status: "success",
+            message: "Playlist with id: ".concat(id, " deleted"),
+            data: {
+              deletedCount: result
+            }
+          }));
+        case 14:
+          _context14.prev = 14;
+          _context14.t0 = _context14["catch"](1);
+          console.log("Error deleting playlist: ".concat(_context14.t0));
+          res.status(500).json({
+            status: "error",
+            message: "Internal server error"
+          });
+        case 18:
+        case "end":
+          return _context14.stop();
+      }
+    }, _callee14, null, [[1, 14]]);
+  }));
+  return function (_x27, _x28) {
+    return _ref14.apply(this, arguments);
+  };
+}());
+app.post("/songs/addSong", /*#__PURE__*/function () {
+  var _ref15 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee15(req, res) {
+    var _req$body4, name, artistName, genre, album, song, ownerId, addedSong;
+    return _regeneratorRuntime().wrap(function _callee15$(_context15) {
+      while (1) switch (_context15.prev = _context15.next) {
+        case 0:
+          _req$body4 = req.body, name = _req$body4.name, artistName = _req$body4.artistName, genre = _req$body4.genre, album = _req$body4.album, song = _req$body4.song, ownerId = _req$body4.ownerId;
+          _context15.prev = 1;
+          _context15.next = 4;
+          return Song.addSong(name, artistName, genre, album, song, ownerId);
+        case 4:
+          addedSong = _context15.sent;
+          _context15.next = 7;
+          return User.addSongToSongs(ownerId, addedSong._id);
+        case 7:
+          return _context15.abrupt("return", res.status(201).json({
+            status: "success",
+            message: "song added to your songs",
+            data: {
+              song: addedSong
+            }
+          }));
+        case 10:
+          _context15.prev = 10;
+          _context15.t0 = _context15["catch"](1);
+          console.log("Error adding song: ".concat(_context15.t0));
+          res.status(500).json({
+            status: "error",
+            message: "Internal server error"
+          });
+        case 14:
+        case "end":
+          return _context15.stop();
+      }
+    }, _callee15, null, [[1, 10]]);
+  }));
+  return function (_x29, _x30) {
+    return _ref15.apply(this, arguments);
+  };
+}());
+app["delete"]("/songs/deleteSong/:ownerId/:songId", /*#__PURE__*/function () {
+  var _ref16 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee16(req, res) {
+    var _req$params6, ownerId, songId, dCount;
+    return _regeneratorRuntime().wrap(function _callee16$(_context16) {
+      while (1) switch (_context16.prev = _context16.next) {
+        case 0:
+          _req$params6 = req.params, ownerId = _req$params6.ownerId, songId = _req$params6.songId;
+          _context16.prev = 1;
+          if (!(!_mongodb.ObjectId.isValid(songId) || !_mongodb.ObjectId.isValid(ownerId))) {
+            _context16.next = 4;
+            break;
+          }
+          return _context16.abrupt("return", res.status(400).json({
+            status: "error",
+            message: "Invalid song or owner ID format"
+          }));
+        case 4:
+          _context16.next = 6;
+          return Song.deleteSong(songId);
+        case 6:
+          dCount = _context16.sent;
+          if (!(dCount === 0)) {
+            _context16.next = 9;
+            break;
+          }
+          return _context16.abrupt("return", res.status(404).json({
+            status: "error",
+            message: 'song not found or already deleted'
+          }));
+        case 9:
+          _context16.next = 11;
+          return User.removeSongFromSongs(ownerId, songId);
+        case 11:
+          return _context16.abrupt("return", res.status(200).json({
+            status: "success",
+            message: "song deleted from your Songs",
+            data: {
+              deletedCount: dCount
+            }
+          }));
+        case 14:
+          _context16.prev = 14;
+          _context16.t0 = _context16["catch"](1);
+          console.log("Error deleting song: ".concat(_context16.t0));
+          res.status(500).json({
+            status: "error",
+            message: "Internal server error"
+          });
+        case 18:
+        case "end":
+          return _context16.stop();
+      }
+    }, _callee16, null, [[1, 14]]);
+  }));
+  return function (_x31, _x32) {
+    return _ref16.apply(this, arguments);
+  };
+}());
+app.get("/songs/getSong/:id", /*#__PURE__*/function () {
+  var _ref17 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee17(req, res) {
+    var id, sng;
+    return _regeneratorRuntime().wrap(function _callee17$(_context17) {
+      while (1) switch (_context17.prev = _context17.next) {
+        case 0:
+          id = req.params.id;
+          _context17.prev = 1;
+          if (_mongodb.ObjectId.isValid(id)) {
+            _context17.next = 4;
+            break;
+          }
+          return _context17.abrupt("return", res.status(400).json({
+            status: "error",
+            message: "Invalid song ID format"
+          }));
+        case 4:
+          _context17.next = 6;
+          return Song.getSongById(id);
+        case 6:
+          sng = _context17.sent;
+          if (sng) {
+            _context17.next = 9;
+            break;
+          }
+          return _context17.abrupt("return", res.status(404).json({
+            status: "error",
+            message: "Song not found"
+          }));
+        case 9:
+          return _context17.abrupt("return", res.status(200).json({
+            status: "success",
+            message: "Song with songId: ".concat(id, " retrieved successfully"),
+            data: {
+              song: sng
+            }
+          }));
+        case 12:
+          _context17.prev = 12;
+          _context17.t0 = _context17["catch"](1);
+          console.log("Error getting song by id: ".concat(_context17.t0));
+          res.status(500).json({
+            status: "error",
+            message: "Internal server error"
+          });
+        case 16:
+        case "end":
+          return _context17.stop();
+      }
+    }, _callee17, null, [[1, 12]]);
+  }));
+  return function (_x33, _x34) {
+    return _ref17.apply(this, arguments);
+  };
+}());
+app.get("/songs/getUserSongs/:userId", /*#__PURE__*/function () {
+  var _ref18 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee18(req, res) {
+    var userId, sngs;
+    return _regeneratorRuntime().wrap(function _callee18$(_context18) {
+      while (1) switch (_context18.prev = _context18.next) {
+        case 0:
+          userId = req.params.userId;
+          _context18.prev = 1;
+          if (_mongodb.ObjectId.isValid(userId)) {
+            _context18.next = 4;
+            break;
+          }
+          return _context18.abrupt("return", res.status(400).json({
+            status: "error",
+            message: "Invalid song ID format"
+          }));
+        case 4:
+          _context18.next = 6;
+          return Song.getUserSongs(userId);
+        case 6:
+          sngs = _context18.sent;
+          if (sngs) {
+            _context18.next = 9;
+            break;
+          }
+          return _context18.abrupt("return", res.status(404).json({
+            status: "error",
+            message: "User Songs not found"
+          }));
+        case 9:
+          return _context18.abrupt("return", res.status(200).json({
+            status: "success",
+            message: "User Songs retrieved successfully",
+            data: {
+              songs: sngs
+            }
+          }));
+        case 12:
+          _context18.prev = 12;
+          _context18.t0 = _context18["catch"](1);
+          console.log("Error getting user songs: ".concat(_context18.t0));
+          res.status(500).json({
+            status: "error",
+            message: "Internal server error"
+          });
+        case 16:
+        case "end":
+          return _context18.stop();
+      }
+    }, _callee18, null, [[1, 12]]);
+  }));
+  return function (_x35, _x36) {
+    return _ref18.apply(this, arguments);
   };
 }());
 
