@@ -2,6 +2,8 @@ import express from "express";
 import { MongoClient, ObjectId } from "mongodb";
 import bcrypt from "bcrypt";
 require('dotenv').config();
+//const jwt = require('jsonwebtoken');
+//const secretKey = process.env.Secret_Key
 
 
 //import { userClass } from "./userClass";
@@ -40,7 +42,7 @@ client.connect().then(() => {
 //SERVE A STATIC PAGE IN THE PUBLIC DIRECTORY
 app.use(express.static(path.join(__dirname, '../../frontend/public')));
 
-app.post("/register", async (req, res) =>{
+app.post("/auth/register", async (req, res) =>{
     try{
         const {username,email, password } = req.body;
 
@@ -49,20 +51,23 @@ app.post("/register", async (req, res) =>{
         if(userEmailExists){
             return res.status(409).json({
                 status: "error", 
-                message: `User with Email: ${email} already exists` 
+                message: `Email address already exists` 
             });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = await User.createUser(username,email, hashedPassword );
 
+        //const tkn = jwt.sign({userId: user._id, email: user.email}, secretKey, {expiresIn: '2h'});
+
         res.status(201).json({
             status: "success",
             message: "user registered successfully" ,
-            data : {userId : user._id} });
+            data : {userId : user._id}
+            /*data : {token : tkn }*/ });
     }
     catch(err){
-        console.log(`Error registering user: ${error}`);
+        console.log(`Error registering user: ${err}`);
         res.status(500).json({ 
             status: "error",
             error: "Internal server error"
@@ -70,7 +75,7 @@ app.post("/register", async (req, res) =>{
     }
 });
 
-app.post("/login", async(req, res) => {
+app.post("/auth/login", async(req, res) => {
     try{
         const {email, password} = req.body;
 
@@ -92,11 +97,13 @@ app.post("/login", async(req, res) => {
             });
         }
 
+        //const tkn = jwt.sign({userId: user._id, email: user.email}, secretKey, {expiresIn : '2h'});
 
         return res.status(200).json({
             status: "success",
             message: "Login successful", 
-            data :{userId: user._id}
+            /*data :{token: tkn}*/
+            data : {userId : user._id}
         });
 
     }

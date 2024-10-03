@@ -50,13 +50,16 @@ const playlists = [
 
 export class ProfileFeed extends React.Component{
 
+    
     constructor(props) {
         super(props);
         this.state = {
             showMenu: false,
             showEditForm: false,
-            userName: 'John Doe',
+            userData: this.props.userData,
+            username: this.props.userData.username,
             userPicture: null,
+            errorMessage: ''
         }; 
     }
 
@@ -72,21 +75,61 @@ export class ProfileFeed extends React.Component{
       };
     
       handleInputChange = (e) => {
-        this.setState({ userName: e.target.value });
+
+        const newUserData = {...this.state.userData, username: e.target.value};
+        this.setState({ userData: newUserData, username: e.target.value});
+
+        
+
       };
     
       handleFileChange = (e) => {
         this.setState({ userPicture: URL.createObjectURL(e.target.files[0]) });
       };
     
-      handleFormSubmit = (e) => {
+      handleFormSubmit = async (e) => {
         e.preventDefault();
+
+        const updatedUserData = this.state.userData;
+
+
+        try{
+
+            const response = await fetch(`/updateUser/${localStorage.userId}`, {
+                method : "PUT",
+                headers: {
+                    "content-Type": "application/json"
+                },
+                body: JSON.stringify(updatedUserData)
+            });
+
+            result = await response.json();
+
+            if(result.status === "error"){
+                this.setState({errorMessage: result.message });
+            }
+            
+            if(result.status === "success"){
+                console.log(result.message);
+            }
+
+
+        }
+        catch(error){
+            console.error("Error updating user:", error);
+            this.setState({ errorMessage: "Error updating user" });
+        }
+
         this.toggleEditForm(); 
       };
 
     render(){
 
-        const { showMenu,showEditForm, userName, userPicture } = this.state;
+        const { showMenu,showEditForm, userData, username, userPicture } = this.state;
+        
+        const userName = username;
+
+        //const userName = userData? userData.username: "Loading...";
 
         return (
             <div className={styles.feed}>

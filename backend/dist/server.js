@@ -12,6 +12,8 @@ function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyri
 function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
 function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 require('dotenv').config();
+//const jwt = require('jsonwebtoken');
+//const secretKey = process.env.Secret_Key
 
 //import { userClass } from "./userClass";
 
@@ -37,7 +39,7 @@ client.connect().then(function () {
 
 //SERVE A STATIC PAGE IN THE PUBLIC DIRECTORY
 app.use(_express["default"]["static"](path.join(__dirname, '../../frontend/public')));
-app.post("/register", /*#__PURE__*/function () {
+app.post("/auth/register", /*#__PURE__*/function () {
   var _ref = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(req, res) {
     var _req$body, username, email, password, userEmailExists, hashedPassword, user;
     return _regeneratorRuntime().wrap(function _callee$(_context) {
@@ -55,7 +57,7 @@ app.post("/register", /*#__PURE__*/function () {
           }
           return _context.abrupt("return", res.status(409).json({
             status: "error",
-            message: "User with Email: ".concat(email, " already exists")
+            message: "Email address already exists"
           }));
         case 7:
           _context.next = 9;
@@ -66,19 +68,22 @@ app.post("/register", /*#__PURE__*/function () {
           return User.createUser(username, email, hashedPassword);
         case 12:
           user = _context.sent;
+          //const tkn = jwt.sign({userId: user._id, email: user.email}, secretKey, {expiresIn: '2h'});
+
           res.status(201).json({
             status: "success",
             message: "user registered successfully",
             data: {
               userId: user._id
             }
+            /*data : {token : tkn }*/
           });
           _context.next = 20;
           break;
         case 16:
           _context.prev = 16;
           _context.t0 = _context["catch"](0);
-          console.log("Error registering user: ".concat(error));
+          console.log("Error registering user: ".concat(_context.t0));
           res.status(500).json({
             status: "error",
             error: "Internal server error"
@@ -93,7 +98,7 @@ app.post("/register", /*#__PURE__*/function () {
     return _ref.apply(this, arguments);
   };
 }());
-app.post("/login", /*#__PURE__*/function () {
+app.post("/auth/login", /*#__PURE__*/function () {
   var _ref2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(req, res) {
     var _req$body2, email, password, user, isPwValid;
     return _regeneratorRuntime().wrap(function _callee2$(_context2) {
@@ -130,6 +135,7 @@ app.post("/login", /*#__PURE__*/function () {
           return _context2.abrupt("return", res.status(200).json({
             status: "success",
             message: "Login successful",
+            /*data :{token: tkn}*/
             data: {
               userId: user._id
             }
