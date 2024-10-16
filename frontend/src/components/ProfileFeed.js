@@ -60,7 +60,8 @@ export class ProfileFeed extends React.Component{
             username: this.props.userData.username,
             userPicture: null,
             errorMessage: '',
-            playlistsData: null
+            playlistsData: null,
+            songData: null
         }; 
     }
 
@@ -126,6 +127,7 @@ export class ProfileFeed extends React.Component{
 
     async componentDidMount() {
         this.fetchUserPlaylists();
+        this.fetchUserSongs();
     }
 
     fetchUserPlaylists = async () =>{
@@ -153,9 +155,33 @@ export class ProfileFeed extends React.Component{
         }
     }
 
+    fetchUserSongs = async() =>{
+
+        const userId = localStorage.getItem("userId");
+
+        try{
+            const response = await fetch(`/songs/getUserSongs/${userId}`);
+
+            if(response.ok){
+                const data = await response.json();
+                this.setState({ songData: data.data.songs, loading: false, errorMessage: '' } , () =>{
+                    console.log(this.state.songData);
+                });
+                
+            }
+            else{
+                this.setState({errorMessage: data.message || 'Failed to load songs'});
+            }
+        }
+        catch(err){
+            console.error('Error fetching playlists:', err);
+            this.setState({ errorMessage: 'An error occurred while fetching songs' });
+        }
+    }
+
     render(){
 
-        const { showMenu,showEditForm, userData, username, userPicture, playlistsData } = this.state;
+        const { showMenu,showEditForm, userData, username, userPicture, playlistsData, songData } = this.state;
         
         const userName = username;
 
@@ -246,16 +272,16 @@ export class ProfileFeed extends React.Component{
 
                 <div className={styles.songsOfTheWeek}>
                     <h3 className={styles.header}>Your Songs</h3>
-                    <div className={`${styles.songsOfTheWeekContainer} row`}>
-                        {songsOfWeekData.map((music, index) => (
+                    {songData? <div className={`${styles.songsOfTheWeekContainer} row`}>
+                        {songData.map((music, index) => (
                             <div className="col-12 col-md-6 col-lg-3" key={index}>
-                                <Song image={music.image} name={music.name} />
+                                <Song image="" name={music.name} />
                             </div>
                         ))}
                         <div className="col-12 col-md-6 col-lg-3">
                             <AddSong/>
                         </div>
-                    </div>
+                    </div>:<div></div>}
                 </div>
 
             </div>

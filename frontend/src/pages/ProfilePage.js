@@ -12,6 +12,7 @@ export class ProfilePage extends React.Component{
             userData: null,
             loading: true,
             errorMessage: null,
+            
 
         };
     }
@@ -79,6 +80,8 @@ export class ProfilePage extends React.Component{
             this.setState({ errorMessage: 'An error occurred while fetching playlists' });
         }
     }
+
+    
 
     render(){
         const {userData, loading, errorMessage } = this.state;

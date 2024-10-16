@@ -71,11 +71,13 @@ export class HomePage extends React.Component{
           playlistsData: null,
           loading: true,
           errorMessage: "",
+          songData: null
         };
     }
 
     async componentDidMount() {
         this.fetchUserPlaylists();
+        this.fetchUserSongs();
     }
 
     fetchUserPlaylists = async () =>{
@@ -103,16 +105,41 @@ export class HomePage extends React.Component{
         }
     }
 
-    render(){
-        const {playlistsData, loading, errorMessage } = this.state;
+    fetchUserSongs = async() =>{
 
+        const userId = localStorage.getItem("userId");
+
+        try{
+            const response = await fetch(`/songs/getUserSongs/${userId}`);
+
+            if(response.ok){
+                const data = await response.json();
+                this.setState({ songData: data.data.songs, loading: false, errorMessage: '' } , () =>{
+                    console.log(this.state.songData);
+                });
+                
+            }
+            else{
+                this.setState({errorMessage: data.message || 'Failed to load songs'});
+            }
+        }
+        catch(err){
+            console.error('Error fetching playlists:', err);
+            this.setState({ errorMessage: 'An error occurred while fetching songs' });
+        }
+    }
+
+    render(){
+        const {playlistsData, loading, errorMessage, songData } = this.state;
+
+        console.log("songs: ", songData);
         return(
             <div style={{ display: 'flex',width: '1270px', height: 'auto', flexDirection: 'column', marginLeft: '250px', marginTop: '110px', padding:0, backgroundColor: '#ECF6F6' }}>
                 <UpperBar />
                 <div style={{ display: 'flex', flex: 1 }}>
                     <SideNavBar />
                     <div style={{ flex: 1, padding: '20px' }}>
-                        {playlistsData? <Feed playlists = {playlistsData} songsOfWeekData = {songsOfWeekData} recentMusicData = {recentMusicData} />: <div></div>}
+                        {playlistsData && songData? <Feed playlists = {playlistsData} userSongs = {songData} recentMusicData = {recentMusicData} />: <div></div>}
                     </div>
                 </div>
             </div> 
