@@ -59,7 +59,8 @@ export class ProfileFeed extends React.Component{
             userData: this.props.userData,
             username: this.props.userData.username,
             userPicture: null,
-            errorMessage: ''
+            errorMessage: '',
+            playlistsData: null
         }; 
     }
 
@@ -83,11 +84,11 @@ export class ProfileFeed extends React.Component{
 
       };
     
-      handleFileChange = (e) => {
+    handleFileChange = (e) => {
         this.setState({ userPicture: URL.createObjectURL(e.target.files[0]) });
-      };
+    };
     
-      handleFormSubmit = async (e) => {
+    handleFormSubmit = async (e) => {
         e.preventDefault();
 
         const updatedUserData = this.state.userData;
@@ -121,11 +122,40 @@ export class ProfileFeed extends React.Component{
         }
 
         this.toggleEditForm(); 
-      };
+    };
+
+    async componentDidMount() {
+        this.fetchUserPlaylists();
+    }
+
+    fetchUserPlaylists = async () =>{
+
+        const userId = localStorage.getItem('userId');
+
+        try{
+
+            const response = await fetch(`/playlists/getUserPlaylists/${userId}`);
+
+            if(response.ok){
+                const data = await response.json();
+                this.setState({ playlistsData: data.data.playlists, loading: false, errorMessage: '' });
+                
+            }
+            else{
+                this.setState({errorMessage: data.message || 'Failed to load playlists'});
+            }
+            
+
+        }
+        catch(err){
+            console.error('Error fetching playlists:', err);
+            this.setState({ errorMessage: 'An error occurred while fetching playlists' });
+        }
+    }
 
     render(){
 
-        const { showMenu,showEditForm, userData, username, userPicture } = this.state;
+        const { showMenu,showEditForm, userData, username, userPicture, playlistsData } = this.state;
         
         const userName = username;
 
@@ -202,16 +232,16 @@ export class ProfileFeed extends React.Component{
                  
                 <div className={styles.playlists}>
                     <h3 className={styles.header}>Your Playlists</h3>
-                    <div className={`${styles.playlistsContainer} row`}>
-                        {playlists.slice(0, 5).map((playlist, index) => (
+                    {playlistsData? <div className={`${styles.playlistsContainer} row`}>
+                        {playlistsData.slice(0, 5).map((playlist, index) => (
                             <div className="col-12 col-md-6 col-lg-2" key={index}>
-                                <PlayListPreview image={playlist.image} title={playlist.title} songAmount={playlist.songAmount} />
+                                <PlayListPreview image='' title={playlist.playlistName} songAmount={playlist.songs.length} />
                             </div>
                         ))}
                         <div className="col-12 col-md-6 col-lg-3">
                             <CreatePlaylist />
                         </div>
-                    </div>
+                    </div>: <div></div>}
                 </div>
 
                 <div className={styles.songsOfTheWeek}>

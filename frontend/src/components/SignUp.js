@@ -133,6 +133,11 @@ export class SignUp extends React.Component{
                 {/*<div className={styles.loginLogoContainer}>
                   <img className={styles.logo} alt="tunetrail logo" src={Logo} />
                 </div>*/}
+                {this.state.errorMessage && (
+                  <div className="alert alert-danger" role="alert">
+                    {this.state.errorMessage}
+                  </div>
+                )} 
                 <div className={styles.loginHeaderContainer}>
                   <h2>Register</h2>
                 </div>

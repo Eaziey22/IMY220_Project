@@ -27,6 +27,7 @@ export class UpperBar extends React.Component {
 
     logOut = () =>{
         console.log("logging out");
+        localStorage.removeItem('userId');
         this.setState({ redirectTo: '/',showMenu: false});
     }
 

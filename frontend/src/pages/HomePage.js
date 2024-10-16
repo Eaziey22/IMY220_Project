@@ -45,7 +45,7 @@ const songsOfWeekData = [
     }
 ];
 
-const playlists = [
+/*const playlists = [
     {
         image: "../../public/assets/images/logo.png",
         title: "SA Hip Hop",
@@ -61,18 +61,58 @@ const playlists = [
         title: "Amapiano",
         songAmount: 440
     }
-];
+];*/
 
 export class HomePage extends React.Component{
+
+    constructor(props) {
+        super(props);
+        this.state = {
+          playlistsData: null,
+          loading: true,
+          errorMessage: "",
+        };
+    }
+
+    async componentDidMount() {
+        this.fetchUserPlaylists();
+    }
+
+    fetchUserPlaylists = async () =>{
+
+        const userId = localStorage.getItem('userId');
+
+        try{
+
+            const response = await fetch(`/playlists/getUserPlaylists/${userId}`);
+
+            if(response.ok){
+                const data = await response.json();
+                this.setState({ playlistsData: data.data.playlists, loading: false, errorMessage: '' });
+                
+            }
+            else{
+                this.setState({errorMessage: data.message || 'Failed to load playlists'});
+            }
+            
+
+        }
+        catch(err){
+            console.error('Error fetching playlists:', err);
+            this.setState({ errorMessage: 'An error occurred while fetching playlists' });
+        }
+    }
+
     render(){
-        
+        const {playlistsData, loading, errorMessage } = this.state;
+
         return(
             <div style={{ display: 'flex',width: '1270px', height: 'auto', flexDirection: 'column', marginLeft: '250px', marginTop: '110px', padding:0, backgroundColor: '#ECF6F6' }}>
                 <UpperBar />
                 <div style={{ display: 'flex', flex: 1 }}>
                     <SideNavBar />
                     <div style={{ flex: 1, padding: '20px' }}>
-                        <Feed playlists = {playlists} songsOfWeekData = {songsOfWeekData} recentMusicData = {recentMusicData} />
+                        {playlistsData? <Feed playlists = {playlistsData} songsOfWeekData = {songsOfWeekData} recentMusicData = {recentMusicData} />: <div></div>}
                     </div>
                 </div>
             </div> 

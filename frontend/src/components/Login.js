@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import * as styles from '../styles/login.module.css';
-import Logo from '../../public/assets/images/logo_no_background.png';
+//import Logo from '../../public/assets/images/logo_no_background.png';
 
 export class Login extends React.Component {
   constructor(props) {
@@ -96,15 +96,18 @@ export class Login extends React.Component {
         else{
           console.log("hey",data.message);
           this.setState({ errorMessage: data.message || 'Login failed' });
+          
         }
 
       }
       catch(error){
         console.log('Error: ', error);
         this.setState({errorMessage: "Login failed"});
+        
       }
     } else {
       console.log('Form is invalid. Cannot submit.');
+      
     }
   }
 
@@ -115,10 +118,16 @@ export class Login extends React.Component {
 
     return (
       <div className={styles.formContainer}>
+        
         <form className={styles.form} onSubmit={this.handleSubmit}>
           {/*<div className={styles.loginLogoContainer}>
             <img className={styles.logo} alt="tunetrail logo" src={Logo} />
           </div>*/}
+          {this.state.errorMessage && (
+            <div className="alert alert-danger" role="alert">
+              {this.state.errorMessage}
+            </div>
+          )} 
           <div className={styles.loginHeaderContainer}>
             <h2>Login</h2>
           </div>

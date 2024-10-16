@@ -40,7 +40,7 @@ export class Feed extends React.Component{
                     <div className={`${styles.playlistsContainer} row`}>
                         {this.props.playlists.slice(0, 5).map((playlist, index) => (
                             <div className="col-12 col-md-6 col-lg-2" key={index}>
-                                <PlayListPreview image={playlist.image} title={playlist.title} songAmount={playlist.songAmount} />
+                                <PlayListPreview image='' title={playlist.playlistName} songAmount={playlist.songs.lenth} />
                             </div>
                         ))}
                         <div className="col-12 col-md-6 col-lg-3">

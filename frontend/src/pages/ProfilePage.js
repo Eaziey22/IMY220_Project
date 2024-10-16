@@ -11,7 +11,8 @@ export class ProfilePage extends React.Component{
         this.state = {
             userData: null,
             loading: true,
-            error: null
+            errorMessage: null,
+
         };
     }
 
@@ -45,15 +46,42 @@ export class ProfilePage extends React.Component{
                 this.setState({ errorMessage: udata.message || 'could not get user profile' , loading: false});
             }
 
+            this.fetchUserPlaylists(userId);
+
         }
         catch(error){
             console.log('Error: ', error);
-            this.setState({error: "could not get user profile", loading: false});
+            this.setState({errorMessage: "could not get user profile", loading: false});
+        }
+    }
+
+    fetchUserPlaylists = async (uId) =>{
+
+        const userId = uId;
+
+        try{
+
+            const response = await fetch(`/playlists/getUserPlaylists/${userId}`);
+
+            if(response.ok){
+                const data = await response.json();
+                this.setState({ playlistsData: data.data.playlists, loading: false, errorMessage: '' });
+                
+            }
+            else{
+                this.setState({errorMessage: data.message || 'Failed to load playlists'});
+            }
+            
+
+        }
+        catch(err){
+            console.error('Error fetching playlists:', err);
+            this.setState({ errorMessage: 'An error occurred while fetching playlists' });
         }
     }
 
     render(){
-        const {userData, loading, error } = this.state;
+        const {userData, loading, errorMessage } = this.state;
 
         
         return(
@@ -62,7 +90,7 @@ export class ProfilePage extends React.Component{
                 <div style={{ display: 'flex', flex: 1 }}>
                     <SideNavBar />
                     <div style={{ flex: 1, padding: '20px' }}>
-                        {userData ? <ProfileFeed userData = {userData}/>: <div>No user data available</div>}
+                        {userData ? <ProfileFeed userData = {userData}/>: <div></div>}
                     </div>
                 </div>
             </div>
