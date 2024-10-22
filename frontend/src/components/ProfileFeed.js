@@ -201,7 +201,8 @@ export class ProfileFeed extends React.Component{
                         </div>
                         <div className={` ${styles.profileInfo} col-12 col-md-6 col-lg-3`}>
                             <h3>{userName}</h3>
-                            <p>{playlists.length} Playlists</p>
+                            {playlistsData?<p>{playlistsData.length} Playlists</p>: <p>0 Playlists</p>}
+                            
                         </div>
                         <div className={`${styles.menuContainer}`}>
                             <button className={styles.menuButton} onClick={this.toggleMenu}>
@@ -261,7 +262,7 @@ export class ProfileFeed extends React.Component{
                     {playlistsData? <div className={`${styles.playlistsContainer} row`}>
                         {playlistsData.slice(0, 5).map((playlist, index) => (
                             <div className="col-12 col-md-6 col-lg-2" key={index}>
-                                <PlayListPreview image='' title={playlist.playlistName} songAmount={playlist.songs.length} />
+                                <PlayListPreview image='' title={playlist.playlistName} songAmount={playlist.songs.length} playlistId = {playlist._id} />
                             </div>
                         ))}
                         <div className="col-12 col-md-6 col-lg-3">

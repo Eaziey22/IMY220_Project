@@ -243,5 +243,35 @@ var playlistModel = exports.playlistModel = /*#__PURE__*/function () {
       }
       return removeSongFromPlaylist;
     }()
+  }, {
+    key: "getSongsFromPlaylist",
+    value: function () {
+      var _getSongsFromPlaylist = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee9(playlistId) {
+        var Playlist;
+        return _regeneratorRuntime().wrap(function _callee9$(_context9) {
+          while (1) switch (_context9.prev = _context9.next) {
+            case 0:
+              _context9.next = 2;
+              return this.getPlaylistById(playlistId);
+            case 2:
+              Playlist = _context9.sent;
+              if (Playlist) {
+                _context9.next = 5;
+                break;
+              }
+              return _context9.abrupt("return", []);
+            case 5:
+              return _context9.abrupt("return", Playlist.songs || []);
+            case 6:
+            case "end":
+              return _context9.stop();
+          }
+        }, _callee9, this);
+      }));
+      function getSongsFromPlaylist(_x14) {
+        return _getSongsFromPlaylist.apply(this, arguments);
+      }
+      return getSongsFromPlaylist;
+    }()
   }]);
 }();

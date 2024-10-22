@@ -51,7 +51,7 @@ export class Playlistsfeed extends React.Component{
 
     render(){
         const {playlists, errorMessage} = this.state;
-        console.log(playlists);
+        console.log("myPl" , playlists);
         return(
             
 
@@ -61,7 +61,7 @@ export class Playlistsfeed extends React.Component{
                     <div className={`${styles.playlistsContainer} row`}>
                         {playlists.map((playlist, index) => (
                             <div className="col-12 col-md-6 col-lg-2" key={index}>
-                                <PlayListPreview image="../../public/assets/images/logo.png" title={playlist.playlistName} songAmount={playlist.songs.length}  />
+                                <PlayListPreview image="../../public/assets/images/logo.png" title={playlist.playlistName} songAmount={playlist.songs.length} playlistId = {playlist._id} />
                             </div>
                         ))}
                         <div className="col-12 col-md-6 col-lg-3">

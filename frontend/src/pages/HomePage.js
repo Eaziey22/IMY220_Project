@@ -139,7 +139,7 @@ export class HomePage extends React.Component{
                 <div style={{ display: 'flex', flex: 1 }}>
                     <SideNavBar />
                     <div style={{ flex: 1, padding: '20px' }}>
-                        {playlistsData && songData? <Feed playlists = {playlistsData} userSongs = {songData} recentMusicData = {recentMusicData} />: <div></div>}
+                        {playlistsData && songData? <Feed playlists = {playlistsData} userSongs = {songData} recentMusicData = {recentMusicData} fetchUserSongs={this.fetchUserSongs} />: <div></div>}
                     </div>
                 </div>
             </div> 

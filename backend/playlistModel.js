@@ -82,4 +82,16 @@ export class playlistModel{
 
         return result.modifiedCount;
     }
+
+    async getSongsFromPlaylist(playlistId){
+
+        const Playlist = await this.getPlaylistById(playlistId);
+
+        if (!Playlist) {
+            return [];
+        }
+
+        
+        return Playlist.songs || [];
+    }
 }

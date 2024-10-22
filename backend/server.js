@@ -2,6 +2,8 @@ import express from "express";
 import { MongoClient, ObjectId } from "mongodb";
 import bcrypt from "bcrypt";
 require('dotenv').config();
+const multer = require("multer");
+
 //const jwt = require('jsonwebtoken');
 //const secretKey = process.env.Secret_Key
 
@@ -23,7 +25,11 @@ const path = require('path');
 //CREATE APP
 const app = express();
 
-app.use(express.json());
+const storage = multer.memoryStorage(); 
+const upload = multer({ storage: storage });
+
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 
 client.connect().then(() => {
@@ -546,12 +552,14 @@ app.delete("/playlists/deletePlaylist/:ownerId/:id", async (req, res) =>{
     }
 });
 
-app.post("/songs/addSong", async (req, res) =>{
-    const {name, artistName, genre, album, song, ownerId} = req.body;
+app.post("/songs/addSong", upload.single("file"),  async (req, res) =>{
+    const {name, artistName, genre, album, ownerId } = req.body;
 
+    const file = req.file;
+    console.log("artist1: ", file);
     try{
 
-        const addedSong = await Song.addSong(name, artistName, genre, album, song, ownerId);
+        const addedSong = await Song.addSong(name, artistName, genre, album,  file, ownerId);
 
         await User.addSongToSongs(ownerId, addedSong._id);
 
@@ -570,6 +578,7 @@ app.post("/songs/addSong", async (req, res) =>{
     }
 
 });
+
 
 app.delete("/songs/deleteSong/:ownerId/:songId",async(req, res) => {
     const { ownerId, songId } = req.params;
@@ -644,6 +653,53 @@ app.get("/songs/getSong/:id", async (req, res) =>{
         });
     }
     
+});
+
+app.get("/playlist/getPlaylistSongs/:playlistId", async(req, res) =>{
+
+    const { playlistId} = req.params;
+
+    try{
+
+        if (!ObjectId.isValid(playlistId)) {
+            return res.status(400).json({
+                status: "error", 
+                message: "Invalid playlist ID format" });
+        }
+
+        const songIds = await Playlist.getSongsFromPlaylist(playlistId);
+
+        console.log(songIds);
+        
+        const sngs = [];
+
+        for (const songId of songIds) {
+            const sng = await Song.getSongById(songId); 
+            sngs.push(sng);
+        }
+
+        if(!sngs){
+            return res.status(404).json({
+                status: "error", 
+                message: "Songs from playlist not found"});
+        }
+
+        return res.status(200).json({
+            status: "success", 
+            message : `Songs from playlist with playlistId: ${playlistId} retrieved successfully`, 
+            data : {songs: sngs}
+        });
+
+    }
+    catch(err){
+        console.log(`Error getting songs from playlist by id: ${err}`);
+        res.status(500).json({
+            status: "error", 
+            message: "Internal server error"
+        });
+    }
+
+
 });
 
 app.get("/songs/getUserSongs/:userId", async (req, res) =>{

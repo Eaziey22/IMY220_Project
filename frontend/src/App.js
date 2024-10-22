@@ -9,7 +9,7 @@ import { PlaylistsPage } from './pages/PlaylistsPage';
 //components
 import {Login} from './components/Login';
 import { SignUp } from './components/SignUp';
-import { OnePlaylist } from './pages/OnePlaylist';
+import OnePlaylist  from './pages/OnePlaylist';
 
 
 const router = createBrowserRouter([
@@ -44,7 +44,7 @@ const router = createBrowserRouter([
         errorElement: <div>404 Not Found</div>
     },
     {
-        path:"/playlist",
+        path:"/playlist/:pId",
         element: <OnePlaylist/>,
         errorElement: <div>404 Not Found</div>
     }

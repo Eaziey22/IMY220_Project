@@ -2,6 +2,7 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMusic, faUserCircle, faEllipsisV, faHeart } from "@fortawesome/free-solid-svg-icons";
 import * as styles from '../styles/playlistFeed.module.css';
+import { useParams } from "react-router-dom";
 
 export class PlaylistFeed extends React.Component{
 
@@ -10,8 +11,10 @@ export class PlaylistFeed extends React.Component{
         this.state = {
             showMenu: false,
             showEditForm: false,
-            playlistName: 'my playlist',
+            playlistData : this.props.playlist,
+            playlistName: this.props.playlist.playlistName,
             playlistPicture: null,
+            playlistSongs: [],
             songs: [
               { id: 1, title: "Song 1", album: "Album 1", played: 10, duration: "3:45" },
               { id: 2, title: "Song 2", album: "Album 2", played: 15, duration: "4:00" },
@@ -19,6 +22,46 @@ export class PlaylistFeed extends React.Component{
           ]
         };
     }
+
+  async componentDidMount() {
+    //var playlistId = this.props.params.pId;
+    //this.fetchPlaylistById(playlistId);
+    //withPlaylistProps();
+    console.log("pId:", this.state.playlistData._id);
+
+    this.fetchPlaylistSongs(this.state.playlistData._id);
+
+     
+  }
+
+  fetchPlaylistSongs = async (playlistId) => {
+
+    const pId = playlistId;
+
+    try{
+  
+      const response = await fetch(`/playlist/getPlaylistSongs/${pId}`);
+
+      if(response.ok){
+          const data = await response.json();
+          this.setState({ playlistSongs: data.data.songs, loading: false, errorMessage: '' });
+          
+      }
+      else{
+          this.setState({errorMessage: data.message || 'Failed to load playlist songs'});
+      }
+      
+
+    }
+    catch(err){
+        console.error('Error fetching playlist songs:', err);
+        this.setState({ errorMessage: 'An error occurred while fetching playlist songs' });
+    }
+
+    
+  }
+
+  
 
     toggleMenu = () => {
         this.setState(prevState => ({
@@ -42,11 +85,11 @@ export class PlaylistFeed extends React.Component{
     handleFormSubmit = (e) => {
       e.preventDefault();
       this.toggleEditForm(); 
-    };
+    }; 
 
     render(){
 
-        const { showMenu,showEditForm, playlistName, playlistPicture, songs} = this.state;
+        const { showMenu,showEditForm,playlistData, playlistName, playlistPicture,playlistSongs, songs} = this.state;
 
         return(
             <div className={styles.feed}>
@@ -61,7 +104,7 @@ export class PlaylistFeed extends React.Component{
                         </div>
                         <div className={` ${styles.playlistInfo} col-12 col-md-6 col-lg-3`}>
                             <h3>{playlistName}</h3>
-                            <p><FontAwesomeIcon icon={faUserCircle} color="#37D0D6" className={styles.userIcon} />John Doe - 5 Songs</p>
+                            <p><FontAwesomeIcon icon={faUserCircle} color="#37D0D6" className={styles.userIcon} />John Doe - {playlistData.songs.length} songs</p>
                         </div>
                         <div className={`${styles.menuContainer}`}>
                             <button className={styles.menuButton} onClick={this.toggleMenu}>
@@ -127,20 +170,22 @@ export class PlaylistFeed extends React.Component{
                             <tr>
                                 <th>#</th>
                                 <th>Title</th>
+                                <th>Artist</th>
                                 <th>Album Name</th>
-                                <th>Played</th>
-                                <th>Duration</th>
+                                {/*<th>Played</th>
+                                <th>Duration</th>*/}
                                 <th></th>
                             </tr>
                         </thead>
                         <tbody>
-                            {songs.map((song, index) => (
-                                <tr key={song.id}>
+                            {playlistSongs.map((song, index) => (
+                                <tr key={song._id}>
                                     <td>{index + 1}</td>
-                                    <td>{song.title}</td>
+                                    <td>{song.name}</td>
+                                    <td>{song.artistName}</td>
                                     <td>{song.album}</td>
-                                    <td>{song.played}</td>
-                                    <td>{song.duration}</td>
+                                    {/*<td>{song.played}</td>
+                                    <td>{song.duration}</td>*/}
                                     <td>
                                         <FontAwesomeIcon icon={faHeart} color="#ff0000" />
                                     </td>
@@ -167,3 +212,5 @@ export class PlaylistFeed extends React.Component{
         );
     }
 }
+
+

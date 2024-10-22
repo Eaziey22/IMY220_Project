@@ -8,9 +8,12 @@ export class PlayListPreview extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
-            goToPlaylist: false
+            goToPlaylist: false,
+            playlistData: null
         };
     }
+
+    
 
     goToPlaylist = (event) =>{
         event.preventDefault();
@@ -19,11 +22,14 @@ export class PlayListPreview extends React.Component{
 
     render(){
 
-        const {image, title, songAmount} = this.props;
+        const {image, title, songAmount, playlistId} = this.props;
 
         if (this.state.goToPlaylist) {
-            return <Navigate to="/playlist" />; 
+            var playlistRoute = `/playlist/${playlistId}`
+            return <Navigate to= {playlistRoute} />; 
         }
+
+        
 
         return(
 
