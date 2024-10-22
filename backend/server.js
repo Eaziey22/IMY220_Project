@@ -148,7 +148,7 @@ app.get("/getUser/:id", async (req, res) =>{
         return res.status(200).json({
             status: "success", 
             message : `User with userId: ${id} retrieved successfully`, 
-            data : {userId: usr._id, username: usr.username}
+            data : {userId: usr._id, username: usr.username, friends: usr.friends}
         });
     }
     catch(error){

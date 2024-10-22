@@ -42,7 +42,7 @@ export class userModel{
     async getUserById(userId){
 
         const user = await this.collection.findOne({_id : new ObjectId(userId)});
-        console.log(user);
+        //console.log(user);
         return user;
     }
 

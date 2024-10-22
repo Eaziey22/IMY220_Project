@@ -145,6 +145,7 @@
     z-index: 1000;
 }
 
+
 .editFormContainer {
     background: #1e1e1e;
     padding: 20px;
@@ -197,9 +198,111 @@
     cursor: pointer;
 }
 
+.followButton {
+    background-color: #37D0D6;
+    color: white;
+    padding: 10px 20px; 
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+    width: 100%;
+}
+
+.followButton:hover{
+    background-color: #ECF6F6;
+    color: #37D0D6;
+}
+
 .profileImage {
     width: 150px;
     height: 150px;
     border-radius: 10px;
     object-fit: cover;
 }
+
+.playlistFriendsContainer {
+    display: flex;
+    align-items: center;
+    gap: 10px; 
+}
+
+.friendsText:hover{
+    cursor: pointer;
+}
+
+.friendsMenu {
+    background: #1e1e1e;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    width: 400px;
+    max-width: 100%;
+    color: white;
+    position: relative; 
+    padding: 20px;
+
+    /*position: absolute;
+    top: 40px; 
+    right: 0;*/
+    background-color: #333;
+    border: 1px solid #1a1a1a;
+    /*border-radius: 5px;*/
+    box-shadow: 2px 0 15px rgba(0, 0, 0, 0.3);
+    /*z-index: 1000;*/
+}
+
+.friendsMenu ul {
+    list-style: none;
+    margin: 0;
+    padding: 10px;
+}
+
+.friendsMenu h5 {
+    
+    margin: 0;
+    padding: 10px;
+}
+
+.friendsMenu ul li {
+    color: white;
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.friendsMenu ul li:hover {
+    background-color: #444;
+}
+
+.friendsMenuOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.closeFriendsMenuButton {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #ECF6F6;
+}
+
+.closeFriendsMenuButton:hover {
+    color: white;
+}
+
+.friendsListContainer{
+    margin: 10px;
+}
+

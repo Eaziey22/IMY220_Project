@@ -8,7 +8,10 @@ import { faHome, faHeart, faMusic, faUserCircle } from '@fortawesome/free-solid-
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 export class SideNavBar extends React.Component {
+    
     render(){
+        const userId = localStorage.getItem("userId");
+        const profileRoute = `/profile/${userId}`
         return (
             <div className={styles.sideNav}>
                 <Link to="/home" style={{ textDecoration: 'none' }}>
@@ -31,7 +34,7 @@ export class SideNavBar extends React.Component {
                     </li>
 
                     <li className={styles.navItem} >
-                        <NavLink to="/profile" style = {({isActive}) => {return {backgroundColor: isActive? '#37D0D6': '', color: isActive? 'white' : '' }}} >
+                        <NavLink to={profileRoute} style = {({isActive}) => {return {backgroundColor: isActive? '#37D0D6': '', color: isActive? 'white' : '' }}} >
                             <FontAwesomeIcon icon={faUserCircle} className={styles.icon} />Profile
                         </NavLink>
                     </li>

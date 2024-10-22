@@ -2,8 +2,13 @@ import React from "react";
 import { UpperBar } from "../components/UpperBar";
 import { SideNavBar } from "../components/SideNav";
 import { ProfileFeed } from "../components/profileFeed";
+import { useParams } from "react-router-dom";
 
-export class ProfilePage extends React.Component{
+function withParams(Component) {
+    return props => <Component {...props} params={useParams()} />;
+}
+
+class ProfilePage extends React.Component{
 
     constructor(props) {
         super(props);
@@ -12,6 +17,7 @@ export class ProfilePage extends React.Component{
             userData: null,
             loading: true,
             errorMessage: null,
+            paramsId: this.props.params.uId
             
 
         };
@@ -22,7 +28,8 @@ export class ProfilePage extends React.Component{
     async componentDidMount() {
 
         try{
-            const userId = localStorage.getItem('userId');
+            
+            const userId = this.props.params.uId;
             const response = await fetch(`/getUser/${userId}`,{
             
                 method: 'GET',
@@ -48,6 +55,7 @@ export class ProfilePage extends React.Component{
             }
 
             this.fetchUserPlaylists(userId);
+            
 
         }
         catch(error){
@@ -55,6 +63,8 @@ export class ProfilePage extends React.Component{
             this.setState({errorMessage: "could not get user profile", loading: false});
         }
     }
+
+    
 
     fetchUserPlaylists = async (uId) =>{
 
@@ -66,6 +76,7 @@ export class ProfilePage extends React.Component{
 
             if(response.ok){
                 const data = await response.json();
+                
                 this.setState({ playlistsData: data.data.playlists, loading: false, errorMessage: '' });
                 
             }
@@ -84,7 +95,7 @@ export class ProfilePage extends React.Component{
     
 
     render(){
-        const {userData, loading, errorMessage } = this.state;
+        const {userData, loading, errorMessage, paramsId } = this.state;
 
         
         return(
@@ -93,10 +104,12 @@ export class ProfilePage extends React.Component{
                 <div style={{ display: 'flex', flex: 1 }}>
                     <SideNavBar />
                     <div style={{ flex: 1, padding: '20px' }}>
-                        {userData ? <ProfileFeed userData = {userData}/>: <div></div>}
+                        {userData ? <ProfileFeed userData = {userData} paramsId = {paramsId} />: <div></div>}
                     </div>
                 </div>
             </div>
         );
     }
 }
+
+export default withParams(ProfilePage);

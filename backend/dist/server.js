@@ -208,7 +208,8 @@ app.get("/getUser/:id", /*#__PURE__*/function () {
             message: "User with userId: ".concat(id, " retrieved successfully"),
             data: {
               userId: usr._id,
-              username: usr.username
+              username: usr.username,
+              friends: usr.friends
             }
           }));
         case 12:

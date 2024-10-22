@@ -4,7 +4,7 @@ import { Song } from "./Song";
 import { PlayListPreview } from "./PlaylistsPreview";
 import { CreatePlaylist } from "./createPlaylist";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserCircle, faEllipsisV } from '@fortawesome/free-solid-svg-icons';
+import { faUserCircle, faEllipsisV, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { AddSong } from "./addSong";
 
 const songsOfWeekData = [
@@ -61,8 +61,21 @@ export class ProfileFeed extends React.Component{
             userPicture: null,
             errorMessage: '',
             playlistsData: null,
-            songData: null
+            songData: null,
+            friends: this.props.userData.friends,
+            isUserProfile: true,
+            showFriends: false
         }; 
+    }
+
+    isUser(userId){
+
+        if(userId !== localStorage.getItem('userId')){
+            
+            return false;
+        }
+
+        return true;
     }
 
     toggleMenu = () => {
@@ -72,9 +85,9 @@ export class ProfileFeed extends React.Component{
     }
 
     toggleEditForm = () => {
-        this.setState({showMenu:false});
+        //this.setState({showMenu:false});
         this.setState(prevState => ({ showEditForm: !prevState.showEditForm }));
-      };
+    };
     
       handleInputChange = (e) => {
 
@@ -83,7 +96,46 @@ export class ProfileFeed extends React.Component{
 
         
 
-      };
+    };
+
+    toggleFriendsMenu = () => {
+        console.log(this.state.showFriends);
+        this.setState(prevState => ({
+            showFriends: !prevState.showFriends
+        }));
+    }
+
+    closeMenu = () =>{
+
+        const sf = this.state.showFriends;
+        if(sf){
+            this.toggleFriendsMenu();
+        }
+
+        const se = this.state.showEditForm;
+        if(se){
+            this.toggleEditForm();
+        }
+
+        const sm= this.state.showMenu;
+        if(sm){
+            this.toggleMenu();
+        }
+        
+    }
+
+    closeMenu2 = () =>{
+
+        const sm= this.state.showMenu;
+        if(sm){
+            this.toggleMenu();
+        }
+    }
+
+    handleBothActions = () => {
+        this.toggleEditForm();
+        this.closeMenu2();
+    }
     
     handleFileChange = (e) => {
         this.setState({ userPicture: URL.createObjectURL(e.target.files[0]) });
@@ -126,6 +178,7 @@ export class ProfileFeed extends React.Component{
     };
 
     async componentDidMount() {
+        this.setState({isUserProfile: this.isUser(this.props.paramsId) });
         this.fetchUserPlaylists();
         this.fetchUserSongs();
     }
@@ -181,16 +234,16 @@ export class ProfileFeed extends React.Component{
 
     render(){
 
-        const { showMenu,showEditForm, userData, username, userPicture, playlistsData, songData } = this.state;
+        const { showMenu,showEditForm, userData, username, userPicture, playlistsData, songData, friends, isUserProfile, showFriends } = this.state;
         
         const userName = username;
 
         //const userName = userData? userData.username: "Loading...";
 
         return (
-            <div className={styles.feed}>
+            <div className={styles.feed}  >
                 <h3 className={styles.header}>Profile</h3>
-                <div className={styles.profile}>
+                <div className={styles.profile} >
                     <div className={`${styles.profileContainer} row`}>
                         <div className={`${styles.profilePictureContainer} col-12 col-md-6 col-lg-3`}>
                             {userPicture ? (
@@ -201,17 +254,22 @@ export class ProfileFeed extends React.Component{
                         </div>
                         <div className={` ${styles.profileInfo} col-12 col-md-6 col-lg-3`}>
                             <h3>{userName}</h3>
-                            {playlistsData?<p>{playlistsData.length} Playlists</p>: <p>0 Playlists</p>}
-                            
+                            <div className={`${styles.playlistFriendsContainer}`}>
+                                <p>{playlistsData ? playlistsData.length : 0} Playlists</p>
+                                <p onClick={this.toggleFriendsMenu} className = {styles.friendsText}>{friends.length} friends</p>
+                            </div>
+                            {!isUserProfile? <button className={`${styles.followButton} btn`}>Follow</button>: <div></div>}
                         </div>
-                        <div className={`${styles.menuContainer}`}>
+                    
+                        <div className={`${styles.menuContainer}`} >
                             <button className={styles.menuButton} onClick={this.toggleMenu}>
                                 <FontAwesomeIcon icon={faEllipsisV} />
                             </button>
                             {showMenu && (
-                                <div className={styles.menu}>
+                                
+                                <div className={styles.menu} >
                                     <ul>
-                                        <li onClick={this.toggleEditForm}>Edit Profile</li>
+                                        <li onClick={this.handleBothActions} >Edit Profile</li>
                                         <li>Copy Profile Link</li>
                                     </ul>
                                 </div>
@@ -219,8 +277,8 @@ export class ProfileFeed extends React.Component{
                         </div>
                     </div>
                     {showEditForm && (
-                      <div className={styles.editFormOverlay}>
-                        <div className={styles.editFormContainer}>
+                      <div className={styles.editFormOverlay} onClick={this.closeMenu} >
+                        <div className={styles.editFormContainer} onClick={e => e.stopPropagation()}>
                           <h2>Edit Profile</h2>
                           <form onSubmit={this.handleFormSubmit}>
                             <div className={styles.formGroup}>
@@ -255,6 +313,22 @@ export class ProfileFeed extends React.Component{
                       </div>
                     )}
                 </div>
+                {showFriends && (
+                    <div className={styles.friendsMenuOverlay} onClick={this.closeMenu}>
+                        <div className={styles.friendsMenu} onClick={e => e.stopPropagation()}>
+                            <button className={styles.closeFriendsMenuButton} onClick={this.toggleFriendsMenu} >
+                                <FontAwesomeIcon icon={faTimes}  />
+                            </button>
+                            <div className={styles.friendsListContainer}>
+                                <h5>Your Friends</h5>
+                                <ul>
+                                    <li>Edit Profile</li>
+                                    <li>Copy Profile Link</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                 )}
 
                  
                 <div className={styles.playlists}>

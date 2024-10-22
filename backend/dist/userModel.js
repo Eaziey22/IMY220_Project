@@ -142,9 +142,8 @@ var userModel = exports.userModel = /*#__PURE__*/function () {
               });
             case 2:
               user = _context5.sent;
-              console.log(user);
               return _context5.abrupt("return", user);
-            case 5:
+            case 4:
             case "end":
               return _context5.stop();
           }
