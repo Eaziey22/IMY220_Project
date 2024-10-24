@@ -62,9 +62,10 @@ export class ProfileFeed extends React.Component{
             errorMessage: '',
             playlistsData: null,
             songData: null,
-            friends: this.props.userData.friends,
+            friends: this.props.friends,
             isUserProfile: true,
-            showFriends: false
+            showFriends: false,
+            
         }; 
     }
 
@@ -238,6 +239,7 @@ export class ProfileFeed extends React.Component{
         
         const userName = username;
 
+
         //const userName = userData? userData.username: "Loading...";
 
         return (
@@ -322,8 +324,13 @@ export class ProfileFeed extends React.Component{
                             <div className={styles.friendsListContainer}>
                                 <h5>Your Friends</h5>
                                 <ul>
-                                    <li>Edit Profile</li>
-                                    <li>Copy Profile Link</li>
+                                    {friends && friends.length > 0 ? (
+                                      friends.map((friend, index) => (
+                                        <li key={index}>{index + 1}.{friend.username}</li>
+                                      ))
+                                    ) : (
+                                      <li>You have no friends yet</li>
+                                    )}
                                 </ul>
                             </div>
                         </div>

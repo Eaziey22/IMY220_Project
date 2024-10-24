@@ -161,5 +161,22 @@ export class userModel{
         return result.modifiedCount;
     }
 
+    async getFriends(friends) {
+        if (friends && friends.length > 0) {
+            
+            const result = await Promise.all(
+                friends.map(async (friendId) => {
+                    return await this.getUserById(friendId); 
+                })
+            );
+
+    
+            return result; 
+        } else {
+            return []; 
+        }
+    }
+    
+
 
 }

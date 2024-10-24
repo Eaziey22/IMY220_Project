@@ -395,5 +395,54 @@ var userModel = exports.userModel = /*#__PURE__*/function () {
       }
       return removePlaylistFromPlaylists;
     }()
+  }, {
+    key: "getFriends",
+    value: function () {
+      var _getFriends = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee15(friends) {
+        var _this = this;
+        var result;
+        return _regeneratorRuntime().wrap(function _callee15$(_context15) {
+          while (1) switch (_context15.prev = _context15.next) {
+            case 0:
+              if (!(friends && friends.length > 0)) {
+                _context15.next = 7;
+                break;
+              }
+              _context15.next = 3;
+              return Promise.all(friends.map(/*#__PURE__*/function () {
+                var _ref = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee14(friendId) {
+                  return _regeneratorRuntime().wrap(function _callee14$(_context14) {
+                    while (1) switch (_context14.prev = _context14.next) {
+                      case 0:
+                        _context14.next = 2;
+                        return _this.getUserById(friendId);
+                      case 2:
+                        return _context14.abrupt("return", _context14.sent);
+                      case 3:
+                      case "end":
+                        return _context14.stop();
+                    }
+                  }, _callee14);
+                }));
+                return function (_x23) {
+                  return _ref.apply(this, arguments);
+                };
+              }()));
+            case 3:
+              result = _context15.sent;
+              return _context15.abrupt("return", result);
+            case 7:
+              return _context15.abrupt("return", []);
+            case 8:
+            case "end":
+              return _context15.stop();
+          }
+        }, _callee15);
+      }));
+      function getFriends(_x22) {
+        return _getFriends.apply(this, arguments);
+      }
+      return getFriends;
+    }()
   }]);
 }();

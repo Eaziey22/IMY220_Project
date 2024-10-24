@@ -249,6 +249,53 @@ app.delete("/deleteUser/:id", async (req, res) =>{
     }
 });
 
+app.get("/user/getFriends/:userId", async(req, res) =>{
+
+    const {userId}= req.params;
+
+    try{
+
+        if (!ObjectId.isValid(userId) ) {
+            return res.status(400).json({
+                status: "error", 
+                message: "Invalid user ID format" });
+        }
+
+        const user = await User.getUserById(userId);
+        //console.log("user", result);
+
+        if (!user) {
+            return res.status(404).json({
+                status: "error",
+                message: "User not found"
+            });
+        }
+        
+        const friends = await User.getFriends(user.friends);
+        
+        /*
+        const friends = await Promise.all(result.map(async (friendId) => {
+            const friend = await User.getUserById(friendId);
+            return friend;
+        }));*/
+
+        return res.status(200).json({
+            status: "success",
+            message: `Friends retrieved successfully`,
+            data: { friends }
+        });
+
+
+    }
+    catch(error){
+        console.log(`Error fetching friends: ${error}`);
+        res.status(500).json({
+            status: "error", 
+            message: "Internal server error"
+        });
+    }
+})
+
 app.put("user/:userId/addFriend/:friendId", async (req, res) =>{
 
     const {userId, friendId} = req.params;
@@ -736,6 +783,8 @@ app.get("/songs/getUserSongs/:userId", async (req, res) =>{
     }
     
 });
+
+
 
 //PORT TO LISTEN TO
 app.listen(3001, () => {

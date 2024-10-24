@@ -1,7 +1,7 @@
 import React from "react";
 import { UpperBar } from "../components/UpperBar";
 import { SideNavBar } from "../components/SideNav";
-import { ProfileFeed } from "../components/profileFeed";
+import { ProfileFeed } from "../components/ProfileFeed";
 import { useParams } from "react-router-dom";
 
 function withParams(Component) {
@@ -17,7 +17,8 @@ class ProfilePage extends React.Component{
             userData: null,
             loading: true,
             errorMessage: null,
-            paramsId: this.props.params.uId
+            paramsId: this.props.params.uId,
+            friends: null
             
 
         };
@@ -55,7 +56,7 @@ class ProfilePage extends React.Component{
             }
 
             this.fetchUserPlaylists(userId);
-            
+            this.fetchUserFriends(userId);
 
         }
         catch(error){
@@ -92,10 +93,36 @@ class ProfilePage extends React.Component{
         }
     }
 
+    fetchUserFriends = async (uId) =>{
+
+        const userId = uId;
+
+        try{
+
+            const response = await fetch(`/user/getFriends/${userId}`);
+
+            if(response.ok){
+                const data = await response.json();
+
+                this.setState({friends: data.data.friends});
+            }
+            else{
+                const data = await response.json();
+                this.setState({errorMessage: data.message || 'Failed to retrieve friends'});
+            }
+        }
+        catch(err){
+
+            console.error('Error fetching friends:', err);
+            this.setState({ errorMessage: 'An error occurred while retrieving friends' });
+
+        }
+    }
+
     
 
     render(){
-        const {userData, loading, errorMessage, paramsId } = this.state;
+        const {userData, loading, errorMessage, paramsId, friends } = this.state;
 
         
         return(
@@ -104,7 +131,7 @@ class ProfilePage extends React.Component{
                 <div style={{ display: 'flex', flex: 1 }}>
                     <SideNavBar />
                     <div style={{ flex: 1, padding: '20px' }}>
-                        {userData ? <ProfileFeed userData = {userData} paramsId = {paramsId} />: <div></div>}
+                        {userData && friends ? <ProfileFeed userData = {userData} paramsId = {paramsId} friends = {friends}/>: <div></div>}
                     </div>
                 </div>
             </div>
