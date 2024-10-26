@@ -10,7 +10,7 @@ export class PlayListPreview extends React.Component{
         this.state = {
             goToPlaylist: false,
             playlistData: null
-        };
+        }; 
     }
 
     

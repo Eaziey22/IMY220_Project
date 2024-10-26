@@ -14,11 +14,11 @@ class ProfilePage extends React.Component{
         super(props);
 
         this.state = {
-            userData: null,
-            loading: true,
-            errorMessage: null,
+            //userData: null,
+            //loading: true,
+            //errorMessage: null,
             paramsId: this.props.params.uId,
-            friends: null
+            //friends: null
             
 
         };
@@ -26,7 +26,7 @@ class ProfilePage extends React.Component{
 
     
 
-    async componentDidMount() {
+    /*async componentDidMount() {
 
         try{
             
@@ -93,36 +93,15 @@ class ProfilePage extends React.Component{
         }
     }
 
-    fetchUserFriends = async (uId) =>{
-
-        const userId = uId;
-
-        try{
-
-            const response = await fetch(`/user/getFriends/${userId}`);
-
-            if(response.ok){
-                const data = await response.json();
-
-                this.setState({friends: data.data.friends});
-            }
-            else{
-                const data = await response.json();
-                this.setState({errorMessage: data.message || 'Failed to retrieve friends'});
-            }
-        }
-        catch(err){
-
-            console.error('Error fetching friends:', err);
-            this.setState({ errorMessage: 'An error occurred while retrieving friends' });
-
-        }
-    }
+    
+    */
 
     
 
     render(){
-        const {userData, loading, errorMessage, paramsId, friends } = this.state;
+        //const {userData, loading, errorMessage, paramsId, friends } = this.state;
+
+        const {paramsId} = this.state;
 
         
         return(
@@ -131,7 +110,8 @@ class ProfilePage extends React.Component{
                 <div style={{ display: 'flex', flex: 1 }}>
                     <SideNavBar />
                     <div style={{ flex: 1, padding: '20px' }}>
-                        {userData && friends ? <ProfileFeed userData = {userData} paramsId = {paramsId} friends = {friends}/>: <div></div>}
+                        {/*{userData && friends ? <ProfileFeed userData = {userData} paramsId = {paramsId} friends = {friends}/>: <div></div>}*/}
+                        <ProfileFeed paramsId = {paramsId} />
                     </div>
                 </div>
             </div>
