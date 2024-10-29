@@ -79,7 +79,7 @@ export class playlistModel{
     async removeSongFromPlaylist(playlistId, songId){
         const result = await this.collection.updateOne(
             {_id : new ObjectId(playlistId)},
-            { $pull : {songs: songId}}
+            { $pull : {songs: new ObjectId(songId)}}
         );
 
         return result.modifiedCount;

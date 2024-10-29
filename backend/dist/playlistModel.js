@@ -232,7 +232,7 @@ var playlistModel = exports.playlistModel = /*#__PURE__*/function () {
                 _id: new ObjectId(playlistId)
               }, {
                 $pull: {
-                  songs: songId
+                  songs: new ObjectId(songId)
                 }
               });
             case 2:

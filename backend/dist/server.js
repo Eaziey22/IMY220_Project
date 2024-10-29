@@ -808,7 +808,7 @@ app.put("/playlists/removeSong/:playlistId/songs/:songId", /*#__PURE__*/function
           _req$params4 = req.params, playlistId = _req$params4.playlistId, songId = _req$params4.songId;
           _context14.prev = 1;
           _context14.next = 4;
-          return User.removeSongFromPlaylist(playlistId, songId);
+          return Playlist.removeSongFromPlaylist(playlistId, songId);
         case 4:
           modifiedCount = _context14.sent;
           if (!(modifiedCount === 0)) {

@@ -539,7 +539,7 @@ app.put("/playlists/removeSong/:playlistId/songs/:songId", async (req, res) => {
     const { playlistId, songId } = req.params;
 
     try {
-        const modifiedCount = await User.removeSongFromPlaylist(playlistId, songId);
+        const modifiedCount = await Playlist.removeSongFromPlaylist(playlistId, songId);
 
         if (modifiedCount === 0) {
             return res.status(404).json({ 

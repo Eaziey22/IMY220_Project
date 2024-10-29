@@ -15,7 +15,11 @@ export class PlaylistFeed extends React.Component{
             playlistName: this.props.playlist.playlistName,
             playlistPicture: null,
             playlistSongs: [],
-            userData: null
+            userData: null,
+            showRemovePrompt: false,
+            errorMessage: '',
+            songId: ''
+
         };
     }
 
@@ -96,6 +100,38 @@ export class PlaylistFeed extends React.Component{
 
   }
 
+  removeSongFromPlaylist = async(songId) =>{
+
+    const playlistId = this.props.playlist._id;
+
+    //console.log("p: ", playlistId, songId);
+
+    try{
+      
+      const response = await fetch(`/playlists/removeSong/${playlistId}/songs/${songId}`, {
+        method: 'PUT', 
+        headers: {
+            'Content-Type': 'application/json',
+        },
+      });
+
+      const data = await response.json();
+
+      if(response.ok){
+        console.log("song removed from playlist successfully.");
+        //alert("song removed from playlist successfully.")
+      }
+      else{
+        this.setState({errorMessage: data.message || 'Failed to add song to playlist'});
+      }
+    }
+    catch(err){
+      console.error('Error adding song to playlists:', err);
+          this.setState({ errorMessage: 'An error occurred while adding song to playlists' });
+    }
+
+  }
+
   
 
     toggleMenu = () => {
@@ -122,9 +158,34 @@ export class PlaylistFeed extends React.Component{
       this.toggleEditForm(); 
     }; 
 
+
+    toggleRemovePrompt = (songId) =>{
+      this.setState(prevState => ({
+        showRemovePrompt: !prevState.showRemovePrompt,
+        songId: prevState.showRemovePrompt ? '' : songId,
+      }));
+
+      /*if(this.state.showRemovePrompt){
+        this.setState({songId : songId});
+      }
+      else{
+        this.setState({songId : ''});
+      }*/
+      
+    }
+
+    handleRemoveSong = async() =>{
+
+      const {songId} = this.state;
+      console.log(songId);
+      //this.setState({songId: songId});
+      await this.removeSongFromPlaylist(songId);
+      this.toggleRemovePrompt();
+    }
+
     render(){
 
-        const { showMenu,showEditForm,playlistData, playlistName, playlistPicture,playlistSongs, userData} = this.state;
+        const { showMenu,showEditForm,playlistData, playlistName, playlistPicture,playlistSongs, userData, showRemovePrompt} = this.state;
 
         return(
             <div className={styles.feed}>
@@ -223,7 +284,7 @@ export class PlaylistFeed extends React.Component{
                                     {/*<td>{song.played}</td>
                                     <td>{song.duration}</td>*/}
                                     <td>
-                                        <FontAwesomeIcon icon={faHeart} color="#ff0000" />
+                                        <FontAwesomeIcon icon={faHeart} size="3x" color="#ff0000" className={styles.heartIcon} onClick={() => this.toggleRemovePrompt(song._id)} />
                                     </td>
                                 </tr>
                             ))}
@@ -232,6 +293,25 @@ export class PlaylistFeed extends React.Component{
                     </div>
                   </div>
                 </div>
+                {showRemovePrompt && (
+                  <div className={styles.removePrompt}>
+                      <h4>Do you want to remove this song from the playlist?</h4>
+                      <div className={styles.promptButtons}>
+                          <button 
+                              onClick={() =>this.handleRemoveSong()} 
+                              className={styles.confirmButton}
+                          >
+                              Yes
+                          </button>
+                          <button 
+                              onClick={() => this.setState({showRemovePrompt: false})} 
+                              className={styles.cancelButton}
+                          >
+                              No
+                          </button>
+                      </div>
+                  </div>
+              )}
 
                 {/*<div className={styles.songsOfTheWeek}>
                     <h3 className={styles.header}>Your Songs</h3>

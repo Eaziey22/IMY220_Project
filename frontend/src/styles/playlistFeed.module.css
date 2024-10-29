@@ -187,6 +187,41 @@
     margin-top: 50px;
 }
 
+.heartIcon:hover{
+    cursor: pointer;
+}
+
+.removePrompt {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    padding: 20px;
+    border-radius: 5px;
+    margin: 10px 0;
+}
+
+.promptButtons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.confirmButton {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+.cancelButton {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+
 
 .searchContainer{
     padding: 10px;
@@ -243,3 +278,4 @@
 .table tbody td {
     padding: 15px 0; /* Adjust the padding to increase row height */
 }
+
