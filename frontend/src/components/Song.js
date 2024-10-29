@@ -51,9 +51,9 @@ export class Song extends React.Component{
                     </button>
 
                 </div> 
-                <div className={`${styles.addSongContainer} col-1 d-flex justify-content-end align-items-center`} onClick={this.toggleMenu}> 
+                {this.props.isUserProfile?<div className={`${styles.addSongContainer} col-1 d-flex justify-content-end align-items-center`} onClick={this.toggleMenu}> 
                     <FontAwesomeIcon icon={faEllipsisV} />
-                </div>
+                </div>:<div></div>}
                 {showMenu && (
                     <div className={styles.menu}>
                                 <ul>

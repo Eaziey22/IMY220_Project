@@ -380,6 +380,7 @@ app.post("/playlists/createPlaylist", async (req, res) =>{
 
     try{
         const {playlistName,ownerId, songs } = req.body;
+        console.log("playlistData", playlistName, ownerId, songs);
         const pl = await Playlist.createPlaylist(playlistName,ownerId, songs );
 
         await User.addPlaylistToPlaylists(ownerId, pl._id);

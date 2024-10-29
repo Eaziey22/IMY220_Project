@@ -2,7 +2,7 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMusic, faUserCircle, faEllipsisV, faHeart } from "@fortawesome/free-solid-svg-icons";
 import * as styles from '../styles/playlistFeed.module.css';
-import { useParams } from "react-router-dom";
+
 
 export class PlaylistFeed extends React.Component{
 
@@ -15,11 +15,7 @@ export class PlaylistFeed extends React.Component{
             playlistName: this.props.playlist.playlistName,
             playlistPicture: null,
             playlistSongs: [],
-            songs: [
-              { id: 1, title: "Song 1", album: "Album 1", played: 10, duration: "3:45" },
-              { id: 2, title: "Song 2", album: "Album 2", played: 15, duration: "4:00" },
-              { id: 3, title: "Song 3", album: "Album 3", played: 8, duration: "2:50" }
-          ]
+            userData: null
         };
     }
 
@@ -30,6 +26,7 @@ export class PlaylistFeed extends React.Component{
     console.log("pId:", this.state.playlistData._id);
 
     this.fetchPlaylistSongs(this.state.playlistData._id);
+    this.fetchUserData(this.state.playlistData.ownerId);
 
      
   }
@@ -61,6 +58,44 @@ export class PlaylistFeed extends React.Component{
     
   }
 
+
+  async fetchUserData(uId){
+
+    const userId = uId;
+
+    try{
+            
+        const response = await fetch(`/getUser/${userId}`,{
+      
+          method: 'GET',
+          headers: {
+              "content-type" : "application/json"
+          }
+      });
+
+      const udata = await response.json();
+
+      
+
+      if(udata.status === "success"){
+          
+          this.setState({userData: udata.data, loading: false}, () => {
+              console.log("State updated:", this.state.userData);
+          });
+          
+      }
+      else{
+          
+          this.setState({ errorMessage: udata.message || 'could not get user profile' , loading: false});
+      }
+    }
+    catch(err){
+        console.error('Error fetching playlist owner:', err);
+        this.setState({ errorMessage: 'An error occurred while fetching playlist owner' });
+    }
+
+  }
+
   
 
     toggleMenu = () => {
@@ -89,7 +124,7 @@ export class PlaylistFeed extends React.Component{
 
     render(){
 
-        const { showMenu,showEditForm,playlistData, playlistName, playlistPicture,playlistSongs, songs} = this.state;
+        const { showMenu,showEditForm,playlistData, playlistName, playlistPicture,playlistSongs, userData} = this.state;
 
         return(
             <div className={styles.feed}>
@@ -104,7 +139,8 @@ export class PlaylistFeed extends React.Component{
                         </div>
                         <div className={` ${styles.playlistInfo} col-12 col-md-6 col-lg-3`}>
                             <h3>{playlistName}</h3>
-                            <p><FontAwesomeIcon icon={faUserCircle} color="#37D0D6" className={styles.userIcon} />John Doe - {playlistData.songs.length} songs</p>
+                            {userData?<p><FontAwesomeIcon icon={faUserCircle} color="#37D0D6" className={styles.userIcon} />{userData.username} - {playlistData.songs.length} songs</p>
+                            : <p><FontAwesomeIcon icon={faUserCircle} color="#37D0D6" className={styles.userIcon} />{playlistData.songs.length} songs</p> }
                         </div>
                         <div className={`${styles.menuContainer}`}>
                             <button className={styles.menuButton} onClick={this.toggleMenu}>

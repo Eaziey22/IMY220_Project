@@ -24,7 +24,7 @@ var playlistModel = exports.playlistModel = /*#__PURE__*/function () {
     key: "createPlaylist",
     value: function () {
       var _createPlaylist = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(playlistName, ownerId, songs) {
-        var result;
+        var result, playlist;
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) switch (_context.prev = _context.next) {
             case 0:
@@ -37,8 +37,14 @@ var playlistModel = exports.playlistModel = /*#__PURE__*/function () {
               });
             case 2:
               result = _context.sent;
-              return _context.abrupt("return", result);
-            case 4:
+              _context.next = 5;
+              return this.collection.findOne({
+                _id: result.insertedId
+              });
+            case 5:
+              playlist = _context.sent;
+              return _context.abrupt("return", playlist);
+            case 7:
             case "end":
               return _context.stop();
           }

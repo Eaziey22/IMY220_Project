@@ -16,7 +16,9 @@ export class playlistModel{
             dateCreated: new Date()
         });
 
-        return result;
+        const playlist = await this.collection.findOne({ _id: result.insertedId });
+
+        return playlist;
     }
 
     async getPlaylistById(playlistId){

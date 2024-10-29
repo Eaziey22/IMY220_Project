@@ -51,7 +51,7 @@ export class Playlistsfeed extends React.Component{
 
     render(){
         const {playlists, errorMessage} = this.state;
-        console.log("myPl" , playlists);
+        //console.log("myPl" , playlists);
         return(
             
 

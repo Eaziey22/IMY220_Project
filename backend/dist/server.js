@@ -553,13 +553,14 @@ app.post("/playlists/createPlaylist", /*#__PURE__*/function () {
         case 0:
           _context9.prev = 0;
           _req$body3 = req.body, playlistName = _req$body3.playlistName, ownerId = _req$body3.ownerId, songs = _req$body3.songs;
-          _context9.next = 4;
+          console.log("playlistData", playlistName, ownerId, songs);
+          _context9.next = 5;
           return Playlist.createPlaylist(playlistName, ownerId, songs);
-        case 4:
+        case 5:
           pl = _context9.sent;
-          _context9.next = 7;
+          _context9.next = 8;
           return User.addPlaylistToPlaylists(ownerId, pl._id);
-        case 7:
+        case 8:
           res.status(201).json({
             status: "success",
             message: "playlist created successfully",
@@ -567,21 +568,21 @@ app.post("/playlists/createPlaylist", /*#__PURE__*/function () {
               playlist: pl
             }
           });
-          _context9.next = 14;
+          _context9.next = 15;
           break;
-        case 10:
-          _context9.prev = 10;
+        case 11:
+          _context9.prev = 11;
           _context9.t0 = _context9["catch"](0);
           console.log("Error creating a new playlist: ".concat(_context9.t0));
           res.status(500).json({
             status: "error",
             message: "Internal server error"
           });
-        case 14:
+        case 15:
         case "end":
           return _context9.stop();
       }
-    }, _callee9, null, [[0, 10]]);
+    }, _callee9, null, [[0, 11]]);
   }));
   return function (_x17, _x18) {
     return _ref9.apply(this, arguments);

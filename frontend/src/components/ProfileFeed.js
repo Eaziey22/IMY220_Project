@@ -4,7 +4,7 @@ import { Song } from "./Song";
 import { PlayListPreview } from "./PlaylistsPreview";
 import { CreatePlaylist } from "./createPlaylist";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserCircle, faEllipsisV, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faUserCircle, faEllipsisV, faTimes, faMusic } from '@fortawesome/free-solid-svg-icons';
 import { AddSong } from "./addSong";
 import { Navigate } from "react-router-dom";
 
@@ -431,30 +431,32 @@ export class ProfileFeed extends React.Component{
 
                  
                 <div className={styles.playlists}>
-                    <h3 className={styles.header}>Your Playlists</h3>
+                    <h3 className={styles.header}>Playlists</h3>
                     {playlistsData? <div className={`${styles.playlistsContainer} row`}>
                         {playlistsData.slice(0, 5).map((playlist, index) => (
                             <div className="col-12 col-md-6 col-lg-2" key={index}>
                                 <PlayListPreview image='' title={playlist.playlistName} songAmount={playlist.songs.length} playlistId = {playlist._id} />
                             </div>
                         ))}
-                        <div className="col-12 col-md-6 col-lg-3">
+                        {isUserProfile?<div className="col-12 col-md-6 col-lg-3">
                             <CreatePlaylist />
-                        </div>
+                        </div>:<div className=" d-flex justify-content-center align-items-center">
+                            <FontAwesomeIcon icon={faMusic} size="8x" color="white" />
+                        </div>}
                     </div>: <div></div>}
                 </div>
 
                 <div className={styles.songsOfTheWeek}>
-                    <h3 className={styles.header}>Your Songs</h3>
+                    <h3 className={styles.header}>Songs</h3>
                     {songData? <div className={`${styles.songsOfTheWeekContainer} row`}>
                         {songData.map((music, index) => (
                             <div className="col-12 col-md-6 col-lg-3" key={index}>
-                                <Song image="" name={music.name} />
+                                <Song image="" name={music.name} isUserProfile={isUserProfile}/>
                             </div>
                         ))}
-                        <div className="col-12 col-md-6 col-lg-3">
+                        {isUserProfile?<div className="col-12 col-md-6 col-lg-3">
                             <AddSong/>
-                        </div>
+                        </div>: <div className="col-12 col-md-6 col-lg-3"></div>}
                     </div>:<div></div>}
                 </div>
 

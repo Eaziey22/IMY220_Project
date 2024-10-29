@@ -130,7 +130,7 @@ export class userModel{
         return result.modifiedCount;
     }
 
-    async addplaylistToPlaylists(userId, playlistId){
+    async addPlaylistToPlaylists(userId, playlistId){
 
         const result = await this.collection.updateOne(
             {_id : new ObjectId(userId)},

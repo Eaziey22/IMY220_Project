@@ -334,9 +334,9 @@ var userModel = exports.userModel = /*#__PURE__*/function () {
       return removeSongFromSongs;
     }()
   }, {
-    key: "addplaylistToPlaylists",
+    key: "addPlaylistToPlaylists",
     value: function () {
-      var _addplaylistToPlaylists = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee12(userId, playlistId) {
+      var _addPlaylistToPlaylists = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee12(userId, playlistId) {
         var result;
         return _regeneratorRuntime().wrap(function _callee12$(_context12) {
           while (1) switch (_context12.prev = _context12.next) {
@@ -359,10 +359,10 @@ var userModel = exports.userModel = /*#__PURE__*/function () {
           }
         }, _callee12, this);
       }));
-      function addplaylistToPlaylists(_x18, _x19) {
-        return _addplaylistToPlaylists.apply(this, arguments);
+      function addPlaylistToPlaylists(_x18, _x19) {
+        return _addPlaylistToPlaylists.apply(this, arguments);
       }
-      return addplaylistToPlaylists;
+      return addPlaylistToPlaylists;
     }()
   }, {
     key: "removePlaylistFromPlaylists",
