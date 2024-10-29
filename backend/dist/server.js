@@ -759,10 +759,10 @@ app.put("/playlists/addSong/:playlistId/songs/:songId", /*#__PURE__*/function ()
     return _regeneratorRuntime().wrap(function _callee13$(_context13) {
       while (1) switch (_context13.prev = _context13.next) {
         case 0:
-          _req$params3 = req.params, playlistId = _req$params3.playlistId, songId = _req$params3.songId;
+          _req$params3 = req.params, playlistId = _req$params3.playlistId, songId = _req$params3.songId; //console.log("songAndPlaylist: ", playlistId, songId);
           _context13.prev = 1;
           _context13.next = 4;
-          return User.addSongToPlaylist(playlistId, songId);
+          return Playlist.addSongToPlaylist(playlistId, songId);
         case 4:
           modifiedCount = _context13.sent;
           if (!(modifiedCount === 0)) {

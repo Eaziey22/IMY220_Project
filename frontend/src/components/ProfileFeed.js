@@ -451,7 +451,7 @@ export class ProfileFeed extends React.Component{
                     {songData? <div className={`${styles.songsOfTheWeekContainer} row`}>
                         {songData.map((music, index) => (
                             <div className="col-12 col-md-6 col-lg-3" key={index}>
-                                <Song image="" name={music.name} isUserProfile={isUserProfile}/>
+                                <Song image="" name={music.name} isUserProfile={isUserProfile} songId= {music._id}/>
                             </div>
                         ))}
                         {isUserProfile?<div className="col-12 col-md-6 col-lg-3">

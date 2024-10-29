@@ -511,8 +511,9 @@ app.put("/playlists/updatePlaylist/:id", async (req, res) =>{
 app.put("/playlists/addSong/:playlistId/songs/:songId", async (req, res) => {
     const { playlistId, songId } = req.params;
 
+    //console.log("songAndPlaylist: ", playlistId, songId);
     try {
-        const modifiedCount = await User.addSongToPlaylist(playlistId, songId);
+        const modifiedCount = await Playlist.addSongToPlaylist(playlistId, songId);
 
         if (modifiedCount === 0) {
             return res.status(404).json({ 

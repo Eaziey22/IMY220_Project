@@ -8,9 +8,28 @@ import { AddSong } from "./addSong";
 
 export class Feed extends React.Component{
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            playlists: this.props.playlists,
+            userSongs: this.props.userSongs,
+        };
+    }
+
+    fetchPlaylists = async () => {
+        const { fetchUserPlaylists } = this.props; 
+        const updatedPlaylists = await fetchUserPlaylists(); 
+        this.setState({ playlists: updatedPlaylists });
+    };
+
+    handleSongAddition = async () => {
+        
+        await this.fetchPlaylists();
+    };
+
     render(){
         
-        const {playlists, userSongs, recentMusicData, fetchUserSongs } = this.props;
+        const {playlists, userSongs, recentMusicData, fetchUserSongs, fetchUserPlaylists } = this.props;
 
         return (
 
@@ -22,7 +41,8 @@ export class Feed extends React.Component{
                      <div className={`${styles.songsOfTheWeekContainer} row`}>
                         {userSongs.slice(0,7).map((music, index) => (
                             <div className="col-12 col-md-6 col-lg-3" key={index}>
-                                {userSongs?<Song onHandleSubmit = {this.fetchUserSongs} image="" name={music.name} />: <div></div>}
+                                
+                                {userSongs?<Song onHandleSubmit = {this.fetchUserSongs} image="" name={music.name} songId = {music._id} onSongAdded={this.handleSongAddition}/>: <div></div>}
                             </div>
                         ))}
                         <div className="col-12 col-md-6 col-lg-3">

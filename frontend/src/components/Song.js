@@ -9,8 +9,17 @@ export class Song extends React.Component{
         super(props);
         this.state = {
             showMenu: false,
-            showAddForm: false
+            showAddForm: false,
+            isUserProfile: true, 
+            playlistsData: null,
+            errorMessage: '',
+            selectedPlaylists: [],
+            songId: this.props.songId
         };
+    }
+
+    async componentDidMount(){
+      await this.fetchUserPlaylists(localStorage.getItem('userId'));
     }
 
     toggleMenu = () => {
@@ -21,18 +30,127 @@ export class Song extends React.Component{
 
     toggleAddForm = () => {
         this.setState({showMenu:false});
+        //this.fetchUserPlaylists(localStorage.getItem("userId"));
         this.setState(prevState => ({ showAddForm: !prevState.showAddForm }));
     };
 
-    handleFormSubmit = (e) => {
-        e.preventDefault();
-        this.toggleAddForm(); 
-      };
- 
+    handleFormSubmit = async (e) => {
+      e.preventDefault();
+
+      const { selectedPlaylists, songId } = this.state; // Ensure songId is set or retrieved
+      const {onSongAdded } = this.props;
+
+      console.log("songId: ", songId );
+      if (selectedPlaylists.length === 0) {
+          alert("Please select at least one playlist.");
+          return;
+      }
+      
+      try {
+        
+        await Promise.all(
+            selectedPlaylists.map(playlistId => this.addSongToplaylist(playlistId, songId))
+        );
+
+        
+
+        console.log("Song added to all selected playlists successfully.");
+
+        await onSongAdded();
+        
+        
+        this.setState({
+            selectedPlaylists: [],
+            showAddForm: false,
+        });
+
+        
+
+      } catch (error) {
+          console.error("Error adding song to playlists:", error);
+          this.setState({ errorMessage: "Failed to add song to one or more playlists" });
+      }
+
+      
+    };
+
+    fetchUserPlaylists = async (uId) =>{
+
+      //const userId = localStorage.getItem('userId');
+      const userId = uId;
+
+      try{
+
+          const response = await fetch(`/playlists/getUserPlaylists/${userId}`);
+
+          if(response.ok){
+              const data = await response.json();
+              //console.log("dt: " , data)
+              this.setState({ playlistsData: data.data.playlists, loading: false, errorMessage: '' });
+              
+          }
+          else{
+              this.setState({errorMessage: data.message || 'Failed to load playlists'});
+          }
+          
+
+      }
+      catch(err){
+          console.error('Error fetching playlists:', err);
+          this.setState({ errorMessage: 'An error occurred while fetching playlists' });
+      }
+  }
+
+  
+  addSongToplaylist = async (playlistId, songId) =>{
+
+    try{
+      const response = await fetch(`/playlists/addSong/${playlistId}/songs/${songId}`, {
+        method: 'PUT', 
+        headers: {
+            'Content-Type': 'application/json',
+        },
+      });
+
+      const data = await response.json();
+
+      if(response.ok){
+        console.log("song added to playlist successfully.");
+      }
+      else{
+        this.setState({errorMessage: data.message || 'Failed to add song to playlist'});
+      }
+    }
+    catch(err){
+      console.error('Error adding song to playlists:', err);
+          this.setState({ errorMessage: 'An error occurred while adding song to playlists' });
+    }
+
+  }
+
+  handleCheckboxChange = (playlistId) => {
+    this.setState((prevState) => {
+        const { selectedPlaylists } = prevState;
+        if (selectedPlaylists.includes(playlistId)) {
+            
+            return { selectedPlaylists: selectedPlaylists.filter(id => id !== playlistId) };
+        } else {
+            
+            return { selectedPlaylists: [...selectedPlaylists, playlistId] };
+        }
+    });
+};
+
+
     render(){
 
-        const {image, name} = this.props;
-        const { showMenu, showAddForm } = this.state;
+        let {image, name, isUserProfile} = this.props;
+        const { showMenu, showAddForm, playlistsData } = this.state;
+
+        console.log(isUserProfile);
+        if(isUserProfile === undefined){
+          isUserProfile = true;
+        }
 
         return(
             <div>
@@ -51,7 +169,7 @@ export class Song extends React.Component{
                     </button>
 
                 </div> 
-                {this.props.isUserProfile?<div className={`${styles.addSongContainer} col-1 d-flex justify-content-end align-items-center`} onClick={this.toggleMenu}> 
+                {isUserProfile?<div className={`${styles.addSongContainer} col-1 d-flex justify-content-end align-items-center`} onClick={this.toggleMenu}> 
                     <FontAwesomeIcon icon={faEllipsisV} />
                 </div>:<div></div>}
                 {showMenu && (
@@ -75,19 +193,25 @@ export class Song extends React.Component{
                           className={`${styles.formControl} form-control`}
                         />
                       </div>
-                      <div className={`${styles.playlistList}`}>
-                        <div className={`${styles.playlistItem} row align-items-center`}>
-                            <div className="col d-flex align-items-center" style={{marginBottom: '10px'}}>
+
+                      {playlistsData && playlistsData.length > 0 ?(
+                        <div className={`${styles.playlistList}`}>
+                        {playlistsData.map((playlist, index) => (
+                            <div key = {index} className={`${styles.playlistItem} row align-items-center `}>
+                        
+                          <div className="col d-flex align-items-center" style={{marginBottom: '10px'}}>
                               <input 
                                 type="checkbox" 
                                 className={styles.formCheckInput}
-                                id="playlist" 
+                                id={`playlist-${index}`}  
                                 name="playlist"
+                                onChange={() => this.handleCheckboxChange(playlist._id)}
                               />
-                              <label htmlFor="playlist" className={`${styles.playlistLabel}`} style={{marginLeft:'10px'}}>SA Hip Hop</label>
+                              <label htmlFor={`playlist-${index}`} className={`${styles.playlistLabel}`} style={{marginLeft:'10px'}}>{playlist.playlistName}</label>
                             </div>
-                        </div>
-                      </div>
+                        </div>))}
+                      </div>): (<div>You have No playlists</div>)}
+
                       <div className={styles.formActions}>
                         <button type="submit" className={styles.saveButton}>
                           Save
