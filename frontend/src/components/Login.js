@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import * as styles from '../styles/login.module.css';
-import Logo from '../../public/assets/images/logo_no_background.png';
+//import Logo from '../../public/assets/images/logo_no_background.png';
 
 export class Login extends React.Component {
   constructor(props) {
@@ -14,7 +14,8 @@ export class Login extends React.Component {
         emailValid: false,
         passwordValid: false,
         formValid: false,
-        redirectToHome: false
+        redirectToHome: false,
+        errorMessage: ''
     };
   }
 
@@ -56,6 +57,7 @@ export class Login extends React.Component {
     });
   }
 
+  /*
   handleSubmit = (event) => {
     event.preventDefault();
     if (this.state.formValid) {
@@ -65,7 +67,49 @@ export class Login extends React.Component {
     } else {
         console.log('Form is invalid. Cannot submit.');
     }
-  };
+  };*/
+
+  handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if(this.state.formValid){
+      try{
+        const response = await fetch('/auth/login', {
+
+          method: 'POST',
+          headers: {
+            'Content-Type' : 'application/json',
+          },
+          body: JSON.stringify({
+            //username: this.state.username,
+            email: this.state.emailAddress,
+            password: this.state.password
+          })
+        });
+
+        const data = await response.json();
+
+        if(response.ok){
+          localStorage.setItem('userId', data.data.userId);
+          this.setState({redirectToHome : true});
+        }
+        else{
+          console.log("hey",data.message);
+          this.setState({ errorMessage: data.message || 'Login failed' });
+          
+        }
+
+      }
+      catch(error){
+        console.log('Error: ', error);
+        this.setState({errorMessage: "Login failed"});
+        
+      }
+    } else {
+      console.log('Form is invalid. Cannot submit.');
+      
+    }
+  }
 
   render() {
     if (this.state.redirectToHome) {
@@ -74,17 +118,23 @@ export class Login extends React.Component {
 
     return (
       <div className={styles.formContainer}>
+        
         <form className={styles.form} onSubmit={this.handleSubmit}>
           {/*<div className={styles.loginLogoContainer}>
             <img className={styles.logo} alt="tunetrail logo" src={Logo} />
           </div>*/}
+          {this.state.errorMessage && (
+            <div className="alert alert-danger" role="alert">
+              {this.state.errorMessage}
+            </div>
+          )} 
           <div className={styles.loginHeaderContainer}>
             <h2>Login</h2>
           </div>
           <div className={styles.formgroup}>
             <label htmlFor="emailAddress">Email Address:</label>
             <input
-              type="text"
+              type="email"
               className="form-control"
               id="emailAddress"
               name="emailAddress"

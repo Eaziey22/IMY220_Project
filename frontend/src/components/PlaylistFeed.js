@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMusic, faUserCircle, faEllipsisV, faHeart } from "@fortawesome/free-solid-svg-icons";
 import * as styles from '../styles/playlistFeed.module.css';
 
+
 export class PlaylistFeed extends React.Component{
 
     constructor(props) {
@@ -10,15 +11,128 @@ export class PlaylistFeed extends React.Component{
         this.state = {
             showMenu: false,
             showEditForm: false,
-            playlistName: 'my playlist',
+            playlistData : this.props.playlist,
+            playlistName: this.props.playlist.playlistName,
             playlistPicture: null,
-            songs: [
-              { id: 1, title: "Song 1", album: "Album 1", played: 10, duration: "3:45" },
-              { id: 2, title: "Song 2", album: "Album 2", played: 15, duration: "4:00" },
-              { id: 3, title: "Song 3", album: "Album 3", played: 8, duration: "2:50" }
-          ]
+            playlistSongs: [],
+            userData: null,
+            showRemovePrompt: false,
+            errorMessage: '',
+            songId: ''
+
         };
     }
+
+  async componentDidMount() {
+    //var playlistId = this.props.params.pId;
+    //this.fetchPlaylistById(playlistId);
+    //withPlaylistProps();
+    console.log("pId:", this.state.playlistData._id);
+
+    this.fetchPlaylistSongs(this.state.playlistData._id);
+    this.fetchUserData(this.state.playlistData.ownerId);
+
+     
+  }
+
+  fetchPlaylistSongs = async (playlistId) => {
+
+    const pId = playlistId;
+
+    try{
+  
+      const response = await fetch(`/playlist/getPlaylistSongs/${pId}`);
+
+      if(response.ok){
+          const data = await response.json();
+          this.setState({ playlistSongs: data.data.songs, loading: false, errorMessage: '' });
+          
+      }
+      else{
+          this.setState({errorMessage: data.message || 'Failed to load playlist songs'});
+      }
+      
+
+    }
+    catch(err){
+        console.error('Error fetching playlist songs:', err);
+        this.setState({ errorMessage: 'An error occurred while fetching playlist songs' });
+    }
+
+    
+  }
+
+
+  async fetchUserData(uId){
+
+    const userId = uId;
+
+    try{
+            
+        const response = await fetch(`/getUser/${userId}`,{
+      
+          method: 'GET',
+          headers: {
+              "content-type" : "application/json"
+          }
+      });
+
+      const udata = await response.json();
+
+      
+
+      if(udata.status === "success"){
+          
+          this.setState({userData: udata.data, loading: false}, () => {
+              console.log("State updated:", this.state.userData);
+          });
+          
+      }
+      else{
+          
+          this.setState({ errorMessage: udata.message || 'could not get user profile' , loading: false});
+      }
+    }
+    catch(err){
+        console.error('Error fetching playlist owner:', err);
+        this.setState({ errorMessage: 'An error occurred while fetching playlist owner' });
+    }
+
+  }
+
+  removeSongFromPlaylist = async(songId) =>{
+
+    const playlistId = this.props.playlist._id;
+
+    //console.log("p: ", playlistId, songId);
+
+    try{
+      
+      const response = await fetch(`/playlists/removeSong/${playlistId}/songs/${songId}`, {
+        method: 'PUT', 
+        headers: {
+            'Content-Type': 'application/json',
+        },
+      });
+
+      const data = await response.json();
+
+      if(response.ok){
+        console.log("song removed from playlist successfully.");
+        //alert("song removed from playlist successfully.")
+      }
+      else{
+        this.setState({errorMessage: data.message || 'Failed to add song to playlist'});
+      }
+    }
+    catch(err){
+      console.error('Error adding song to playlists:', err);
+          this.setState({ errorMessage: 'An error occurred while adding song to playlists' });
+    }
+
+  }
+
+  
 
     toggleMenu = () => {
         this.setState(prevState => ({
@@ -42,11 +156,36 @@ export class PlaylistFeed extends React.Component{
     handleFormSubmit = (e) => {
       e.preventDefault();
       this.toggleEditForm(); 
-    };
+    }; 
+
+
+    toggleRemovePrompt = (songId) =>{
+      this.setState(prevState => ({
+        showRemovePrompt: !prevState.showRemovePrompt,
+        songId: prevState.showRemovePrompt ? '' : songId,
+      }));
+
+      /*if(this.state.showRemovePrompt){
+        this.setState({songId : songId});
+      }
+      else{
+        this.setState({songId : ''});
+      }*/
+      
+    }
+
+    handleRemoveSong = async() =>{
+
+      const {songId} = this.state;
+      console.log(songId);
+      //this.setState({songId: songId});
+      await this.removeSongFromPlaylist(songId);
+      this.toggleRemovePrompt();
+    }
 
     render(){
 
-        const { showMenu,showEditForm, playlistName, playlistPicture, songs} = this.state;
+        const { showMenu,showEditForm,playlistData, playlistName, playlistPicture,playlistSongs, userData, showRemovePrompt} = this.state;
 
         return(
             <div className={styles.feed}>
@@ -61,7 +200,8 @@ export class PlaylistFeed extends React.Component{
                         </div>
                         <div className={` ${styles.playlistInfo} col-12 col-md-6 col-lg-3`}>
                             <h3>{playlistName}</h3>
-                            <p><FontAwesomeIcon icon={faUserCircle} color="#37D0D6" className={styles.userIcon} />John Doe - 5 Songs</p>
+                            {userData?<p><FontAwesomeIcon icon={faUserCircle} color="#37D0D6" className={styles.userIcon} />{userData.username} - {playlistData.songs.length} songs</p>
+                            : <p><FontAwesomeIcon icon={faUserCircle} color="#37D0D6" className={styles.userIcon} />{playlistData.songs.length} songs</p> }
                         </div>
                         <div className={`${styles.menuContainer}`}>
                             <button className={styles.menuButton} onClick={this.toggleMenu}>
@@ -127,22 +267,24 @@ export class PlaylistFeed extends React.Component{
                             <tr>
                                 <th>#</th>
                                 <th>Title</th>
+                                <th>Artist</th>
                                 <th>Album Name</th>
-                                <th>Played</th>
-                                <th>Duration</th>
+                                {/*<th>Played</th>
+                                <th>Duration</th>*/}
                                 <th></th>
                             </tr>
                         </thead>
                         <tbody>
-                            {songs.map((song, index) => (
-                                <tr key={song.id}>
+                            {playlistSongs.map((song, index) => (
+                                <tr key={song._id}>
                                     <td>{index + 1}</td>
-                                    <td>{song.title}</td>
+                                    <td>{song.name}</td>
+                                    <td>{song.artistName}</td>
                                     <td>{song.album}</td>
-                                    <td>{song.played}</td>
-                                    <td>{song.duration}</td>
+                                    {/*<td>{song.played}</td>
+                                    <td>{song.duration}</td>*/}
                                     <td>
-                                        <FontAwesomeIcon icon={faHeart} color="#ff0000" />
+                                        <FontAwesomeIcon icon={faHeart} size="3x" color="#ff0000" className={styles.heartIcon} onClick={() => this.toggleRemovePrompt(song._id)} />
                                     </td>
                                 </tr>
                             ))}
@@ -151,6 +293,25 @@ export class PlaylistFeed extends React.Component{
                     </div>
                   </div>
                 </div>
+                {showRemovePrompt && (
+                  <div className={styles.removePrompt}>
+                      <h4>Do you want to remove this song from the playlist?</h4>
+                      <div className={styles.promptButtons}>
+                          <button 
+                              onClick={() =>this.handleRemoveSong()} 
+                              className={styles.confirmButton}
+                          >
+                              Yes
+                          </button>
+                          <button 
+                              onClick={() => this.setState({showRemovePrompt: false})} 
+                              className={styles.cancelButton}
+                          >
+                              No
+                          </button>
+                      </div>
+                  </div>
+              )}
 
                 {/*<div className={styles.songsOfTheWeek}>
                     <h3 className={styles.header}>Your Songs</h3>
@@ -167,3 +328,5 @@ export class PlaylistFeed extends React.Component{
         );
     }
 }
+
+

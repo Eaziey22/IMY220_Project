@@ -8,16 +8,19 @@ export class SignUp extends React.Component{
   constructor(props) {
     super(props);
     this.state = {
+        username: '',
         emailAddress: '',
         password: '',
         confirmPassword: '',
         rememberMe: false,
-        formErrors: { emailAddress: '', password: '', confirmPassword: '' },
+        formErrors: { username: '' ,emailAddress: '', password: '', confirmPassword: '' },
+        usernameValid: false,
         emailValid: false,
         passwordValid: false,
         confirmPasswordValid: false,
         formValid: false,
-        redirectToHome: false
+        redirectToHome: false,
+        errorMessage: ''
     };
   }
 
@@ -28,13 +31,18 @@ export class SignUp extends React.Component{
 
   validateField(fieldName, value) {
     let fieldValidationErrors = this.state.formErrors;
+    let usernameValid = this.state.usernameValid;
     let emailValid = this.state.emailValid;
     let passwordValid = this.state.passwordValid;
     let confirmPasswordValid = this.state.confirmPasswordValid;
 
     switch (fieldName) {
+        case 'username':
+          usernameValid = value.length >= 4;
+          fieldValidationErrors.username = usernameValid ? '' : 'username must be atleast 4 characters long';
+          break;
         case 'emailAddress':
-            emailValid = value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
+            emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
             fieldValidationErrors.emailAddress = emailValid ? '' : 'please enter a valid email';
             break;
         case 'password':
@@ -51,6 +59,7 @@ export class SignUp extends React.Component{
 
     this.setState({
         formErrors: fieldValidationErrors,
+        usernameValid: usernameValid,
         emailValid: emailValid,
         passwordValid: passwordValid,
         confirmPasswordValid: confirmPasswordValid
@@ -60,10 +69,10 @@ export class SignUp extends React.Component{
 
   validateForm() {
     this.setState({
-        formValid: this.state.emailValid && this.state.passwordValid && this.state.confirmPasswordValid
+        formValid: this.state.usernameValid && this.state.emailValid && this.state.passwordValid && this.state.confirmPasswordValid
     });
   }
-
+/*
   handleSubmit = (event) => {
     event.preventDefault();
     if (this.state.formValid) {
@@ -73,7 +82,46 @@ export class SignUp extends React.Component{
     } else {
         console.log('Form is invalid. Cannot submit.');
     }
-  };
+  };*/
+
+  handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if(this.state.formValid){
+      try{
+        const response = await fetch('/auth/register', {
+
+          method: 'POST',
+          headers: {
+            'Content-Type' : 'application/json',
+          },
+          body: JSON.stringify({
+            username: this.state.username,
+            email: this.state.emailAddress,
+            password: this.state.password
+          })
+        });
+
+        const data = await response.json();
+
+        if(response.ok){
+          localStorage.setItem('userId', data.data.userId);
+          this.setState({redirectToHome : true});
+        }
+        else{
+          console.log("hey",data.message);
+          this.setState({ errorMessage: data.message || 'Registration failed' });
+        }
+
+      }
+      catch(error){
+        console.log('Error: ', error);
+        this.setState({errorMessage: "Registration failed"});
+      }
+    } else {
+      console.log('Form is invalid. Cannot submit.');
+    }
+  }
 
   render(){
     if (this.state.redirectToHome) {
@@ -85,21 +133,48 @@ export class SignUp extends React.Component{
                 {/*<div className={styles.loginLogoContainer}>
                   <img className={styles.logo} alt="tunetrail logo" src={Logo} />
                 </div>*/}
+                {this.state.errorMessage && (
+                  <div className="alert alert-danger" role="alert">
+                    {this.state.errorMessage}
+                  </div>
+                )} 
                 <div className={styles.loginHeaderContainer}>
-                  <h2>Sign Up</h2>
+                  <h2>Register</h2>
                 </div>
+
+                <div className={styles.formgroup}>
+                    <label htmlFor="username">Username:</label>
+                    <input 
+                      type="text" 
+                      className="form-control" 
+                      id="username" 
+                      name="username"
+                      value={this.state.username}
+                      onChange={this.handleInputChange} 
+                      required />
+                    <span className={`${styles.error} ${this.state.formErrors.username ? 'visible' : ''} ${this.state.errorMessage? 'visible' : ''}`} style={{margin: '10px'}}>{this.state.formErrors.username}</span>
+                    
+                  </div>
 
                   <div className={styles.formgroup}>
                     <label htmlFor="emailAddress">Email Address:</label>
                     <input 
-                      type="text" 
+                      type="email" 
                       className="form-control" 
                       id="emailAddress" 
                       name="emailAddress"
                       value={this.state.emailAddress}
                       onChange={this.handleInputChange} 
-                      required />
-                    <span className={`${styles.error} ${this.state.formErrors.emailAddress ? 'visible' : ''}`} style={{margin: '10px'}}>{this.state.formErrors.emailAddress}</span>
+                      required 
+                      placeholder='Email Address'/>
+                    <div style={{ margin: '10px 0' }}>
+                      <span className={`${styles.error} ${this.state.formErrors.emailAddress ? 'visible' : ''}`} style={{ display: 'block', marginBottom: '5px' }}>
+                          {this.state.formErrors.emailAddress}
+                      </span>
+                      <span className={`${styles.error} ${this.state.errorMessage ? 'visible' : ''}`} style={{ display: 'block' }}>
+                          {this.state.errorMessage}
+                      </span>
+                  </div>
                   </div>
                   <div className={styles.formgroup}>
                     <label htmlFor="password">Password:</label>
@@ -136,7 +211,7 @@ export class SignUp extends React.Component{
                     <label htmlFor="rememberMe">Remember me</label>
                   </div>
 
-                  <button type="submit" className={`${styles.btn} btn`} disabled={!this.state.formValid}>Sign Up</button>
+                  <button type="submit" className={`${styles.btn} btn`} disabled={!this.state.formValid}>Register</button>
                   <hr></hr>
                   <div>
                       Already have an account? <Link to='/login' className={styles.link}>Login</Link>

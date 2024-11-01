@@ -4,12 +4,12 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 //pages
 import { SplashPage } from './pages/SplashPage';
 import { HomePage } from './pages/HomePage';
-import { ProfilePage } from './pages/ProfilePage';
+import ProfilePage from './pages/ProfilePage';
 import { PlaylistsPage } from './pages/PlaylistsPage';
 //components
 import {Login} from './components/Login';
 import { SignUp } from './components/SignUp';
-import { OnePlaylist } from './pages/OnePlaylist';
+import OnePlaylist  from './pages/OnePlaylist';
 
 
 const router = createBrowserRouter([
@@ -39,12 +39,12 @@ const router = createBrowserRouter([
         errorElement: <div>404 Not Found</div>
     },
     {
-        path:"/profile",
+        path:"/profile/:uId",
         element: <ProfilePage/>,
         errorElement: <div>404 Not Found</div>
     },
     {
-        path:"/playlist",
+        path:"/playlist/:pId",
         element: <OnePlaylist/>,
         errorElement: <div>404 Not Found</div>
     }

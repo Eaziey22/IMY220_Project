@@ -8,29 +8,45 @@ import { AddSong } from "./addSong";
 
 export class Feed extends React.Component{
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            playlists: this.props.playlists,
+            userSongs: this.props.userSongs,
+        };
+    }
+
+    fetchPlaylists = async () => {
+        const { fetchUserPlaylists } = this.props; 
+        const updatedPlaylists = await fetchUserPlaylists(); 
+        this.setState({ playlists: updatedPlaylists });
+    };
+
+    handleSongAddition = async () => {
+        
+        await this.fetchPlaylists();
+    };
+
     render(){
+        
+        const {playlists, userSongs, recentMusicData, fetchUserSongs, fetchUserPlaylists } = this.props;
+
         return (
+
+
             <div className={styles.feed}>
-                <div className={styles.recentlyPlayedSongs}>
-                    <h3 className={styles.header}>Recently played songs</h3>
-                    <div className={`${styles.recentlyPlayedSongsContainer} row`}>
-                        {this.props.recentMusicData.map((music, index) => (
-                            <div className="col-12 col-md-6 col-lg-3 mb-4" key={index}>
-                                <Song image={music.image} name={music.name} />
-                            </div>
-                        ))}
-                    </div>
-                </div>
+                
                 <div className={styles.songsOfTheWeek}>
                     <h3 className={styles.header}>Your Songs</h3>
-                    <div className={`${styles.songsOfTheWeekContainer} row`}>
-                        {this.props.songsOfWeekData.slice(0,7).map((music, index) => (
+                     <div className={`${styles.songsOfTheWeekContainer} row`}>
+                        {userSongs.slice(0,7).map((music, index) => (
                             <div className="col-12 col-md-6 col-lg-3" key={index}>
-                                <Song image={music.image} name={music.name} />
+                                
+                                {userSongs?<Song onHandleSubmit = {this.fetchUserSongs} image="" name={music.name} songId = {music._id} onSongAdded={this.handleSongAddition}/>: <div></div>}
                             </div>
                         ))}
                         <div className="col-12 col-md-6 col-lg-3">
-                            <AddSong/>
+                            <AddSong fetchUserSongs={fetchUserSongs}/>
                         </div>
                     </div>
                     
@@ -38,14 +54,24 @@ export class Feed extends React.Component{
                 <div className={styles.playlists}>
                     <h3 className={styles.header}>Your Playlists</h3>
                     <div className={`${styles.playlistsContainer} row`}>
-                        {this.props.playlists.slice(0, 5).map((playlist, index) => (
+                        {playlists.slice(0, 5).map((playlist, index) => (
                             <div className="col-12 col-md-6 col-lg-2" key={index}>
-                                <PlayListPreview image={playlist.image} title={playlist.title} songAmount={playlist.songAmount} />
+                                <PlayListPreview image='' title={playlist.playlistName} songAmount={playlist.songs.length} playlistId = {playlist._id}/>
                             </div>
                         ))}
                         <div className="col-12 col-md-6 col-lg-3">
                             <CreatePlaylist />
                         </div>
+                    </div>
+                </div>
+                <div className={styles.playlists}>
+                    <h3 className={styles.header}>Your friends Playlists</h3>
+                    <div className={`${styles.playlistsContainer} row`}>
+                        {playlists.slice(0, 5).map((playlist, index) => (
+                            <div className="col-12 col-md-6 col-lg-2" key={index}>
+                                <PlayListPreview image='' title={playlist.playlistName} songAmount={playlist.songs.length} playlistId = {playlist._id}/>
+                            </div>
+                        ))}
                     </div>
                 </div>
 

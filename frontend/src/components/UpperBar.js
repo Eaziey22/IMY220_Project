@@ -22,11 +22,13 @@ export class UpperBar extends React.Component {
 
     goToProfile = () =>{
         console.log("going to profile");
-        this.setState({redirectTo: '/profile',showMenu: false});
+        const profileRoute = `/profile/${localStorage.getItem("userId")}`;
+    this.setState({redirectTo: profileRoute,showMenu: false});
     }
 
     logOut = () =>{
         console.log("logging out");
+        localStorage.removeItem('userId');
         this.setState({ redirectTo: '/',showMenu: false});
     }
 
