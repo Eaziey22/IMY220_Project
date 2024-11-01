@@ -14,29 +14,12 @@ export class ProfileFeed extends React.Component{
     
     constructor(props) {
         super(props);
-        /*this.state = {
-            showMenu: false,
-            showEditForm: false,
-            userData: this.props.userData,
-            username: this.props.userData.username,
-            userPicture: null,
-            errorMessage: '',
-            playlistsData: null,
-            songData: null,
-            friends: this.props.friends,
-            isUserProfile: true,
-            showFriends: false,
-            goToFriendProfile: false,
-            friendId: null,
-            paramsId: this.props.paramsId
-            
-        }; */
 
         this.state = {
             showMenu: false,
             showEditForm: false,
             userData: null,
-            userPicture: null,
+            profilePicture: null,
             errorMessage: '',
             playlistsData: null,
             songData: null,
@@ -45,7 +28,11 @@ export class ProfileFeed extends React.Component{
             showFriends: false,
             goToFriendProfile: false,
             friendId: null,
-            paramsId: this.props.paramsId
+            paramsId: this.props.paramsId,
+            username: '',
+            isUserFriend: false,
+            
+            
         }
     }
 
@@ -59,23 +46,32 @@ export class ProfileFeed extends React.Component{
         return true;
     }
 
+    isFriend(friendId, friends) {
+        console.log("isFriend: ", friends.some(friendID => friendID === friendId));
+        return friends.some(friendID => friendID === friendId);
+    }
+
+    toggleIsFriend = () =>{
+
+        //this.addFriend(this.props.paramsId, this.props.paramsId);
+        
+        this.setState(prevState => ({
+            isUserFriend: !prevState.isUserFriend
+        }));
+
+        
+    }
+
     goToFriendProfile= (event, friendId) =>{
         event.preventDefault();
-        
-        //this.setState({goToFriendProfile : true, friendId: friendId});
-        //this.setState({isUserProfile: this.isUser(this.props.paramsId) });
-
-        //console.log("friendId: " , friendId);
-        //this.fetchUserProfile(friendId);
 
         this.setState({ goToFriendProfile: true, friendId }, () => {
             this.setState({isUserProfile: this.isUser(friendId) });
-            this.fetchUserProfile(friendId); // Fetch the friend's profile
-            this.setState({ goToFriendProfile: false }); // Reset to prevent further navigation
+            this.fetchUserProfile(friendId); 
+            this.setState({ goToFriendProfile: false }); 
             this.closeMenu();
         });
-        /*this.fetchUserPlaylists();
-        this.fetchUserSongs();*/
+        
     }
 
     toggleMenu = () => {
@@ -138,26 +134,38 @@ export class ProfileFeed extends React.Component{
     }
     
     handleFileChange = (e) => {
-        this.setState({ userPicture: URL.createObjectURL(e.target.files[0]) });
+        const image = e.target.files[0];
+        this.setState(prevState => ({
+            userData: {
+                ...prevState.userData,
+                profilePicture: image
+            }
+        }));
     };
     
     handleFormSubmit = async (e) => {
         e.preventDefault();
 
+        const formData = new FormData();
+
         const updatedUserData = this.state.userData;
+
+        formData.append("username", updatedUserData.username);
+        //formData.append("email", updatedUserData.email);
+
+        if(updatedUserData.profilePicture){
+            formData.append("profilePicture", updatedUserData.profilePicture);
+        }
 
 
         try{
 
             const response = await fetch(`/updateUser/${this.props.paramsId}`, {
                 method : "PUT",
-                headers: {
-                    "content-Type": "application/json"
-                },
-                body: JSON.stringify(updatedUserData)
+                body: formData
             });
 
-            result = await response.json();
+            const result = await response.json();
 
             if(result.status === "error"){
                 this.setState({errorMessage: result.message });
@@ -167,6 +175,7 @@ export class ProfileFeed extends React.Component{
                 console.log(result.message);
             }
 
+            this.fetchUserProfile(this.props.paramsId);
 
         }
         catch(error){
@@ -179,26 +188,12 @@ export class ProfileFeed extends React.Component{
 
     async componentDidMount() {
         this.setState({isUserProfile: this.isUser(this.props.paramsId) });
-        //this.fetchUserPlaylists();
-        //this.fetchUserSongs();
+        
         await this.fetchUserProfile(this.props.paramsId);
+
+        
     }
 
-    /*
-    async componentDidUpdate(prevProps) {
-        // Check if the paramsId (representing the profile being viewed) has changed
-
-        //console.log("prevprops:", prevProps);
-        console.log("prevprops:", prevProps, "newProps:",  this.props.paramsId);
-        if (prevProps.paramsId !== this.props.paramsId) {
-            console.log("prevprops:", prevProps, "newProps:",  this.props.paramsId);
-            // Update the user profile state and re-fetch the friend's data
-            this.setState({ isUserProfile: this.isUser(this.props.paramsId) });
-            //await this.fetchUserPlaylists();
-            //await this.fetchUserSongs();
-            //await this.fetchUserProfile();
-        }
-    }*/
 
     fetchUserProfile = async(uId) =>{
 
@@ -223,6 +218,9 @@ export class ProfileFeed extends React.Component{
                 this.setState({userData: udata.data, loading: false}, () => {
                     console.log("State updated:", this.state.userData);
                 });
+
+                this.setState({username: udata.data.username});
+                this.setState({profilePicture: udata.data.profilePicture});
                 
             }
             else{
@@ -233,6 +231,7 @@ export class ProfileFeed extends React.Component{
             this.fetchUserPlaylists(userId);
             this.fetchUserFriends(userId);
             this.fetchUserSongs(userId);
+            this.setState({ isUserFriend: this.isFriend(this.props.paramsId, udata.data.friends)});
 
         }
         catch(error){
@@ -252,7 +251,8 @@ export class ProfileFeed extends React.Component{
 
             if(response.ok){
                 const data = await response.json();
-                this.setState({ playlistsData: data.data.playlists, loading: false, errorMessage: '' });
+                const sortedPlaylists = data.data.playlists.sort((a,b) => new Date(b.dateCreated) - new Date(a.dateCreated));
+                this.setState({ playlistsData: sortedPlaylists, loading: false, errorMessage: '' });
                 
             }
             else{
@@ -277,7 +277,8 @@ export class ProfileFeed extends React.Component{
 
             if(response.ok){
                 const data = await response.json();
-                this.setState({ songData: data.data.songs, loading: false, errorMessage: '' } , () =>{
+                const sortedSongs = data.data.songs.sort((a,b) => new Date(b.dateAdded) - new Date(a.dateAdded));
+                this.setState({ songData: sortedSongs, loading: false, errorMessage: '' } , () =>{
                     console.log("songData:", this.state.songData);
                 });
                 
@@ -318,11 +319,107 @@ export class ProfileFeed extends React.Component{
         }
     }
 
+    addFriend = async(uId, friendId) =>{
+
+        //console.log("fId:", friendId);
+        
+        try{
+
+            const response = await fetch(`/user/${uId}/addFriend/${friendId}`, {
+                method : "PUT",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if(response.ok){
+                const data = await response.json();
+
+                const updatedFriends = data.data.user.friends;
+    
+                /*this.setState({
+                    userData: data.data.user,
+                    isUserFriend: this.isFriend(friendId, updatedFriends)
+                });*/
+            
+                //console.log(data.data.user);
+                await this.fetchUserProfile(data.data.friend._id);
+
+                this.setState({
+                    isUserFriend: this.isFriend(friendId, updatedFriends)
+                });
+            }
+            else{
+                const data = await response.json();
+                this.setState({errorMessage: data.message || 'Failed to retrieve friends'});
+
+                
+            }
+        }
+        catch(err){
+
+            console.error('Error fetching friends:', err);
+            this.setState({ errorMessage: 'An error occurred while retrieving friends' });
+
+        }
+    }
+
+    removeFriend = async(uId, friendId) =>{
+
+        console.log("hh: ", uId, ":", friendId);
+
+        try{
+
+            const response = await fetch(`/user/${uId}/removeFriend/${friendId}`, {
+                method : "PUT",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if(response.ok){
+                const data = await response.json();
+
+                const updatedFriends = data.data.user.friends;
+    
+                /*this.setState({
+                    userData: data.data.user,
+                    isUserFriend: this.isFriend(friendId, updatedFriends)
+                });*/
+            
+                //console.log(data.data.user);
+                await this.fetchUserProfile(data.data.friend._id);
+
+                this.setState({
+                    isUserFriend: this.isFriend(friendId, updatedFriends)
+                });
+
+                //return data.status;
+            }
+            else{
+                const data = await response.json();
+                this.setState({errorMessage: data.message || 'Failed to retrieve friends'});
+
+                
+            }
+        }
+        catch(err){
+
+            console.error('Error fetching friends:', err);
+            this.setState({ errorMessage: 'An error occurred while retrieving friends' });
+
+        }
+    }
+
     render(){
 
-        const { showMenu,showEditForm, userData, userPicture, playlistsData, songData, friends, isUserProfile, showFriends, goToFriendProfile, friendId } = this.state;
+        const { showMenu,showEditForm, userData, profilePicture, playlistsData, songData, friends, isUserProfile, showFriends, goToFriendProfile, friendId, username, paramsId, isUserFriend } = this.state;
         
-        //const userName = userData.username;
+        const userName = username;
+
+        console.log("pId:",paramsId);
+
+        
 
         if (goToFriendProfile) {
             var profileRoute = `/profile/${friendId}`
@@ -340,25 +437,37 @@ export class ProfileFeed extends React.Component{
                 <div className={styles.profile} >
                     {userData? <div className={`${styles.profileContainer} row`}>
                         <div className={`${styles.profilePictureContainer} col-12 col-md-6 col-lg-3`}>
-                            {userPicture ? (
-                                  <img src={userPicture} alt="Profile" className={styles.profileImage} />
+                            {profilePicture ? (
+                                  <img src={profilePicture} alt="Profile" className={styles.profileImage} />
                                 ) : (
                                   <FontAwesomeIcon icon={faUserCircle} color="#37D0D6" className={styles.icon} />
                                 )}
                         </div>
                         <div className={` ${styles.profileInfo} col-12 col-md-6 col-lg-3`}>
-                            <h3>{userData.username}</h3>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <h3 style={{ marginRight: '10px' }}>{userData.username}</h3>
+                                {isUserFriend && <p style={{ color: 'green' }}>friends</p>}
+                            </div>
                             <div className={`${styles.playlistFriendsContainer}`}>
                                 <p>{playlistsData ? playlistsData.length : 0} Playlists</p>
-                                <p onClick={this.toggleFriendsMenu} className = {styles.friendsText}>{friends ? friends.length : 0} friends</p>
+                                {isUserFriend || isUserProfile? <p onClick={this.toggleFriendsMenu} className = {styles.friendsText}>{friends ? friends.length : 0} friends</p>
+                                : <p className = {styles.notfriendsText}>{friends ? friends.length : 0} friends</p>}
                             </div>
-                            {!isUserProfile? <button className={`${styles.followButton} btn`}>Follow</button>: <div></div>}
+                            {
+                                !isUserProfile ? (
+                                    isUserFriend ? (
+                                        <button className={`${styles.followButton} btn`} onClick={() => this.removeFriend(localStorage.getItem("userId"), paramsId)}>Unfollow</button>
+                                    ) : (
+                                        <button className={`${styles.followButton} btn`} onClick={() => this.addFriend(localStorage.getItem("userId"), this.props.paramsId )}>Follow</button>
+                                    )
+                                ) : null
+                            }
                         </div>
                     
                         <div className={`${styles.menuContainer}`} >
-                            <button className={styles.menuButton} onClick={this.toggleMenu}>
+                        {isUserProfile?<button className={styles.menuButton} onClick={this.toggleMenu}>
                                 <FontAwesomeIcon icon={faEllipsisV} />
-                            </button>
+                            </button>:<div></div>}
                             {showMenu && (
                                 
                                 <div className={styles.menu} >
@@ -386,10 +495,10 @@ export class ProfileFeed extends React.Component{
                               />
                             </div>
                             <div className={styles.formGroup}>
-                              <label htmlFor="userPicture">Profile Picture</label>
+                              <label htmlFor="profilePicture">Profile Picture</label>
                               <input
                                 type="file"
-                                id="userPicture"
+                                id="profilePicture"
                                 onChange={this.handleFileChange}
                                 className={`${styles.formControl} form-control`}
                               />

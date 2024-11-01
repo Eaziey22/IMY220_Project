@@ -25,8 +25,12 @@ const path = require('path');
 //CREATE APP
 const app = express();
 
-const storage = multer.memoryStorage(); 
-const upload = multer({ storage: storage });
+//const storage = multer.memoryStorage(); 
+//const upload = multer({ storage: storage });
+
+const upload = multer({
+    dest: path.join(__dirname, '../../frontend/public/assets/images/profilePictures')
+});
 
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
@@ -138,6 +142,8 @@ app.get("/getUser/:id", async (req, res) =>{
 
         const usr = await User.getUserById(id);
 
+        console.log(usr);
+
         if(!usr){
             return res.status(404).json({
                 status: "error", 
@@ -148,7 +154,7 @@ app.get("/getUser/:id", async (req, res) =>{
         return res.status(200).json({
             status: "success", 
             message : `User with userId: ${id} retrieved successfully`, 
-            data : {userId: usr._id, username: usr.username, friends: usr.friends}
+            data : {userId: usr._id, username: usr.username, friends: usr.friends, profilePicture: usr.profilePicture}
         });
     }
     catch(error){
@@ -161,9 +167,9 @@ app.get("/getUser/:id", async (req, res) =>{
     
 });
 
-app.put("/updateUser/:id", async (req, res) =>{
+app.put("/updateUser/:id", upload.single('profilePicture'),  async (req, res) =>{
     const id = req.params.id;
-
+    let updateData = {};
     try{
 
         if (!ObjectId.isValid(id)) {
@@ -173,7 +179,13 @@ app.put("/updateUser/:id", async (req, res) =>{
             });
         }
 
-        const result = await User.updateUser(id , req.body);
+        updateData = req.body;
+
+        if(req.file){
+            updateData.profilePicture = `/assets/images/profilePictures/${req.file.filename}`;
+        }
+
+        const result = await User.updateUser(id , updateData);
 
         if(!result){
             return res.status(404).json({
@@ -296,7 +308,7 @@ app.get("/user/getFriends/:userId", async(req, res) =>{
     }
 })
 
-app.put("user/:userId/addFriend/:friendId", async (req, res) =>{
+app.put("/user/:userId/addFriend/:friendId", async (req, res) =>{
 
     const {userId, friendId} = req.params;
 
@@ -309,7 +321,8 @@ app.put("user/:userId/addFriend/:friendId", async (req, res) =>{
         }
 
         const result = await User.addFriend(userId, friendId);
-        if(result === 0){
+        const result2 = await User.addFriend(friendId, userId);
+        if(result === 0  && result2 === 0){
             
             return res.status(404).json({
                 status: "error", 
@@ -318,11 +331,12 @@ app.put("user/:userId/addFriend/:friendId", async (req, res) =>{
         }
 
         const updatedUser = await User.getUserById(userId);
+        const updatedFriend = await User.getUserById(friendId);
 
         return res.status(200).json({
             status: "success",
             message: `Friend with id: ${friendId} added to friends`, 
-            data: {updatedCount: result, user: updatedUser}
+            data: {updatedCount: result, user: updatedUser, friend: updatedFriend}
         });
 
 
@@ -336,7 +350,58 @@ app.put("user/:userId/addFriend/:friendId", async (req, res) =>{
     }
 });
 
-app.put("user/:userId/removeFriend/:friendId", async (req, res) =>{
+app.get("/user/getSuggestedFriends/:userId", async (req, res) =>{
+
+    const {userId}= req.params;
+
+    try{
+
+        if (!ObjectId.isValid(userId) ) {
+            return res.status(400).json({
+                status: "error", 
+                message: "Invalid user ID format" });
+        }
+
+        const user = await User.getUserById(userId);
+        //console.log("user", result);
+
+        if (!user) {
+            return res.status(404).json({
+                status: "error",
+                message: "User not found"
+            });
+        }
+        
+        //const friends = await User.getFriends(user.friends);
+        
+        var suggestedFriends = await User.getSuggestedFriends(user.friends, userId);
+        
+        //suggestedFriends.splice(userId);
+
+        /*
+        const friends = await Promise.all(result.map(async (friendId) => {
+            const friend = await User.getUserById(friendId);
+            return friend;
+        }));*/
+
+        return res.status(200).json({
+            status: "success",
+            message: `Friends retrieved successfully`,
+            data: { suggestedFriends }
+        });
+
+
+    }
+    catch(error){
+        console.log(`Error fetching friends: ${error}`);
+        res.status(500).json({
+            status: "error", 
+            message: "Internal server error"
+        });
+    }
+})
+
+app.put("/user/:userId/removeFriend/:friendId", async (req, res) =>{
 
     const {userId, friendId} = req.params;
 
@@ -349,7 +414,8 @@ app.put("user/:userId/removeFriend/:friendId", async (req, res) =>{
         }
 
         const result = await User.removeFriend(userId, friendId);
-        if(result === 0){
+        const result2 = await User.removeFriend(friendId, userId);
+        if(result === 0 && result2 === 0){
             
             return res.status(404).json({
                 status: "error", 
@@ -358,11 +424,12 @@ app.put("user/:userId/removeFriend/:friendId", async (req, res) =>{
         }
 
         const updatedUser = await User.getUserById(userId);
+        const updatedFriend = await User.getUserById(friendId);
 
         return res.status(200).json({
             status: "success",
             message: `Friend with id: ${friendId} removed from friends`, 
-            data: {updatedCount: result, user: updatedUser}
+            data: {updatedCount: result, user: updatedUser, friend: updatedFriend}
         });
 
 

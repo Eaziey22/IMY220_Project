@@ -87,10 +87,11 @@ export class HomePage extends React.Component{
         try{
 
             const response = await fetch(`/playlists/getUserPlaylists/${userId}`);
-
+            const data = await response.json();
             if(response.ok){
-                const data = await response.json();
-                this.setState({ playlistsData: data.data.playlists, loading: false, errorMessage: '' });
+                
+                const sortedPlaylists = data.data.playlists.sort((a,b) => new Date(b.dateCreated) - new Date(a.dateCreated));
+                this.setState({ playlistsData: sortedPlaylists, loading: false, errorMessage: '' });
                 
             }
             else{
@@ -111,10 +112,12 @@ export class HomePage extends React.Component{
 
         try{
             const response = await fetch(`/songs/getUserSongs/${userId}`);
+            const data = await response.json();
 
             if(response.ok){
-                const data = await response.json();
-                this.setState({ songData: data.data.songs, loading: false, errorMessage: '' } , () =>{
+                
+                const sortedSongs = data.data.songs.sort((a,b) => new Date(b.dateAdded) - new Date(a.dateAdded));
+                this.setState({ songData: sortedSongs, loading: false, errorMessage: '' } , () =>{
                     console.log(this.state.songData);
                 });
                 
@@ -132,7 +135,7 @@ export class HomePage extends React.Component{
     render(){
         const {playlistsData, loading, errorMessage, songData } = this.state;
 
-        console.log("songs: ", songData);
+        //console.log("songs: ", songData);
         return(
             <div style={{ display: 'flex',width: '1270px', height: 'auto', flexDirection: 'column', marginLeft: '250px', marginTop: '110px', padding:0, backgroundColor: '#ECF6F6' }}>
                 <UpperBar />

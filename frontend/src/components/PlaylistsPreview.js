@@ -2,6 +2,7 @@ import React from "react";
 import { Navigate } from "react-router-dom";
 /*import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';*/
 import * as styles from '../styles/PlaylistPreview.module.css'
+import { Card, Button } from 'react-bootstrap';
 
 export class PlayListPreview extends React.Component{
 

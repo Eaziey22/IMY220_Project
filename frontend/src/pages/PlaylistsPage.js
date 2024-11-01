@@ -25,10 +25,11 @@ export class PlaylistsPage extends React.Component{
         try{
 
             const response = await fetch(`/playlists/getUserPlaylists/${userId}`);
+            const data = await response.json();
 
             if(response.ok){
-                const data = await response.json();
-                this.setState({ playlistsData: data.data.playlists, loading: false, errorMessage: '' });
+                const sortedPlaylists = data.data.playlists.sort((a,b) => new Date(b.dateCreated) - new Date(a.dateCreated));
+                this.setState({ playlistsData: sortedPlaylists, loading: false, errorMessage: '' });
                 
             }
             else{

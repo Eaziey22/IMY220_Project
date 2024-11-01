@@ -15,7 +15,8 @@ export class userModel{
             password, 
             friends: [],
             playlists: [],
-            songs: []
+            songs: [],
+            profilePicture: ''
         });
 
         console.log("User added to database");
@@ -175,6 +176,34 @@ export class userModel{
         } else {
             return []; 
         }
+    }
+
+    async getSuggestedFriends(friends, userId){
+
+
+        if (friends && friends.length > 0){
+            const excludedFriends = friends.map(id => new ObjectId(id));
+            excludedFriends.push(new ObjectId(userId));
+
+            const results = await this.collection.find({
+                _id: { $nin: excludedFriends }
+              }).toArray();
+
+            return results;
+        }
+        else{
+
+            const excludedFriends = [new ObjectId(userId)];
+
+            const results = await this.collection.find({
+                _id: { $nin: excludedFriends }
+              }).toArray();
+
+            //console.log(results);
+
+            return results;
+        }
+        
     }
     
 

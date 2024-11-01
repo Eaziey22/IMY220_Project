@@ -35,7 +35,8 @@ var userModel = exports.userModel = /*#__PURE__*/function () {
                 password: password,
                 friends: [],
                 playlists: [],
-                songs: []
+                songs: [],
+                profilePicture: ''
               });
             case 2:
               result = _context.sent;
@@ -443,6 +444,53 @@ var userModel = exports.userModel = /*#__PURE__*/function () {
         return _getFriends.apply(this, arguments);
       }
       return getFriends;
+    }()
+  }, {
+    key: "getSuggestedFriends",
+    value: function () {
+      var _getSuggestedFriends = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee16(friends, userId) {
+        var excludedFriends, results, _excludedFriends, _results;
+        return _regeneratorRuntime().wrap(function _callee16$(_context16) {
+          while (1) switch (_context16.prev = _context16.next) {
+            case 0:
+              if (!(friends && friends.length > 0)) {
+                _context16.next = 9;
+                break;
+              }
+              excludedFriends = friends.map(function (id) {
+                return new ObjectId(id);
+              });
+              excludedFriends.push(new ObjectId(userId));
+              _context16.next = 5;
+              return this.collection.find({
+                _id: {
+                  $nin: excludedFriends
+                }
+              }).toArray();
+            case 5:
+              results = _context16.sent;
+              return _context16.abrupt("return", results);
+            case 9:
+              _excludedFriends = [new ObjectId(userId)];
+              _context16.next = 12;
+              return this.collection.find({
+                _id: {
+                  $nin: _excludedFriends
+                }
+              }).toArray();
+            case 12:
+              _results = _context16.sent;
+              return _context16.abrupt("return", _results);
+            case 14:
+            case "end":
+              return _context16.stop();
+          }
+        }, _callee16, this);
+      }));
+      function getSuggestedFriends(_x24, _x25) {
+        return _getSuggestedFriends.apply(this, arguments);
+      }
+      return getSuggestedFriends;
     }()
   }]);
 }();

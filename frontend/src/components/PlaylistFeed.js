@@ -119,6 +119,7 @@ export class PlaylistFeed extends React.Component{
 
       if(response.ok){
         console.log("song removed from playlist successfully.");
+        this.fetchPlaylistSongs(this.state.playlistData._id);
         //alert("song removed from playlist successfully.")
       }
       else{
@@ -259,59 +260,67 @@ export class PlaylistFeed extends React.Component{
                   <h3 className={styles.header}>Songs</h3>
                   <div className={styles.playlistSongsContainer}>
                     <div className={styles.searchContainer}>
-                      <input type="text" className="form-control" placeholder="Search..." style={{ padding: '5px 10px', width: '70%' }} />
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Search..."
+                        style={{ padding: '5px 10px', width: '70%' }}
+                      />
                     </div>
                     <div className={styles.tableContainer}>
                       <table className={`${styles.table} table}`}>
                         <thead className="thead-dark">
-                            <tr>
-                                <th>#</th>
-                                <th>Title</th>
-                                <th>Artist</th>
-                                <th>Album Name</th>
-                                {/*<th>Played</th>
-                                <th>Duration</th>*/}
-                                <th></th>
-                            </tr>
+                          <tr>
+                            <th>#</th>
+                            <th>Title</th>
+                            <th>Artist</th>
+                            <th>Album Name</th>
+                            <th></th>
+                          </tr>
                         </thead>
                         <tbody>
-                            {playlistSongs.map((song, index) => (
-                                <tr key={song._id}>
-                                    <td>{index + 1}</td>
-                                    <td>{song.name}</td>
-                                    <td>{song.artistName}</td>
-                                    <td>{song.album}</td>
-                                    {/*<td>{song.played}</td>
-                                    <td>{song.duration}</td>*/}
-                                    <td>
-                                        <FontAwesomeIcon icon={faHeart} size="3x" color="#ff0000" className={styles.heartIcon} onClick={() => this.toggleRemovePrompt(song._id)} />
-                                    </td>
-                                </tr>
-                            ))}
+                          {playlistSongs.map((song, index) => (
+                            <tr key={song._id}>
+                              <td>{index + 1}</td>
+                              <td>{song.name}</td>
+                              <td>{song.artistName}</td>
+                              <td>{song.album}</td>
+                              <td>
+                                <FontAwesomeIcon
+                                  icon={faHeart}
+                                  size="1x"
+                                  color="#ff0000"
+                                  className={styles.heartIcon}
+                                  onClick={() => this.toggleRemovePrompt(song._id)}
+                                />
+                              </td>
+                            </tr>
+                          ))}
                         </tbody>
                       </table>
                     </div>
+                        
+                    {showRemovePrompt && (
+                      <>
+                        
+                        <div className={styles.backdrop} onClick={() => this.setState({ showRemovePrompt: false })} />
+                    
+                        <div className={styles.removePrompt}>
+                          <h4>Do you want to remove this song from the playlist?</h4>
+                          <div className={styles.promptButtons}>
+                            <button onClick={() => this.handleRemoveSong()} className={styles.confirmButton}>
+                              Yes
+                            </button>
+                            <button onClick={() => this.setState({ showRemovePrompt: false })} className={styles.cancelButton}>
+                              No
+                            </button>
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
-                {showRemovePrompt && (
-                  <div className={styles.removePrompt}>
-                      <h4>Do you want to remove this song from the playlist?</h4>
-                      <div className={styles.promptButtons}>
-                          <button 
-                              onClick={() =>this.handleRemoveSong()} 
-                              className={styles.confirmButton}
-                          >
-                              Yes
-                          </button>
-                          <button 
-                              onClick={() => this.setState({showRemovePrompt: false})} 
-                              className={styles.cancelButton}
-                          >
-                              No
-                          </button>
-                      </div>
-                  </div>
-              )}
+                
 
                 {/*<div className={styles.songsOfTheWeek}>
                     <h3 className={styles.header}>Your Songs</h3>

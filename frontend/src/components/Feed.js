@@ -4,6 +4,7 @@ import { Song } from "./Song";
 import { PlayListPreview } from "./PlaylistsPreview";
 import { CreatePlaylist } from "./createPlaylist";
 import { AddSong } from "./addSong";
+import { SuggestedFriend } from "./suggestedFriend";
 
 
 export class Feed extends React.Component{
@@ -13,7 +14,12 @@ export class Feed extends React.Component{
         this.state = {
             playlists: this.props.playlists,
             userSongs: this.props.userSongs,
+            suggestedFriendsData: null
         };
+    }
+
+    async componentDidMount(){
+        await this.fetchSuggestedFriends(localStorage.getItem('userId'));
     }
 
     fetchPlaylists = async () => {
@@ -27,14 +33,52 @@ export class Feed extends React.Component{
         await this.fetchPlaylists();
     };
 
+    fetchSuggestedFriends = async (userId) =>{
+
+        try{
+            const response = await fetch(`/user/getSuggestedFriends/${userId}`);
+
+            if(response.ok){
+                const data = await response.json();
+                this.setState({ suggestedFriendsData: data.data.suggestedFriends, loading: false, errorMessage: '' } , () =>{
+                    console.log(this.state.suggestedFriendsData);
+                });
+                
+            }
+            else{
+                this.setState({errorMessage: data.message || 'Failed to get suggested friends'});
+            }
+        }
+        catch(err){
+            console.error('Error fetching suggested friends:', err);
+            this.setState({ errorMessage: 'An error occurred while fetching suggested friends' });
+        }
+    }
+
     render(){
         
         const {playlists, userSongs, recentMusicData, fetchUserSongs, fetchUserPlaylists } = this.props;
+
+        const {suggestedFriendsData} = this.state;
 
         return (
 
 
             <div className={styles.feed}>
+
+                <div className={styles.songsOfTheWeek}>
+                    <h3 className={styles.header}>suggested friends</h3>
+                     <div className={`${styles.songsOfTheWeekContainer} row`}>
+                        {suggestedFriendsData? 
+                            (suggestedFriendsData.slice(0,8).map((friend, index) => (
+                                <div className="col-12 col-md-6 col-lg-3" key={index}>
+
+                                   <SuggestedFriend  friend = {friend}/>
+                                </div>
+                        ))):( <div></div>)}
+                        
+                    </div>
+                </div>
                 
                 <div className={styles.songsOfTheWeek}>
                     <h3 className={styles.header}>Your Songs</h3>
