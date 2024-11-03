@@ -6,17 +6,26 @@ export class userModel{
         this.collection = dbName.collection("User");
     }
 
-    async createUser(username, email, password){
+    async createUser(name, surname, username,email, password, bio, pronouns, instagram, facebook, twitter ){
 
         
         const result = await this.collection.insertOne({
+            name,
+            surname,
             username,
             email,
             password, 
             friends: [],
             playlists: [],
             songs: [],
-            profilePicture: ''
+            profilePicture: '',
+            bio,
+            pronouns,
+            instagram,
+            facebook,
+            twitter,
+            likedSongs: [],
+            dateJoined: new Date()
         });
 
         console.log("User added to database");
@@ -99,6 +108,52 @@ export class userModel{
         return result.modifiedCount;
     }
 
+    async addToLikedPlaylists(userId, playlistId){
+
+        const result = await this.collection.updateOne(
+            {_id : new ObjectId(userId)},
+            {
+                $addToSet: {likedPlaylists: new ObjectId(playlistId)}
+            }
+        );
+
+        console.log(`playlist added to liked playlists`);
+
+        return result.modifiedCount;
+    }
+
+    async removeFromLikedPlaylists(userId, playlistId){
+
+        const result = await this.collection.updateOne(
+            {
+                _id : new ObjectId(userId)
+            },
+            {
+                $pull: {likedPlaylists: new ObjectId(playlistId)}
+            }
+        );
+
+        console.log(`playlist removed from liked playlists`);
+
+        return result.modifiedCount;
+    }
+
+    async getLikedPlaylists(userId){
+
+        try{
+            const user = await this.getUserById(userId);
+
+            
+            if (user) {
+                return user.likedPlaylists || []; 
+            } else {
+                throw new Error("User not found");
+            }
+        } catch (error) {
+            console.error("Error retrieving liked playlists:", error);
+            throw error; 
+    }
+    }
     
     async addSongToSongs(userId, songId){
 

@@ -4,7 +4,8 @@ import { Song } from "./Song";
 import { PlayListPreview } from "./PlaylistsPreview";
 import { CreatePlaylist } from "./createPlaylist";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserCircle, faEllipsisV, faTimes, faMusic } from '@fortawesome/free-solid-svg-icons';
+import { faUserCircle, faEllipsisV, faTimes, faMusic, faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import {faInstagram, faFacebook, faTwitter} from '@fortawesome/free-brands-svg-icons'
 import { AddSong } from "./addSong";
 import { Navigate } from "react-router-dom";
 
@@ -30,8 +31,18 @@ export class ProfileFeed extends React.Component{
             friendId: null,
             paramsId: this.props.paramsId,
             username: '',
+            name: '',
+            surname: '',
+            pronouns:'',
+            bio:'',
+            instagram: '',
+            facebook: '',
+            twitter: '',
+            email: '',
             isUserFriend: false,
-            
+            currentFormPage: 1,
+            likedPlaylists: this.props.likedPlaylists,
+            likedStatus: []
             
         }
     }
@@ -87,8 +98,10 @@ export class ProfileFeed extends React.Component{
     
     handleInputChange = (e) => {
 
-        const newUserData = {...this.state.userData, username: e.target.value};
-        this.setState({ userData: newUserData, username: e.target.value});
+        const newUserData = {...this.state.userData, [e.target.name] : e.target.value};
+        this.setState({ 
+            userData: newUserData, 
+            [e.target.name]: e.target.value});
 
         
 
@@ -150,13 +163,22 @@ export class ProfileFeed extends React.Component{
 
         const updatedUserData = this.state.userData;
 
+        formData.append("name", updatedUserData.name);
+        formData.append("surname", updatedUserData.surname);
         formData.append("username", updatedUserData.username);
-        //formData.append("email", updatedUserData.email);
+        formData.append("email", updatedUserData.email);
+        
+        
 
         if(updatedUserData.profilePicture){
             formData.append("profilePicture", updatedUserData.profilePicture);
         }
 
+        formData.append("bio", updatedUserData.bio);
+        formData.append("pronouns", updatedUserData.pronouns);
+        formData.append("instagram", updatedUserData.instagram);
+        formData.append("facebook", updatedUserData.facebook);
+        formData.append("twitter", updatedUserData.twitter);
 
         try{
 
@@ -190,10 +212,32 @@ export class ProfileFeed extends React.Component{
         this.setState({isUserProfile: this.isUser(this.props.paramsId) });
         
         await this.fetchUserProfile(this.props.paramsId);
+        //await this.fetchUserPlaylists(this.props.paramsId);
+        this.updateLikedStatus();
+        //await this.fetchLikedPlaylists();
+
+        
 
         
     }
 
+
+    isPlaylistLiked = (playlistId) => {
+        const likedPlaylists  = this.props.likedPlaylists;
+        console.log("myProps:", likedPlaylists);
+        return likedPlaylists.some(likedPlaylistId => likedPlaylistId === playlistId);
+    };
+    
+
+    updateLikedStatus = async () => {
+        const { playlistsData } = this.state;
+        const likedStatus = await Promise.all(
+            playlistsData.map(playlist => this.isPlaylistLiked(playlist._id))
+        );
+    
+        
+        this.setState({ likedStatus });
+    };
 
     fetchUserProfile = async(uId) =>{
 
@@ -219,8 +263,20 @@ export class ProfileFeed extends React.Component{
                     console.log("State updated:", this.state.userData);
                 });
 
-                this.setState({username: udata.data.username});
-                this.setState({profilePicture: udata.data.profilePicture});
+                this.setState({
+                    username: udata.data.username,
+                    profilePicture: udata.data.profilePicture,
+                    name: udata.data.name,
+                    surname: udata.data.surname,
+                    bio: udata.data.bio,
+                    pronouns: udata.data.pronouns,
+                    instagram: udata.data.instagram,
+                    facebook: udata.data.facebook,
+                    twitter: udata.data.twitter,
+                    email: udata.data.email,
+                    errorMessage: ''
+                });
+                //this.setState({profilePicture: udata.data.profilePicture});
                 
             }
             else{
@@ -231,6 +287,7 @@ export class ProfileFeed extends React.Component{
             this.fetchUserPlaylists(userId);
             this.fetchUserFriends(userId);
             this.fetchUserSongs(userId);
+            //this.fetchLikedPlaylists();
             this.setState({ isUserFriend: this.isFriend(this.props.paramsId, udata.data.friends)});
 
         }
@@ -242,7 +299,7 @@ export class ProfileFeed extends React.Component{
 
     fetchUserPlaylists = async (uId) =>{
 
-        //const userId = localStorage.getItem('userId');
+        
         const userId = uId;
 
         try{
@@ -252,7 +309,7 @@ export class ProfileFeed extends React.Component{
             if(response.ok){
                 const data = await response.json();
                 const sortedPlaylists = data.data.playlists.sort((a,b) => new Date(b.dateCreated) - new Date(a.dateCreated));
-                this.setState({ playlistsData: sortedPlaylists, loading: false, errorMessage: '' });
+                this.setState({ playlistsData: sortedPlaylists, loading: false, errorMessage: '' }, this.updateLikedStatus);
                 
             }
             else{
@@ -318,6 +375,9 @@ export class ProfileFeed extends React.Component{
 
         }
     }
+
+    
+    
 
     addFriend = async(uId, friendId) =>{
 
@@ -411,9 +471,49 @@ export class ProfileFeed extends React.Component{
         }
     }
 
+    nextStep = () =>{
+        this.setState({currentFormPage: this.state.currentFormPage + 1});
+        
+    }
+    
+    previousStep = () =>{
+        
+        this.setState({currentFormPage: this.state.currentFormPage -1});
+    }
+
+    
+    
+
+    
+
     render(){
 
-        const { showMenu,showEditForm, userData, profilePicture, playlistsData, songData, friends, isUserProfile, showFriends, goToFriendProfile, friendId, username, paramsId, isUserFriend } = this.state;
+        const { 
+            showMenu,
+            showEditForm, 
+            userData,
+            profilePicture,
+            playlistsData, 
+            songData, friends, 
+            isUserProfile, 
+            showFriends, 
+            goToFriendProfile, 
+            friendId, 
+            username, 
+            paramsId, 
+            isUserFriend,
+            name,
+            surname,
+            bio,
+            pronouns,
+            instagram,
+            facebook,
+            twitter,
+            email,
+            currentFormPage,
+            likedPlaylists,
+            likedStatus
+         } = this.state;
         
         const userName = username;
 
@@ -425,6 +525,8 @@ export class ProfileFeed extends React.Component{
             var profileRoute = `/profile/${friendId}`
             return <Navigate to= {profileRoute} />; 
         }
+
+        
 
         //console.log("uData:", userData);
 
@@ -449,9 +551,44 @@ export class ProfileFeed extends React.Component{
                                 {isUserFriend && <p style={{ color: 'green' }}>friends</p>}
                             </div>
                             <div className={`${styles.playlistFriendsContainer}`}>
-                                <p>{playlistsData ? playlistsData.length : 0} Playlists</p>
-                                {isUserFriend || isUserProfile? <p onClick={this.toggleFriendsMenu} className = {styles.friendsText}>{friends ? friends.length : 0} friends</p>
-                                : <p className = {styles.notfriendsText}>{friends ? friends.length : 0} friends</p>}
+
+                                <h5>{playlistsData ? playlistsData.length : 0} Playlists</h5>
+                                {isUserFriend || isUserProfile? 
+                                    <h5 onClick={this.toggleFriendsMenu} className = {styles.friendsText}>{friends ? friends.length : 0} friends</h5>
+                                    : <h5 className = {styles.notfriendsText}>{friends ? friends.length : 0} friends</h5>
+                                }
+
+                            </div>
+
+                            <div className={styles.profileBioInfo}>
+                                <p>{`${name} ${surname} ${pronouns.length? "~": " "} ${pronouns}`} </p>
+                                
+                                <p>{bio} </p>
+                                <div>
+                                    {instagram ? (
+                                    <a href={instagram} target="_blank" rel="noopener noreferrer">
+                                        <FontAwesomeIcon icon={faInstagram} size="2x" className={styles.socialIcon} />
+                                    </a>
+                                    ) : (
+                                        <a />
+                                    )}
+
+                                    {facebook ? (
+                                        <a href={facebook} target="_blank" rel="noopener noreferrer">
+                                            <FontAwesomeIcon icon={faFacebook} size="2x" className={styles.socialIcon} />
+                                        </a>
+                                    ) : (
+                                        <a />
+                                    )}
+
+                                    {twitter ? (
+                                        <a href={twitter} target="_blank" rel="noopener noreferrer">
+                                            <FontAwesomeIcon icon={faTwitter} size="2x" className={styles.socialIcon} />
+                                        </a>
+                                    ) : (
+                                        <a/>
+                                    )}
+                                </div>
                             </div>
                             {
                                 !isUserProfile ? (
@@ -484,25 +621,175 @@ export class ProfileFeed extends React.Component{
                         <div className={styles.editFormContainer} onClick={e => e.stopPropagation()}>
                           <h2>Edit Profile</h2>
                           <form onSubmit={this.handleFormSubmit}>
-                            <div className={styles.formGroup}>
-                              <label htmlFor="userName">Name</label>
-                              <input
-                                type="text"
-                                id="userName"
-                                value={userName}
-                                onChange={this.handleInputChange}
-                                className={`${styles.formControl} form-control`}
-                              />
-                            </div>
-                            <div className={styles.formGroup}>
-                              <label htmlFor="profilePicture">Profile Picture</label>
-                              <input
-                                type="file"
-                                id="profilePicture"
-                                onChange={this.handleFileChange}
-                                className={`${styles.formControl} form-control`}
-                              />
-                            </div>
+
+                            
+                            {currentFormPage === 1 && (
+                                <div>
+                                    <div className="d-flex justify-content-between mt-4">
+                                      <button type="button" className={`${styles.btn} btn`} onClick={this.nextStep}>
+                                        <FontAwesomeIcon icon={faArrowRight} size="2x" className="arrowIcon" />  
+                                      </button>
+                                    </div>
+                                    <div className={styles.formGroup}>
+                                      <label htmlFor="userName">Username:</label>
+                                      <input
+                                        type="text"
+                                        id="userName"
+                                        name="username"
+                                        value={userName}
+                                        onChange={this.handleInputChange}
+                                        className={`${styles.formControl} form-control`}
+                                      />
+                                    </div>
+                                    <div className={styles.formGroup}>
+                                      <label htmlFor="email">Email Address:</label>
+                                      <input
+                                        type="text"
+                                        id="email"
+                                        name="email"
+                                        value={email}
+                                        onChange={this.handleInputChange}
+                                        className={`${styles.formControl} form-control`}
+                                      />
+                                    </div>
+                                    <div className={styles.formGroup}>
+                                      <label htmlFor="profilePicture">Profile Picture:</label>
+                                      <input
+                                        type="file"
+                                        id="profilePicture"
+                                        onChange={this.handleFileChange}
+                                        className={`${styles.formControl} form-control`}
+                                      />
+                                    </div>
+                                </div>
+                            )}
+
+                            {currentFormPage === 2 && (
+                                
+                                <div>
+                                    <div className="d-flex justify-content-between">
+                                      <button type="button" className={`${styles.btn} btn me-2`} onClick={this.previousStep} >
+                                        <FontAwesomeIcon icon={faArrowLeft} size="2x" className="arrowIcon" /> 
+                                      </button>
+
+                                      <button type="button" className={`${styles.btn} btn`} onClick={this.nextStep} >
+                                        <FontAwesomeIcon icon={faArrowRight} size="2x" className="arrowIcon" />
+                                      </button>
+                                    </div>
+
+                                    <div className={styles.formGroup}>
+                                      <label htmlFor="name">Name:</label>
+                                      <input
+                                        type="text"
+                                        id="name"
+                                        name="name"
+                                        value={name}
+                                        onChange={this.handleInputChange}
+                                        className={`${styles.formControl} form-control`}
+                                      />
+                                    </div>
+
+                                    <div className={styles.formGroup}>
+                                      <label htmlFor="surname">Surname:</label>
+                                      <input
+                                        type="text"
+                                        id="surname"
+                                        name="surname"
+                                        value={surname}
+                                        onChange={this.handleInputChange}
+                                        className={`${styles.formControl} form-control`}
+                                      />
+                                    </div>
+                                    <div className={styles.formGroup}>
+                                      <label htmlFor="pronouns">Pronouns:</label>
+                                      <input
+                                        type="text"
+                                        id="pronouns"
+                                        name="pronouns"
+                                        value={pronouns}
+                                        onChange={this.handleInputChange}
+                                        className={`${styles.formControl} form-control`}
+                                      />
+                                    </div>
+                                </div>
+                            )}
+
+                            {currentFormPage === 3 && (
+                                <div>
+                                    <div className="d-flex justify-content-between">
+                                      <button type="button" className={`${styles.btn} btn me-2`} onClick={this.previousStep} >
+                                        <FontAwesomeIcon icon={faArrowLeft} size="2x" className="arrowIcon" /> 
+                                      </button>
+
+                                      <button type="button" className={`${styles.btn} btn`} onClick={this.nextStep} >
+                                        <FontAwesomeIcon icon={faArrowRight} size="2x" className="arrowIcon" />
+                                      </button>
+                                    </div>
+
+                                    <div className={styles.formGroup}>
+                                      <label htmlFor="bio">Bio:</label>
+                                      <input
+                                        type="text"
+                                        id="bio"
+                                        name="bio"
+                                        value={bio}
+                                        onChange={this.handleInputChange}
+                                        className={`${styles.formControl} form-control bio`}
+                                      />
+                                    </div>
+                                </div>
+                            )}
+
+                            {currentFormPage === 4 && (
+                                <div>
+
+                                    <div className="d-flex justify-content-between">
+                                      <button type="button" className={`${styles.btn} btn me-2`} onClick={this.previousStep} >
+                                        <FontAwesomeIcon icon={faArrowLeft} size="2x" className="arrowIcon" /> 
+                                      </button>
+
+                                    </div>
+                                    
+                                    <div className={styles.formGroup}>
+                                      <label htmlFor="instagram">Instagram:</label>
+                                      <input
+                                        type="text"
+                                        id="instagram"
+                                        name="instagram"
+                                        value={instagram}
+                                        onChange={this.handleInputChange}
+                                        className={`${styles.formControl} form-control`}
+                                        placeholder="Instagram Link"
+                                      />
+                                    </div>
+
+                                    <div className={styles.formGroup}>
+                                      <label htmlFor="facebook">Facebook:</label>
+                                      <input
+                                        type="text"
+                                        id="facebook"
+                                        name="facebook"
+                                        value={facebook}
+                                        onChange={this.handleInputChange}
+                                        className={`${styles.formControl} form-control`}
+                                        placeholder="Facebook Link"
+                                      />
+                                    </div>
+
+                                    <div className={styles.formGroup}>
+                                      <label htmlFor="twitter">Twitter:</label>
+                                      <input
+                                        type="text"
+                                        id="twitter"
+                                        name="twitter"
+                                        value={twitter}
+                                        onChange={this.handleInputChange}
+                                        className={`${styles.formControl} form-control`}
+                                        placeholder="Twitter Link"
+                                      />
+                                    </div>
+                                </div>
+                            )}
                             <div className={styles.formActions}>
                               <button type="submit" className={styles.saveButton}>
                                 Save
@@ -544,15 +831,15 @@ export class ProfileFeed extends React.Component{
                     {playlistsData? <div className={`${styles.playlistsContainer} row`}>
                         {playlistsData.slice(0, 5).map((playlist, index) => (
                             <div className="col-12 col-md-6 col-lg-2" key={index}>
-                                <PlayListPreview image='' title={playlist.playlistName} songAmount={playlist.songs.length} playlistId = {playlist._id} />
+                                <PlayListPreview image={playlist.coverImage} title={playlist.playlistName} songAmount={playlist.songs.length} playlistId = {playlist._id} username = {playlist.username} ownerId = {playlist.ownerId} isLikedPlaylist = {likedStatus[index]} />
                             </div>
                         ))}
                         {isUserProfile?<div className="col-12 col-md-6 col-lg-3">
                             <CreatePlaylist />
-                        </div>:<div className=" d-flex justify-content-center align-items-center">
+                        </div>: <div></div>}
+                    </div>: <div className=" d-flex justify-content-center align-items-center">
                             <FontAwesomeIcon icon={faMusic} size="8x" color="white" />
                         </div>}
-                    </div>: <div></div>}
                 </div>
 
                 <div className={styles.songsOfTheWeek}>

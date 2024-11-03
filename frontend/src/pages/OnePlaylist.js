@@ -32,6 +32,8 @@ class OnePlaylist extends React.Component{
   
             if(response.ok){
                 const data = await response.json();
+
+                //console.log("Dattaaaa:" ,data.data. playlist);
                 this.setState({ playlistData: data.data.playlist, loading: false, errorMessage: '' });
                 
             }
@@ -52,6 +54,8 @@ class OnePlaylist extends React.Component{
         console.log(pId);*/
 
         const {playlistData} = this.state;
+
+        console.log("")
 
         return(
             <div style={{ display: 'flex',width: '1270px', height: 'auto', flexDirection: 'column', marginLeft: '250px', marginTop: '110px', padding:0, backgroundColor: '#ECF6F6' }}>

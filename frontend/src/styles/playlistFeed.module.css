@@ -248,6 +248,18 @@
     margin-bottom: 40px;
 }
 
+.confirmDeletePrompt {
+    background: white;
+    border: 1px solid #ccc;
+    padding: 20px;
+    position: absolute; 
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    
+}
+
 .tableContainer {
     overflow: hidden; /* To ensure the border radius affects the entire table */
     border-radius: 10px; /* Example radius for the whole table */

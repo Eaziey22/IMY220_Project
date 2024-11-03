@@ -18,6 +18,7 @@ class ProfilePage extends React.Component{
             //loading: true,
             //errorMessage: null,
             paramsId: this.props.params.uId,
+            likedPlaylistsData: null
             //friends: null
             
 
@@ -25,7 +26,9 @@ class ProfilePage extends React.Component{
     }
 
     
-
+    async componentDidMount(){
+        await this.fetchLikedPlaylists();
+    }
     /*async componentDidMount() {
 
         try{
@@ -95,13 +98,40 @@ class ProfilePage extends React.Component{
 
     
     */
+    fetchLikedPlaylists = async() =>{
+
+        const userId = localStorage.getItem("userId");
+
+        //console.log('uId: ', userId);
+
+        try{
+            const response = await fetch(`/user/getLikedPlaylists/${userId}`);
+            const data = await response.json();
+
+            if(response.ok){
+                 
+                
+                this.setState({ likedPlaylistsData: data.data.likedPlaylists, loading: false, errorMessage: '' } , () =>{
+                    console.log("hi2", this.state.likedPlaylistsData);
+                });
+                
+            }
+            else{
+                this.setState({errorMessage: data.message || 'Failed to load liked playlists'});
+            }
+        }
+        catch(err){
+            console.error('Error fetching liked playlists:', err);
+            this.setState({ errorMessage: 'An error occurred while fetching liked playlists' });
+        }
+    } 
 
     
 
     render(){
         //const {userData, loading, errorMessage, paramsId, friends } = this.state;
 
-        const {paramsId} = this.state;
+        const {paramsId, likedPlaylistsData} = this.state;
 
         
         return(
@@ -111,7 +141,7 @@ class ProfilePage extends React.Component{
                     <SideNavBar />
                     <div style={{ flex: 1, padding: '20px' }}>
                         {/*{userData && friends ? <ProfileFeed userData = {userData} paramsId = {paramsId} friends = {friends}/>: <div></div>}*/}
-                        <ProfileFeed paramsId = {paramsId} />
+                        {likedPlaylistsData?<ProfileFeed paramsId = {paramsId} likedPlaylists ={likedPlaylistsData}/>:<div></div>}
                     </div>
                 </div>
             </div>

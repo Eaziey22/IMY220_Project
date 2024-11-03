@@ -54,7 +54,7 @@ app.use(express.static(path.join(__dirname, '../../frontend/public')));
 
 app.post("/auth/register", async (req, res) =>{
     try{
-        const {username,email, password } = req.body;
+        const {name, surname, username,email, password, bio, pronouns, instagram, facebook, twitter  } = req.body;
 
         const userEmailExists = await User.userExists(email);
 
@@ -66,14 +66,15 @@ app.post("/auth/register", async (req, res) =>{
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const user = await User.createUser(username,email, hashedPassword );
+        const user = await User.createUser(name, surname, username,email, hashedPassword, bio, pronouns, instagram, facebook, twitter );
 
         //const tkn = jwt.sign({userId: user._id, email: user.email}, secretKey, {expiresIn: '2h'});
 
+        console.log("User:", user);
         res.status(201).json({
             status: "success",
             message: "user registered successfully" ,
-            data : {userId : user._id}
+            data : {userId : user.insertedId}
             /*data : {token : tkn }*/ });
     }
     catch(err){
@@ -154,7 +155,20 @@ app.get("/getUser/:id", async (req, res) =>{
         return res.status(200).json({
             status: "success", 
             message : `User with userId: ${id} retrieved successfully`, 
-            data : {userId: usr._id, username: usr.username, friends: usr.friends, profilePicture: usr.profilePicture}
+            data : {
+                userId: usr._id, 
+                username: usr.username, 
+                friends: usr.friends, 
+                profilePicture: usr.profilePicture,
+                name: usr.name,
+                surname: usr.surname,
+                pronouns: usr.pronouns,
+                bio: usr.bio,
+                instagram: usr.instagram,
+                twitter: usr.twitter,
+                facebook: usr.facebook,
+                email: usr.email
+            }
         });
     }
     catch(error){
@@ -350,6 +364,129 @@ app.put("/user/:userId/addFriend/:friendId", async (req, res) =>{
     }
 });
 
+app.put('/user/:userId/like/:playlistId', async (req, res) => {
+    
+    const {userId, playlistId} = req.params;
+
+    try{
+
+        if (!ObjectId.isValid(userId) || !ObjectId.isValid(playlistId) ) {
+            return res.status(400).json({
+                status: "error", 
+                message: "Invalid user or playlist ID format" });
+        }
+
+        const result = await User.addToLikedPlaylists(userId, playlistId);
+        console.log("result:", result);
+        
+        if(result === 0 ){
+            
+            return res.status(404).json({
+                status: "error", 
+                message: "Unable to add playlist to liked playlists"
+            });
+        }
+
+        const updatedUser = await User.getUserById(userId);
+        
+
+        return res.status(200).json({
+            status: "success",
+            message: `Playlist with id: ${playlistId} added to liked playlists`, 
+            data: {updatedCount: result, user: updatedUser}
+        });
+
+
+    }
+    catch(error){
+        console.log(`Error adding liked playlist: ${error}`);
+        res.status(500).json({
+            status: "error", 
+            message: "Internal server error"
+        });
+    }
+});
+
+app.put('/user/:userId/unlike/:playlistId', async (req, res) => {
+    
+    const {userId, playlistId} = req.params;
+
+    try{
+
+        if (!ObjectId.isValid(userId) || !ObjectId.isValid(playlistId) ) {
+            return res.status(400).json({
+                status: "error", 
+                message: "Invalid user or playlist ID format" });
+        }
+
+        const result = await User.removeFromLikedPlaylists(userId, playlistId);
+        
+        if(result === 0 ){
+            
+            return res.status(404).json({
+                status: "error", 
+                message: "Unable to add playlist to liked playlists"
+            });
+        }
+
+        const updatedUser = await User.getUserById(userId);
+        
+
+        return res.status(200).json({
+            status: "success",
+            message: `playlist with id: ${friendId} removed from playlists`, 
+            data: {updatedCount: result, user: updatedUser}
+        });
+
+
+    }
+    catch(error){
+        console.log(`Error removing playlist from liked playlists: ${error}`);
+        res.status(500).json({
+            status: "error", 
+            message: "Internal server error"
+        });
+    }
+});
+
+app.get('/user/getLikedPlaylists/:userId', async (req, res) =>{
+
+    const userId = req.params.userId;
+
+    try{
+
+        console.log(userId)
+        if (!ObjectId.isValid(userId)) {
+            return res.status(400).json({ 
+                status: "error", 
+                message: "Invalid user ID format "  });
+        }
+
+        const likedPlaylists = await User.getLikedPlaylists(userId);
+
+        if(!likedPlaylists){
+            return res.status(404).json({
+                status: "error", 
+                message: "Liked Playlists not found"});
+        }
+
+        return res.status(200).json({
+            status: "success", 
+            message : `User with userId: ${userId}'s liked playlists retrieved successfully`, 
+            data: {likedPlaylists: likedPlaylists}
+        });
+    }
+    catch(error){
+        console.log(`Error getting user's playlists: ${error}`);
+        res.status(500).json({
+            status: "error", 
+            message: "Internal server error"});
+    }
+    
+});
+
+
+
 app.get("/user/getSuggestedFriends/:userId", async (req, res) =>{
 
     const {userId}= req.params;
@@ -443,12 +580,23 @@ app.put("/user/:userId/removeFriend/:friendId", async (req, res) =>{
     }
 });
 
-app.post("/playlists/createPlaylist", async (req, res) =>{
+app.post("/playlists/createPlaylist",upload.single('coverImage'), async (req, res) =>{
 
     try{
-        const {playlistName,ownerId, songs } = req.body;
-        console.log("playlistData", playlistName, ownerId, songs);
-        const pl = await Playlist.createPlaylist(playlistName,ownerId, songs );
+        const {playlistName,ownerId, category,description,hashtags } = req.body;
+
+        let coverImage = null;
+
+        if(req.file){
+            coverImage = `/assets/images/profilePictures/${req.file.filename}`;
+        }
+
+        const songs = req.body.songs ? JSON.parse(req.body.songs) : [];
+        //const likedPlaylists = req.body.likedPlaylists ? JSON.parse(req.body.likedPlaylists) : [];
+        
+        //const coverImage = req.file ? req.file.filename : null;
+        const user = await User.getUserById(ownerId);
+        const pl = await Playlist.createPlaylist(playlistName,ownerId, songs, category, description,coverImage,hashtags, user.username );
 
         await User.addPlaylistToPlaylists(ownerId, pl._id);
 
@@ -466,6 +614,7 @@ app.post("/playlists/createPlaylist", async (req, res) =>{
         });
     }
 });
+
 
 app.get("/playlists/getPlaylist/:id", async (req, res) =>{
 
@@ -541,8 +690,10 @@ app.get("/playlists/getUserPlaylists/:id", async (req, res) =>{
     
 });
 
-app.put("/playlists/updatePlaylist/:id", async (req, res) =>{
+app.put("/playlists/updatePlaylist/:id", upload.single('coverImage'), async (req, res) =>{
     const id = req.params.id;
+
+    let updateData = {};
 
     try{
 
@@ -552,8 +703,23 @@ app.put("/playlists/updatePlaylist/:id", async (req, res) =>{
                 message: "Invalid playlist ID format" });
         }
 
-        const result = await Playlist.updatePlaylist(id , req.body);
+        updateData = req.body;
 
+        if(req.file){
+            updateData.coverImage = `/assets/images/profilePictures/${req.file.filename}`;
+        }
+        else{
+            updateData.coverImage = "";
+        }
+
+        console.log("updateDatat: ", updateData);
+
+        const result = await Playlist.updatePlaylist(id , updateData);
+
+        console.log("updated playlist count: ",result);
+
+        const result2 = await Playlist.getPlaylistById(id);
+        console.log("updated playlist: ",result2);
         if(!result){
             return res.status(404).json({
                 status: "error", 
@@ -563,7 +729,7 @@ app.put("/playlists/updatePlaylist/:id", async (req, res) =>{
         return res.status(200).json({
             status: "success", 
             message: `Playlist with id: ${id} updated`, 
-            data: {updateCount: result} 
+            data: {modifiedCount: result, playlistData: result2}
         });
 
     }

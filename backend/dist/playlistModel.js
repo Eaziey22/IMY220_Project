@@ -23,7 +23,7 @@ var playlistModel = exports.playlistModel = /*#__PURE__*/function () {
   return _createClass(playlistModel, [{
     key: "createPlaylist",
     value: function () {
-      var _createPlaylist = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(playlistName, ownerId, songs) {
+      var _createPlaylist = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(playlistName, ownerId, songs, category, description, coverImage, hashtags, username) {
         var result, playlist;
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) switch (_context.prev = _context.next) {
@@ -33,7 +33,12 @@ var playlistModel = exports.playlistModel = /*#__PURE__*/function () {
                 playlistName: playlistName,
                 ownerId: new ObjectId(ownerId),
                 songs: songs,
-                dateCreated: new Date()
+                category: category,
+                description: description,
+                coverImage: coverImage,
+                hashtags: hashtags,
+                dateCreated: new Date(),
+                username: username
               });
             case 2:
               result = _context.sent;
@@ -50,7 +55,7 @@ var playlistModel = exports.playlistModel = /*#__PURE__*/function () {
           }
         }, _callee, this);
       }));
-      function createPlaylist(_x, _x2, _x3) {
+      function createPlaylist(_x, _x2, _x3, _x4, _x5, _x6, _x7, _x8) {
         return _createPlaylist.apply(this, arguments);
       }
       return createPlaylist;
@@ -76,7 +81,7 @@ var playlistModel = exports.playlistModel = /*#__PURE__*/function () {
           }
         }, _callee2, this);
       }));
-      function getPlaylistById(_x4) {
+      function getPlaylistById(_x9) {
         return _getPlaylistById.apply(this, arguments);
       }
       return getPlaylistById;
@@ -102,7 +107,7 @@ var playlistModel = exports.playlistModel = /*#__PURE__*/function () {
           }
         }, _callee3, this);
       }));
-      function getUserPlaylists(_x5) {
+      function getUserPlaylists(_x10) {
         return _getUserPlaylists.apply(this, arguments);
       }
       return getUserPlaylists;
@@ -128,7 +133,7 @@ var playlistModel = exports.playlistModel = /*#__PURE__*/function () {
           }
         }, _callee4, this);
       }));
-      function deletePlaylist(_x6) {
+      function deletePlaylist(_x11) {
         return _deletePlaylist.apply(this, arguments);
       }
       return deletePlaylist;
@@ -154,7 +159,7 @@ var playlistModel = exports.playlistModel = /*#__PURE__*/function () {
           }
         }, _callee5, this);
       }));
-      function deleteUserPlaylists(_x7) {
+      function deleteUserPlaylists(_x12) {
         return _deleteUserPlaylists.apply(this, arguments);
       }
       return deleteUserPlaylists;
@@ -175,7 +180,9 @@ var playlistModel = exports.playlistModel = /*#__PURE__*/function () {
               });
             case 2:
               result = _context6.sent;
-              console.log("playlist updated");
+              if (result.modifiedCount > 0) {
+                console.log("playlist updated: ", result);
+              }
               return _context6.abrupt("return", result.modifiedCount > 0 ? result : null);
             case 5:
             case "end":
@@ -183,7 +190,7 @@ var playlistModel = exports.playlistModel = /*#__PURE__*/function () {
           }
         }, _callee6, this);
       }));
-      function updatePlaylist(_x8, _x9) {
+      function updatePlaylist(_x13, _x14) {
         return _updatePlaylist.apply(this, arguments);
       }
       return updatePlaylist;
@@ -214,7 +221,7 @@ var playlistModel = exports.playlistModel = /*#__PURE__*/function () {
           }
         }, _callee7, this);
       }));
-      function addSongToPlaylist(_x10, _x11) {
+      function addSongToPlaylist(_x15, _x16) {
         return _addSongToPlaylist.apply(this, arguments);
       }
       return addSongToPlaylist;
@@ -244,7 +251,7 @@ var playlistModel = exports.playlistModel = /*#__PURE__*/function () {
           }
         }, _callee8, this);
       }));
-      function removeSongFromPlaylist(_x12, _x13) {
+      function removeSongFromPlaylist(_x17, _x18) {
         return _removeSongFromPlaylist.apply(this, arguments);
       }
       return removeSongFromPlaylist;
@@ -274,7 +281,7 @@ var playlistModel = exports.playlistModel = /*#__PURE__*/function () {
           }
         }, _callee9, this);
       }));
-      function getSongsFromPlaylist(_x14) {
+      function getSongsFromPlaylist(_x19) {
         return _getSongsFromPlaylist.apply(this, arguments);
       }
       return getSongsFromPlaylist;

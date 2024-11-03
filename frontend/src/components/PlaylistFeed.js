@@ -2,7 +2,7 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMusic, faUserCircle, faEllipsisV, faHeart } from "@fortawesome/free-solid-svg-icons";
 import * as styles from '../styles/playlistFeed.module.css';
-
+import { Navigate } from "react-router-dom";
 
 export class PlaylistFeed extends React.Component{
 
@@ -13,12 +13,18 @@ export class PlaylistFeed extends React.Component{
             showEditForm: false,
             playlistData : this.props.playlist,
             playlistName: this.props.playlist.playlistName,
-            playlistPicture: null,
+            coverImage: this.props.playlist.coverImage,
             playlistSongs: [],
             userData: null,
             showRemovePrompt: false,
             errorMessage: '',
-            songId: ''
+            songId: '',
+            genres: ['Pop', 'Rock', 'Hip Hop', 'Jazz', 'Classical', 'Country'],
+            category: '', 
+            description: '', 
+            hashtags: '',
+            showConfirmDelete: false,
+            goToHome: false
 
         };
     }
@@ -146,17 +152,67 @@ export class PlaylistFeed extends React.Component{
       this.setState(prevState => ({ showEditForm: !prevState.showEditForm }));
     };
 
+    toggleConfirmDeleteForm = () =>{
+      this.setState({showMenu:false});
+      this.setState(prevState => ({ showConfirmDelete: !prevState.showConfirmDelete }));
+    }
+
     handleInputChange = (e) => {
-      this.setState({ playlistName: e.target.value });
+      this.setState({ [e.target.name]: e.target.value });
     };
     
     handleImageChange = (e) => {
-      this.setState({ playlistPicture: URL.createObjectURL(e.target.files[0]) });
+      this.setState({ coverImage: e.target.files[0] });
     };
     
-    handleFormSubmit = (e) => {
+    handleFormSubmit  = async (e) => {
       e.preventDefault();
-      this.toggleEditForm(); 
+
+      const { playlistName, coverImage, category, description, hashtags } = this.state;
+      const playlistId = this.props.playlist._id;
+
+      const formData = new FormData();
+      formData.append('playlistName', playlistName);
+      formData.append('coverImage', coverImage);
+      formData.append('category', category);
+      formData.append('description', description);
+      formData.append('hashtags', hashtags);
+
+      try {
+
+        const response = await fetch(`/playlists/updatePlaylist/${playlistId}`, {
+            method: 'PUT',
+            body: formData,
+        });
+
+        if (response.ok) {
+
+            const updatedPlaylist = await response.json();
+
+            console.log("updatedPlaylist222222222222222:", updatedPlaylist);
+
+            this.setState({
+                playlistData: updatedPlaylist.data.playlistData,
+                playlistName: updatedPlaylist.data.playlistData.playlistName,
+                coverImage: updatedPlaylist.data.playlistData.coverImage,
+                playlistSongs: updatedPlaylist.data.playlistData.songs,
+                category: updatedPlaylist.data.playlistData.category, 
+                description: updatedPlaylist.data.playlistData.description, 
+                hashtags: updatedPlaylist.data.playlistData.hashtags,
+                showEditForm: false, 
+                errorMessage: ''
+            });
+            console.log("Playlist updated successfully:", updatedPlaylist.data.playlistData);
+        } else {
+            const data = await response.json();
+            this.setState({ errorMessage: data.message || 'Failed to update playlist' });
+        }
+      } catch (err) {
+          console.error('Error updating playlist:', err);
+          this.setState({ errorMessage: 'An error occurred while updating the playlist' });
+      }
+
+
     }; 
 
 
@@ -184,17 +240,50 @@ export class PlaylistFeed extends React.Component{
       this.toggleRemovePrompt();
     }
 
+    deletePlaylist = async (ownerId ,playlistId) => {
+
+      
+      try{
+  
+        const response = await fetch(`/playlists/deletePlaylist/${ownerId}/${playlistId}`, {
+          method: 'DELETE', 
+        });
+  
+        if(response.ok){
+            const data = await response.json();
+            console.log(data, 'playlist(s) deleted');
+            this.setState({errorMessage: '', showConfirmDelete: false, goToHome: true});
+        }
+        else{
+            const data = await response.json();
+            this.setState({errorMessage: data.message || 'Failed to load playlist songs'});
+        }
+        
+  
+      }
+      catch(err){
+          console.error('Error fetching playlist songs:', err);
+          this.setState({ errorMessage: 'An error occurred while fetching playlist songs' });
+      }
+  }
+
     render(){
 
-        const { showMenu,showEditForm,playlistData, playlistName, playlistPicture,playlistSongs, userData, showRemovePrompt} = this.state;
+        const { showMenu,showEditForm,playlistData, playlistName, coverImage,playlistSongs, userData, showRemovePrompt, category, genres, description, hashtags, showConfirmDelete, goToHome} = this.state;
 
+        if (goToHome ) {
+          
+          return <Navigate to="/home" />; 
+          
+        }
+        
         return(
             <div className={styles.feed}>
                 <div className={styles.playlist}>
                     <div className={`${styles.playlistContainer} row`}>
                         <div className={`${styles.playlistPictureContainer} col-12 col-md-6 col-lg-3`}>
-                            {playlistPicture ? (
-                                  <img src={playlistPicture} alt="Profile" className={styles.playlistImage} />
+                            {coverImage ? (
+                                  <img src={coverImage} alt="coverImage" className={styles.playlistImage} />
                                 ) : (
                                   <FontAwesomeIcon icon={faMusic} color="#37D0D6" className={styles.icon} />
                                 )}
@@ -212,11 +301,18 @@ export class PlaylistFeed extends React.Component{
                                 <div className={styles.menu}>
                                     <ul>
                                         <li onClick={this.toggleEditForm}>Edit Playlist</li>
-                                        <li>Delete playlist</li>
+                                        <li onClick={this.toggleConfirmDeleteForm}>Delete playlist</li>
                                     </ul>
                                 </div>
                             )}
                         </div>
+                        {showConfirmDelete && (
+                          <div className={styles.confirmDeletePrompt}>
+                              <p>Are you sure you want to delete the playlist "{playlistName}"?</p>
+                              {playlistData?<button onClick={() => this.deletePlaylist(playlistData.ownerId, playlistData._id)}>Yes, delete</button>: <div></div>}
+                              <button onClick={this.toggleConfirmDeleteForm}>Cancel</button>
+                          </div>
+                       )}
                     </div>
                     {showEditForm && (
                       <div className={styles.editFormOverlay}>
@@ -228,20 +324,61 @@ export class PlaylistFeed extends React.Component{
                               <input
                                 type="text"
                                 id="playlistName"
+                                name = "playlistName"
                                 value={playlistName}
                                 onChange={this.handleInputChange}
                                 className={`${styles.formControl} form-control`}
                               />
                             </div>
                             <div className={styles.formGroup}>
-                              <label htmlFor="userPicture">Playlist Picture</label>
-                              <input
-                                type="file"
-                                id="playlistPicture"
-                                onChange={this.handleImageChange}
-                                className={`${styles.formControl} form-control`}
+                              <label htmlFor="category">Category:</label>
+                              <select
+                                  id="category"
+                                  name="category"
+                                  className={`${styles.formControl} form-control`}
+                                  value={category}
+                                  onChange={this.handleInputChange}
+                                  
+                              >
+                                  <option value="">Select Genre</option>
+                                  {genres.map((genre) => (
+                                      <option key={genre} value={genre}>{genre}</option>
+                                  ))}
+                              </select>
+                            </div>
+                            <div className={styles.formGroup}>
+                              <label htmlFor="description">Description:</label>
+                              <textarea
+                                  id="description"
+                                  name="description"
+                                  className={`${styles.formControl} form-control`}
+                                  value={description}
+                                  onChange={this.handleInputChange}
+
                               />
                             </div>
+                            <div className={styles.formGroup}>
+                              <label htmlFor="coverImage">Cover Image</label>
+                              <input
+                                type="file"
+                                id="coverImage"
+                                name="coverImage"
+                                className={`${styles.formControl} form-control`}
+                                onChange={this.handleImageChange}
+                              />
+                            </div>
+                            <div className={styles.formGroup}>
+                              <label htmlFor="hashtags">Hashtags (Optional):</label>
+                              <input
+                                  type="text"
+                                  id="hashtags"
+                                  name="hashtags"
+                                  className={`${styles.formControl} form-control`}
+                                  value={hashtags}
+                                  onChange={this.handleInputChange}
+                              />
+                            </div>
+                            
                             <div className={styles.formActions}>
                               <button type="submit" className={styles.saveButton}>
                                 Save
@@ -254,6 +391,7 @@ export class PlaylistFeed extends React.Component{
                         </div>
                       </div>
                     )}
+
                 </div>
 
                 <div className={styles.playlistSongs}>

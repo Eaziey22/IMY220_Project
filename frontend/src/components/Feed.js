@@ -14,19 +14,43 @@ export class Feed extends React.Component{
         this.state = {
             playlists: this.props.playlists,
             userSongs: this.props.userSongs,
-            suggestedFriendsData: null
+            likedPlaylists: this.props.likedPlaylists,
+            suggestedFriendsData: null, 
+            likedStatus: []
         };
     }
 
     async componentDidMount(){
         await this.fetchSuggestedFriends(localStorage.getItem('userId'));
+        await this.fetchPlaylists();
+        this.updateLikedStatus();
+        
     }
 
     fetchPlaylists = async () => {
-        const { fetchUserPlaylists } = this.props; 
-        const updatedPlaylists = await fetchUserPlaylists(); 
-        this.setState({ playlists: updatedPlaylists });
+        //const { fetchUserPlaylists } = this.props; 
+        const updatedPlaylists = await this.props.fetchUserPlaylists(); 
+        //console.log("up: ",updatedPlaylists);
+        this.setState({ playlists: updatedPlaylists }, this.updateLikedStatus);
     };
+
+    isPlaylistLiked = (playlistId) => {
+        const { likedPlaylists } = this.state;
+        return likedPlaylists.some(likedPlaylistId => likedPlaylistId === playlistId);
+    };
+    
+
+    updateLikedStatus = async () => {
+        const { playlists } = this.state;
+        const likedStatus = await Promise.all(
+            playlists.map(playlist => this.isPlaylistLiked(playlist._id))
+        );
+    
+        
+        this.setState({ likedStatus });
+    };
+
+
 
     handleSongAddition = async () => {
         
@@ -57,9 +81,10 @@ export class Feed extends React.Component{
 
     render(){
         
-        const {playlists, userSongs, recentMusicData, fetchUserSongs, fetchUserPlaylists } = this.props;
+        const {playlists, userSongs,suggestedFriendsData, likedStatus } = this.state;
 
-        const {suggestedFriendsData} = this.state;
+        
+        const {fetchUserSongs} = this.props;
 
         return (
 
@@ -98,9 +123,16 @@ export class Feed extends React.Component{
                 <div className={styles.playlists}>
                     <h3 className={styles.header}>Your Playlists</h3>
                     <div className={`${styles.playlistsContainer} row`}>
-                        {playlists.slice(0, 5).map((playlist, index) => (
+                        {playlists.slice(0, 4).map((playlist, index) => (
                             <div className="col-12 col-md-6 col-lg-2" key={index}>
-                                <PlayListPreview image='' title={playlist.playlistName} songAmount={playlist.songs.length} playlistId = {playlist._id}/>
+                                <PlayListPreview 
+                                image={playlist.coverImage} 
+                                title={playlist.playlistName}
+                                songAmount={playlist.songs.length}
+                                playlistId={playlist._id}
+                                username={playlist.username}
+                                ownerId={playlist.ownerId}
+                                isLikedPlaylist = {likedStatus[index]}/>
                             </div>
                         ))}
                         <div className="col-12 col-md-6 col-lg-3">

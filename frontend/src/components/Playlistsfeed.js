@@ -61,7 +61,7 @@ export class Playlistsfeed extends React.Component{
                     <div className={`${styles.playlistsContainer} row`}>
                         {playlists.map((playlist, index) => (
                             <div className="col-12 col-md-6 col-lg-2" key={index}>
-                                <PlayListPreview image="../../public/assets/images/logo.png" title={playlist.playlistName} songAmount={playlist.songs.length} playlistId = {playlist._id} />
+                                <PlayListPreview image={playlist.coverImage} title={playlist.playlistName} songAmount={playlist.songs.length} playlistId = {playlist._id} username = {playlist.username} ownerId = {playlist.ownerId} />
                             </div>
                         ))}
                         <div className="col-12 col-md-6 col-lg-3">

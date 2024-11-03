@@ -21,7 +21,7 @@
     border: 1px solid #1a1a1a;
     background-color: #1e1e1e;
     width: 100%;
-    height: 200px;
+    min-height: 250px;
     border-radius: 10px;
     box-shadow: 2px 0 15px rgba(0, 0, 0, 0.3);
     padding: 10px;
@@ -30,17 +30,17 @@
 
 .profileContainer{
     width: 100%;
-    height: 200px;
+    min-height: 250px;
     border-radius: 10px;
     padding: 10px;
     position: relative;
-    display: flex; /* Flexbox for alignment */
-    align-items: center; /* Center items vertically */
+    display: flex; 
+    align-items: center; 
 }
 
 .profilePictureContainer{
-    margin-left: 10px;
-    margin-right: 10px;
+    margin-left: 20px;
+    margin-right: 30px;
 }
 
 .songsOfTheWeek{
@@ -74,6 +74,7 @@
 .profileInfo{
     color: white;
     flex:1;
+    margin-top: 20px;
 }
 
 .profilePictureContainer{
@@ -174,6 +175,10 @@
     color: white;
 }
 
+.bio{
+    height:100px;
+}
+
 .formActions {
     display: flex;
     justify-content: flex-end;
@@ -224,7 +229,9 @@
 .playlistFriendsContainer {
     display: flex;
     align-items: center;
-    gap: 10px; 
+    gap: 15px; 
+    margin-top: 10px ;
+    margin-bottom: 15px;
 }
 
 .friendsText:hover{
@@ -306,3 +313,19 @@
     margin: 10px;
 }
 
+.profileBio p{
+ font-size: x-small;
+}
+
+.socialIcon{
+    margin-right: 15px;
+}
+
+.btn{
+    background-color: transparent;
+    color: white;
+}
+
+.arrowIcon{
+    color: white;
+}

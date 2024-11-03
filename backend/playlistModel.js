@@ -7,13 +7,18 @@ export class playlistModel{
         this.collection = dbName.collection("Playlist");
     }
 
-    async createPlaylist(playlistName, ownerId, songs){
+    async createPlaylist(playlistName, ownerId, songs, category,description, coverImage, hashtags, username){
 
         const result = await this.collection.insertOne({
             playlistName,
             ownerId : new ObjectId(ownerId),
             songs,
-            dateCreated: new Date()
+            category,
+            description,
+            coverImage,
+            hashtags,
+            dateCreated: new Date(),
+            username
         });
 
         const playlist = await this.collection.findOne({ _id: result.insertedId });
@@ -49,12 +54,15 @@ export class playlistModel{
 
     async updatePlaylist(playlistId, updatedData){
 
+
         const result = await this.collection.updateOne(
             {_id : new ObjectId(playlistId)},
             {$set: updatedData }
         );
 
-        console.log(`playlist updated`);
+        if(result.modifiedCount>0){
+            console.log(`playlist updated: `, result);
+        }
 
         return result.modifiedCount > 0 ? result : null;
 
