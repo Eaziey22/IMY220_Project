@@ -984,6 +984,46 @@ app.get("/playlist/getPlaylistSongs/:playlistId", async(req, res) =>{
 
 });
 
+app.get("/playlists/getFriendsPlaylists/:userId", async (req, res) =>{
+
+    const {userId} = req.params;
+
+    try{
+
+        if (!ObjectId.isValid(userId)) {
+            return res.status(400).json({
+                status: "error", 
+                message: "Invalid user ID format" });
+        }
+        
+
+        const friendsPlaylistsIds = await User.getFriendsPlaylists(userId);
+
+        const frndsPlaylists = await Playlist.getFriendsPlaylists(friendsPlaylistsIds);
+
+        console.log("pd",friendsPlaylistsIds ,"p:", frndsPlaylists);
+
+        if(!frndsPlaylists || frndsPlaylists.length === 0){
+            return res.status(404).json({
+                status: "error", 
+                message: "Playlists not found"});
+        }
+
+        return res.status(200).json({
+            status: "success", 
+            message : `playlists retrieved successfully`, 
+            data: {friendsPlaylists: frndsPlaylists}
+        });
+    }
+    catch(error){
+        console.log(`Error getting Playlists: ${error}`);
+        res.status(500).json({
+            status: "error", 
+            message: "Internal server error"});
+    }
+    
+});
+
 app.get("/songs/getUserSongs/:userId", async (req, res) =>{
 
     const {userId} = req.params;
@@ -1018,6 +1058,73 @@ app.get("/songs/getUserSongs/:userId", async (req, res) =>{
     }
     
 });
+
+
+
+app.get("/songs/getSongs", async (req, res) =>{
+
+    //const {userId} = req.params;
+
+    try{
+
+        
+
+        const sngs = await Song.getSongs();
+
+        if(!sngs || sngs.length === 0){
+            return res.status(404).json({
+                status: "error", 
+                message: "Songs not found"});
+        }
+
+        return res.status(200).json({
+            status: "success", 
+            message : `Songs retrieved successfully`, 
+            data: {songs: sngs}
+        });
+    }
+    catch(error){
+        console.log(`Error getting Songs: ${error}`);
+        res.status(500).json({
+            status: "error", 
+            message: "Internal server error"});
+    }
+    
+});
+
+app.get("/playlists/getPlaylists", async(req, res) =>{
+
+    try{
+
+        
+
+        const ps = await Playlist.getAllPlaylists();
+        
+
+        if (!ps) {
+            return res.status(404).json({
+                status: "error",
+                message: "Playlists not found"
+            });
+        }
+        
+
+        return res.status(200).json({
+            status: "success",
+            message: `Playlists retrieved successfully`,
+            data: { playlists: ps }
+        });
+
+
+    }
+    catch(error){
+        console.log(`Error fetching friends: ${error}`);
+        res.status(500).json({
+            status: "error", 
+            message: "Internal server error"
+        });
+    }
+})
 
 
 

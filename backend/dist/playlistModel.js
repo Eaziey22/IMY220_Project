@@ -87,17 +87,15 @@ var playlistModel = exports.playlistModel = /*#__PURE__*/function () {
       return getPlaylistById;
     }()
   }, {
-    key: "getUserPlaylists",
+    key: "getAllPlaylists",
     value: function () {
-      var _getUserPlaylists = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3(userId) {
+      var _getAllPlaylists = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
         var playlists;
         return _regeneratorRuntime().wrap(function _callee3$(_context3) {
           while (1) switch (_context3.prev = _context3.next) {
             case 0:
               _context3.next = 2;
-              return this.collection.find({
-                ownerId: new ObjectId(userId)
-              }).toArray();
+              return this.collection.find().toArray();
             case 2:
               playlists = _context3.sent;
               return _context3.abrupt("return", playlists);
@@ -107,6 +105,32 @@ var playlistModel = exports.playlistModel = /*#__PURE__*/function () {
           }
         }, _callee3, this);
       }));
+      function getAllPlaylists() {
+        return _getAllPlaylists.apply(this, arguments);
+      }
+      return getAllPlaylists;
+    }()
+  }, {
+    key: "getUserPlaylists",
+    value: function () {
+      var _getUserPlaylists = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4(userId) {
+        var playlists;
+        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+          while (1) switch (_context4.prev = _context4.next) {
+            case 0:
+              _context4.next = 2;
+              return this.collection.find({
+                ownerId: new ObjectId(userId)
+              }).toArray();
+            case 2:
+              playlists = _context4.sent;
+              return _context4.abrupt("return", playlists);
+            case 4:
+            case "end":
+              return _context4.stop();
+          }
+        }, _callee4, this);
+      }));
       function getUserPlaylists(_x10) {
         return _getUserPlaylists.apply(this, arguments);
       }
@@ -115,40 +139,14 @@ var playlistModel = exports.playlistModel = /*#__PURE__*/function () {
   }, {
     key: "deletePlaylist",
     value: function () {
-      var _deletePlaylist = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4(playlistId) {
-        var result;
-        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
-          while (1) switch (_context4.prev = _context4.next) {
-            case 0:
-              _context4.next = 2;
-              return this.collection.deleteOne({
-                _id: new ObjectId(playlistId)
-              });
-            case 2:
-              result = _context4.sent;
-              return _context4.abrupt("return", result.deletedCount);
-            case 4:
-            case "end":
-              return _context4.stop();
-          }
-        }, _callee4, this);
-      }));
-      function deletePlaylist(_x11) {
-        return _deletePlaylist.apply(this, arguments);
-      }
-      return deletePlaylist;
-    }()
-  }, {
-    key: "deleteUserPlaylists",
-    value: function () {
-      var _deleteUserPlaylists = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee5(userId) {
+      var _deletePlaylist = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee5(playlistId) {
         var result;
         return _regeneratorRuntime().wrap(function _callee5$(_context5) {
           while (1) switch (_context5.prev = _context5.next) {
             case 0:
               _context5.next = 2;
-              return this.collection.deleteMany({
-                ownerId: new ObjectId(userId)
+              return this.collection.deleteOne({
+                _id: new ObjectId(playlistId)
               });
             case 2:
               result = _context5.sent;
@@ -159,6 +157,32 @@ var playlistModel = exports.playlistModel = /*#__PURE__*/function () {
           }
         }, _callee5, this);
       }));
+      function deletePlaylist(_x11) {
+        return _deletePlaylist.apply(this, arguments);
+      }
+      return deletePlaylist;
+    }()
+  }, {
+    key: "deleteUserPlaylists",
+    value: function () {
+      var _deleteUserPlaylists = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee6(userId) {
+        var result;
+        return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+          while (1) switch (_context6.prev = _context6.next) {
+            case 0:
+              _context6.next = 2;
+              return this.collection.deleteMany({
+                ownerId: new ObjectId(userId)
+              });
+            case 2:
+              result = _context6.sent;
+              return _context6.abrupt("return", result.deletedCount);
+            case 4:
+            case "end":
+              return _context6.stop();
+          }
+        }, _callee6, this);
+      }));
       function deleteUserPlaylists(_x12) {
         return _deleteUserPlaylists.apply(this, arguments);
       }
@@ -167,28 +191,28 @@ var playlistModel = exports.playlistModel = /*#__PURE__*/function () {
   }, {
     key: "updatePlaylist",
     value: function () {
-      var _updatePlaylist = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee6(playlistId, updatedData) {
+      var _updatePlaylist = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee7(playlistId, updatedData) {
         var result;
-        return _regeneratorRuntime().wrap(function _callee6$(_context6) {
-          while (1) switch (_context6.prev = _context6.next) {
+        return _regeneratorRuntime().wrap(function _callee7$(_context7) {
+          while (1) switch (_context7.prev = _context7.next) {
             case 0:
-              _context6.next = 2;
+              _context7.next = 2;
               return this.collection.updateOne({
                 _id: new ObjectId(playlistId)
               }, {
                 $set: updatedData
               });
             case 2:
-              result = _context6.sent;
+              result = _context7.sent;
               if (result.modifiedCount > 0) {
                 console.log("playlist updated: ", result);
               }
-              return _context6.abrupt("return", result.modifiedCount > 0 ? result : null);
+              return _context7.abrupt("return", result.modifiedCount > 0 ? result : null);
             case 5:
             case "end":
-              return _context6.stop();
+              return _context7.stop();
           }
-        }, _callee6, this);
+        }, _callee7, this);
       }));
       function updatePlaylist(_x13, _x14) {
         return _updatePlaylist.apply(this, arguments);
@@ -198,12 +222,12 @@ var playlistModel = exports.playlistModel = /*#__PURE__*/function () {
   }, {
     key: "addSongToPlaylist",
     value: function () {
-      var _addSongToPlaylist = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee7(playlistId, songId) {
+      var _addSongToPlaylist = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee8(playlistId, songId) {
         var result;
-        return _regeneratorRuntime().wrap(function _callee7$(_context7) {
-          while (1) switch (_context7.prev = _context7.next) {
+        return _regeneratorRuntime().wrap(function _callee8$(_context8) {
+          while (1) switch (_context8.prev = _context8.next) {
             case 0:
-              _context7.next = 2;
+              _context8.next = 2;
               return this.collection.updateOne({
                 _id: new ObjectId(playlistId)
               }, {
@@ -212,14 +236,14 @@ var playlistModel = exports.playlistModel = /*#__PURE__*/function () {
                 }
               });
             case 2:
-              result = _context7.sent;
+              result = _context8.sent;
               console.log("song added to playlist");
-              return _context7.abrupt("return", result.modifiedCount);
+              return _context8.abrupt("return", result.modifiedCount);
             case 5:
             case "end":
-              return _context7.stop();
+              return _context8.stop();
           }
-        }, _callee7, this);
+        }, _callee8, this);
       }));
       function addSongToPlaylist(_x15, _x16) {
         return _addSongToPlaylist.apply(this, arguments);
@@ -229,12 +253,12 @@ var playlistModel = exports.playlistModel = /*#__PURE__*/function () {
   }, {
     key: "removeSongFromPlaylist",
     value: function () {
-      var _removeSongFromPlaylist = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee8(playlistId, songId) {
+      var _removeSongFromPlaylist = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee9(playlistId, songId) {
         var result;
-        return _regeneratorRuntime().wrap(function _callee8$(_context8) {
-          while (1) switch (_context8.prev = _context8.next) {
+        return _regeneratorRuntime().wrap(function _callee9$(_context9) {
+          while (1) switch (_context9.prev = _context9.next) {
             case 0:
-              _context8.next = 2;
+              _context9.next = 2;
               return this.collection.updateOne({
                 _id: new ObjectId(playlistId)
               }, {
@@ -243,13 +267,13 @@ var playlistModel = exports.playlistModel = /*#__PURE__*/function () {
                 }
               });
             case 2:
-              result = _context8.sent;
-              return _context8.abrupt("return", result.modifiedCount);
+              result = _context9.sent;
+              return _context9.abrupt("return", result.modifiedCount);
             case 4:
             case "end":
-              return _context8.stop();
+              return _context9.stop();
           }
-        }, _callee8, this);
+        }, _callee9, this);
       }));
       function removeSongFromPlaylist(_x17, _x18) {
         return _removeSongFromPlaylist.apply(this, arguments);
@@ -259,32 +283,118 @@ var playlistModel = exports.playlistModel = /*#__PURE__*/function () {
   }, {
     key: "getSongsFromPlaylist",
     value: function () {
-      var _getSongsFromPlaylist = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee9(playlistId) {
+      var _getSongsFromPlaylist = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee10(playlistId) {
         var Playlist;
-        return _regeneratorRuntime().wrap(function _callee9$(_context9) {
-          while (1) switch (_context9.prev = _context9.next) {
+        return _regeneratorRuntime().wrap(function _callee10$(_context10) {
+          while (1) switch (_context10.prev = _context10.next) {
             case 0:
-              _context9.next = 2;
+              _context10.next = 2;
               return this.getPlaylistById(playlistId);
             case 2:
-              Playlist = _context9.sent;
+              Playlist = _context10.sent;
               if (Playlist) {
-                _context9.next = 5;
+                _context10.next = 5;
                 break;
               }
-              return _context9.abrupt("return", []);
+              return _context10.abrupt("return", []);
             case 5:
-              return _context9.abrupt("return", Playlist.songs || []);
+              return _context10.abrupt("return", Playlist.songs || []);
             case 6:
             case "end":
-              return _context9.stop();
+              return _context10.stop();
           }
-        }, _callee9, this);
+        }, _callee10, this);
       }));
       function getSongsFromPlaylist(_x19) {
         return _getSongsFromPlaylist.apply(this, arguments);
       }
       return getSongsFromPlaylist;
+    }()
+  }, {
+    key: "getFriendsPlaylists",
+    value: function () {
+      var _getFriendsPlaylists = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee13(friendsIds) {
+        var _this = this;
+        var allPlaylists, flattenedPlaylists, result;
+        return _regeneratorRuntime().wrap(function _callee13$(_context13) {
+          while (1) switch (_context13.prev = _context13.next) {
+            case 0:
+              if (!(friendsIds && friendsIds.length > 0)) {
+                _context13.next = 21;
+                break;
+              }
+              _context13.prev = 1;
+              _context13.next = 4;
+              return Promise.all(friendsIds.map(/*#__PURE__*/function () {
+                var _ref = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee11(friendId) {
+                  return _regeneratorRuntime().wrap(function _callee11$(_context11) {
+                    while (1) switch (_context11.prev = _context11.next) {
+                      case 0:
+                        _context11.next = 2;
+                        return _this.getUserPlaylists(friendId);
+                      case 2:
+                        return _context11.abrupt("return", _context11.sent);
+                      case 3:
+                      case "end":
+                        return _context11.stop();
+                    }
+                  }, _callee11);
+                }));
+                return function (_x21) {
+                  return _ref.apply(this, arguments);
+                };
+              }()));
+            case 4:
+              allPlaylists = _context13.sent;
+              console.log("ffff:", allPlaylists);
+              flattenedPlaylists = allPlaylists.flat();
+              console.log("flat:", flattenedPlaylists);
+              _context13.next = 10;
+              return Promise.all(flattenedPlaylists.map(/*#__PURE__*/function () {
+                var _ref2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee12(playlist) {
+                  return _regeneratorRuntime().wrap(function _callee12$(_context12) {
+                    while (1) switch (_context12.prev = _context12.next) {
+                      case 0:
+                        _context12.next = 2;
+                        return _this.getPlaylistById(playlist._id);
+                      case 2:
+                        return _context12.abrupt("return", _context12.sent);
+                      case 3:
+                      case "end":
+                        return _context12.stop();
+                    }
+                  }, _callee12);
+                }));
+                return function (_x22) {
+                  return _ref2.apply(this, arguments);
+                };
+              }()));
+            case 10:
+              result = _context13.sent;
+              console.log("result:", result);
+              return _context13.abrupt("return", result.filter(function (playlist) {
+                return playlist !== null;
+              }));
+            case 15:
+              _context13.prev = 15;
+              _context13.t0 = _context13["catch"](1);
+              console.error('Error fetching friends playlists:', _context13.t0);
+              return _context13.abrupt("return", []);
+            case 19:
+              _context13.next = 22;
+              break;
+            case 21:
+              return _context13.abrupt("return", []);
+            case 22:
+            case "end":
+              return _context13.stop();
+          }
+        }, _callee13, null, [[1, 15]]);
+      }));
+      function getFriendsPlaylists(_x20) {
+        return _getFriendsPlaylists.apply(this, arguments);
+      }
+      return getFriendsPlaylists;
     }()
   }]);
 }();

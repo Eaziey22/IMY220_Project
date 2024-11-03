@@ -16,7 +16,9 @@ export class Feed extends React.Component{
             userSongs: this.props.userSongs,
             likedPlaylists: this.props.likedPlaylists,
             suggestedFriendsData: null, 
-            likedStatus: []
+            likedStatus: [], 
+            allSongs: this.props.allSongData,
+            friendsPlaylists: this.props.friendsPlaylists
         };
     }
 
@@ -81,7 +83,7 @@ export class Feed extends React.Component{
 
     render(){
         
-        const {playlists, userSongs,suggestedFriendsData, likedStatus } = this.state;
+        const {playlists, userSongs,suggestedFriendsData, likedStatus, allSongs, friendsPlaylists } = this.state;
 
         
         const {fetchUserSongs} = this.props;
@@ -104,7 +106,7 @@ export class Feed extends React.Component{
                         
                     </div>
                 </div>
-                
+
                 <div className={styles.songsOfTheWeek}>
                     <h3 className={styles.header}>Your Songs</h3>
                      <div className={`${styles.songsOfTheWeekContainer} row`}>
@@ -120,6 +122,7 @@ export class Feed extends React.Component{
                     </div>
                     
                 </div>
+
                 <div className={styles.playlists}>
                     <h3 className={styles.header}>Your Playlists</h3>
                     <div className={`${styles.playlistsContainer} row`}>
@@ -140,12 +143,32 @@ export class Feed extends React.Component{
                         </div>
                     </div>
                 </div>
+
+                <div className={styles.songsOfTheWeek}>
+                    <h3 className={styles.header}>All Songs</h3>
+                     <div className={`${styles.songsOfTheWeekContainer2} row`}>
+                        {allSongs.map((music, index) => (
+                            <div className="col-12 col-md-6 col-lg-3" key={index}>
+                                
+                                {allSongs?<Song onHandleSubmit = {this.fetchUserSongs} image="" name={music.name} songId = {music._id} onSongAdded={this.handleSongAddition}/>: <div></div>}
+                            </div>
+                        ))}
+                    </div>
+                    
+                </div>
+                
+                
                 <div className={styles.playlists}>
-                    <h3 className={styles.header}>Your friends Playlists</h3>
+                    <h3 className={styles.header}>Friends Playlists</h3>
                     <div className={`${styles.playlistsContainer} row`}>
-                        {playlists.slice(0, 5).map((playlist, index) => (
+                        {friendsPlaylists.map((playlist, index) => (
                             <div className="col-12 col-md-6 col-lg-2" key={index}>
-                                <PlayListPreview image='' title={playlist.playlistName} songAmount={playlist.songs.length} playlistId = {playlist._id}/>
+                                <PlayListPreview image={playlist.coverImage} 
+                                title={playlist.playlistName}
+                                songAmount={playlist.songs.length}
+                                playlistId={playlist._id}
+                                username={playlist.username}
+                                ownerId={playlist.ownerId}/>
                             </div>
                         ))}
                     </div>

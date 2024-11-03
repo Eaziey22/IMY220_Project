@@ -15,16 +15,43 @@ export class PlaylistsPage extends React.Component{
       }
 
       async componentDidMount() {
-        this.fetchUserPlaylists();
+        //this.fetchUserPlaylists();
+        this.fetchAllPlaylists();
       }
 
-      fetchUserPlaylists = async () =>{
+      /*fetchUserPlaylists = async () =>{
 
         const userId = localStorage.getItem('userId');
 
         try{
 
             const response = await fetch(`/playlists/getUserPlaylists/${userId}`);
+            const data = await response.json();
+
+            if(response.ok){
+                const sortedPlaylists = data.data.playlists.sort((a,b) => new Date(b.dateCreated) - new Date(a.dateCreated));
+                this.setState({ playlistsData: sortedPlaylists, loading: false, errorMessage: '' });
+                
+            }
+            else{
+                this.setState({errorMessage: data.message || 'Failed to load playlists'});
+            }
+            
+
+        }
+        catch(err){
+            console.error('Error fetching playlists:', err);
+            this.setState({ errorMessage: 'An error occurred while fetching playlists' });
+        }
+      }*/
+
+      fetchAllPlaylists = async () =>{
+
+         
+
+        try{
+
+            const response = await fetch(`/playlists/getPlaylists`);
             const data = await response.json();
 
             if(response.ok){

@@ -1441,9 +1441,9 @@ app.get("/playlist/getPlaylistSongs/:playlistId", /*#__PURE__*/function () {
     return _ref23.apply(this, arguments);
   };
 }());
-app.get("/songs/getUserSongs/:userId", /*#__PURE__*/function () {
+app.get("/playlists/getFriendsPlaylists/:userId", /*#__PURE__*/function () {
   var _ref24 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee24(req, res) {
-    var userId, sngs;
+    var userId, friendsPlaylistsIds, frndsPlaylists;
     return _regeneratorRuntime().wrap(function _callee24$(_context24) {
       while (1) switch (_context24.prev = _context24.next) {
         case 0:
@@ -1455,23 +1455,83 @@ app.get("/songs/getUserSongs/:userId", /*#__PURE__*/function () {
           }
           return _context24.abrupt("return", res.status(400).json({
             status: "error",
-            message: "Invalid song ID format"
+            message: "Invalid user ID format"
           }));
         case 4:
           _context24.next = 6;
-          return Song.getUserSongs(userId);
+          return User.getFriendsPlaylists(userId);
         case 6:
-          sngs = _context24.sent;
-          if (sngs) {
-            _context24.next = 9;
+          friendsPlaylistsIds = _context24.sent;
+          _context24.next = 9;
+          return Playlist.getFriendsPlaylists(friendsPlaylistsIds);
+        case 9:
+          frndsPlaylists = _context24.sent;
+          console.log("pd", friendsPlaylistsIds, "p:", frndsPlaylists);
+          if (!(!frndsPlaylists || frndsPlaylists.length === 0)) {
+            _context24.next = 13;
             break;
           }
           return _context24.abrupt("return", res.status(404).json({
             status: "error",
+            message: "Playlists not found"
+          }));
+        case 13:
+          return _context24.abrupt("return", res.status(200).json({
+            status: "success",
+            message: "playlists retrieved successfully",
+            data: {
+              friendsPlaylists: frndsPlaylists
+            }
+          }));
+        case 16:
+          _context24.prev = 16;
+          _context24.t0 = _context24["catch"](1);
+          console.log("Error getting Playlists: ".concat(_context24.t0));
+          res.status(500).json({
+            status: "error",
+            message: "Internal server error"
+          });
+        case 20:
+        case "end":
+          return _context24.stop();
+      }
+    }, _callee24, null, [[1, 16]]);
+  }));
+  return function (_x47, _x48) {
+    return _ref24.apply(this, arguments);
+  };
+}());
+app.get("/songs/getUserSongs/:userId", /*#__PURE__*/function () {
+  var _ref25 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee25(req, res) {
+    var userId, sngs;
+    return _regeneratorRuntime().wrap(function _callee25$(_context25) {
+      while (1) switch (_context25.prev = _context25.next) {
+        case 0:
+          userId = req.params.userId;
+          _context25.prev = 1;
+          if (_mongodb.ObjectId.isValid(userId)) {
+            _context25.next = 4;
+            break;
+          }
+          return _context25.abrupt("return", res.status(400).json({
+            status: "error",
+            message: "Invalid song ID format"
+          }));
+        case 4:
+          _context25.next = 6;
+          return Song.getUserSongs(userId);
+        case 6:
+          sngs = _context25.sent;
+          if (sngs) {
+            _context25.next = 9;
+            break;
+          }
+          return _context25.abrupt("return", res.status(404).json({
+            status: "error",
             message: "User Songs not found"
           }));
         case 9:
-          return _context24.abrupt("return", res.status(200).json({
+          return _context25.abrupt("return", res.status(200).json({
             status: "success",
             message: "User Songs retrieved successfully",
             data: {
@@ -1479,21 +1539,111 @@ app.get("/songs/getUserSongs/:userId", /*#__PURE__*/function () {
             }
           }));
         case 12:
-          _context24.prev = 12;
-          _context24.t0 = _context24["catch"](1);
-          console.log("Error getting user songs: ".concat(_context24.t0));
+          _context25.prev = 12;
+          _context25.t0 = _context25["catch"](1);
+          console.log("Error getting user songs: ".concat(_context25.t0));
           res.status(500).json({
             status: "error",
             message: "Internal server error"
           });
         case 16:
         case "end":
-          return _context24.stop();
+          return _context25.stop();
       }
-    }, _callee24, null, [[1, 12]]);
+    }, _callee25, null, [[1, 12]]);
   }));
-  return function (_x47, _x48) {
-    return _ref24.apply(this, arguments);
+  return function (_x49, _x50) {
+    return _ref25.apply(this, arguments);
+  };
+}());
+app.get("/songs/getSongs", /*#__PURE__*/function () {
+  var _ref26 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee26(req, res) {
+    var sngs;
+    return _regeneratorRuntime().wrap(function _callee26$(_context26) {
+      while (1) switch (_context26.prev = _context26.next) {
+        case 0:
+          _context26.prev = 0;
+          _context26.next = 3;
+          return Song.getSongs();
+        case 3:
+          sngs = _context26.sent;
+          if (!(!sngs || sngs.length === 0)) {
+            _context26.next = 6;
+            break;
+          }
+          return _context26.abrupt("return", res.status(404).json({
+            status: "error",
+            message: "Songs not found"
+          }));
+        case 6:
+          return _context26.abrupt("return", res.status(200).json({
+            status: "success",
+            message: "Songs retrieved successfully",
+            data: {
+              songs: sngs
+            }
+          }));
+        case 9:
+          _context26.prev = 9;
+          _context26.t0 = _context26["catch"](0);
+          console.log("Error getting Songs: ".concat(_context26.t0));
+          res.status(500).json({
+            status: "error",
+            message: "Internal server error"
+          });
+        case 13:
+        case "end":
+          return _context26.stop();
+      }
+    }, _callee26, null, [[0, 9]]);
+  }));
+  return function (_x51, _x52) {
+    return _ref26.apply(this, arguments);
+  };
+}());
+app.get("/playlists/getPlaylists", /*#__PURE__*/function () {
+  var _ref27 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee27(req, res) {
+    var ps;
+    return _regeneratorRuntime().wrap(function _callee27$(_context27) {
+      while (1) switch (_context27.prev = _context27.next) {
+        case 0:
+          _context27.prev = 0;
+          _context27.next = 3;
+          return Playlist.getAllPlaylists();
+        case 3:
+          ps = _context27.sent;
+          if (ps) {
+            _context27.next = 6;
+            break;
+          }
+          return _context27.abrupt("return", res.status(404).json({
+            status: "error",
+            message: "Playlists not found"
+          }));
+        case 6:
+          return _context27.abrupt("return", res.status(200).json({
+            status: "success",
+            message: "Playlists retrieved successfully",
+            data: {
+              playlists: ps
+            }
+          }));
+        case 9:
+          _context27.prev = 9;
+          _context27.t0 = _context27["catch"](0);
+          console.log("Error fetching friends: ".concat(_context27.t0));
+          res.status(500).json({
+            status: "error",
+            message: "Internal server error"
+          });
+        case 13:
+        case "end":
+          return _context27.stop();
+      }
+    }, _callee27, null, [[0, 9]]);
+  }));
+  return function (_x53, _x54) {
+    return _ref27.apply(this, arguments);
   };
 }());
 

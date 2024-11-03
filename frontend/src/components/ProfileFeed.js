@@ -829,7 +829,7 @@ export class ProfileFeed extends React.Component{
                 <div className={styles.playlists}>
                     <h3 className={styles.header}>Playlists</h3>
                     {playlistsData? <div className={`${styles.playlistsContainer} row`}>
-                        {playlistsData.slice(0, 5).map((playlist, index) => (
+                        {playlistsData.map((playlist, index) => (
                             <div className="col-12 col-md-6 col-lg-2" key={index}>
                                 <PlayListPreview image={playlist.coverImage} title={playlist.playlistName} songAmount={playlist.songs.length} playlistId = {playlist._id} username = {playlist.username} ownerId = {playlist.ownerId} isLikedPlaylist = {likedStatus[index]} />
                             </div>

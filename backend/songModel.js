@@ -53,4 +53,10 @@ export class songModel{
         return result.deletedCount;
     }
 
+    async getSongs(){
+        const result = await this.collection.find().toArray();
+
+        return result;
+    }
+
 }

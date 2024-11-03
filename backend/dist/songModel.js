@@ -150,5 +150,29 @@ var songModel = exports.songModel = /*#__PURE__*/function () {
       }
       return deleteUserSongs;
     }()
+  }, {
+    key: "getSongs",
+    value: function () {
+      var _getSongs = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
+        var result;
+        return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+          while (1) switch (_context6.prev = _context6.next) {
+            case 0:
+              _context6.next = 2;
+              return this.collection.find().toArray();
+            case 2:
+              result = _context6.sent;
+              return _context6.abrupt("return", result);
+            case 4:
+            case "end":
+              return _context6.stop();
+          }
+        }, _callee6, this);
+      }));
+      function getSongs() {
+        return _getSongs.apply(this, arguments);
+      }
+      return getSongs;
+    }()
   }]);
 }();

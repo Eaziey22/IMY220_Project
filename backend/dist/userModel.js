@@ -602,5 +602,45 @@ var userModel = exports.userModel = /*#__PURE__*/function () {
       }
       return getSuggestedFriends;
     }()
+  }, {
+    key: "getFriendsPlaylists",
+    value: function () {
+      var _getFriendsPlaylists = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee20(userId) {
+        var user;
+        return _regeneratorRuntime().wrap(function _callee20$(_context20) {
+          while (1) switch (_context20.prev = _context20.next) {
+            case 0:
+              console.log("yy:", userId);
+              _context20.prev = 1;
+              _context20.next = 4;
+              return this.getUserById(userId);
+            case 4:
+              user = _context20.sent;
+              if (!user) {
+                _context20.next = 9;
+                break;
+              }
+              return _context20.abrupt("return", user.friends || []);
+            case 9:
+              throw new Error("User not found");
+            case 10:
+              _context20.next = 16;
+              break;
+            case 12:
+              _context20.prev = 12;
+              _context20.t0 = _context20["catch"](1);
+              console.error("Error retrieving friends Playlists:", _context20.t0);
+              throw _context20.t0;
+            case 16:
+            case "end":
+              return _context20.stop();
+          }
+        }, _callee20, this, [[1, 12]]);
+      }));
+      function getFriendsPlaylists(_x38) {
+        return _getFriendsPlaylists.apply(this, arguments);
+      }
+      return getFriendsPlaylists;
+    }()
   }]);
 }();

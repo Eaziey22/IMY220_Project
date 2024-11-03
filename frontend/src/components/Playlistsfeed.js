@@ -64,9 +64,6 @@ export class Playlistsfeed extends React.Component{
                                 <PlayListPreview image={playlist.coverImage} title={playlist.playlistName} songAmount={playlist.songs.length} playlistId = {playlist._id} username = {playlist.username} ownerId = {playlist.ownerId} />
                             </div>
                         ))}
-                        <div className="col-12 col-md-6 col-lg-3">
-                            <CreatePlaylist />
-                        </div>
                     </div>
                 </div>
             </div>

@@ -72,14 +72,18 @@ export class HomePage extends React.Component{
           loading: true,
           errorMessage: "",
           songData: null,
-          likedPlaylistsData: null
+          likedPlaylistsData: null,
+          allSongData: null, 
+          friendsPlaylistsData : null
         };
     }
 
     async componentDidMount() {
         this.fetchUserPlaylists();
         this.fetchUserSongs();
+        this.fetchSongs();
         this.fetchLikedPlaylists();
+        this.fetchFriendsPlaylists();
     }
 
     fetchUserPlaylists = async () =>{
@@ -135,6 +139,65 @@ export class HomePage extends React.Component{
         }
     }
 
+    fetchSongs = async() =>{
+
+        //const userId = localStorage.getItem("userId");
+
+        try{
+            const response = await fetch(`/songs/getSongs`);
+            const data = await response.json();
+
+            if(response.ok){
+                
+                const sortedSongs = data.data.songs.sort((a,b) => new Date(b.dateAdded) - new Date(a.dateAdded));
+                this.setState({ allSongData: sortedSongs, loading: false, errorMessage: '' } , () =>{
+                    console.log("songs: ", this.state.allSongData);
+                });
+                
+            }
+            else{
+                this.setState({errorMessage: data.message || 'Failed to load songs'});
+            }
+        }
+        catch(err){
+            console.error('Error fetching songs:', err);
+            this.setState({ errorMessage: 'An error occurred while fetching songs' });
+        }
+    }
+
+    fetchFriendsPlaylists = async() => {
+
+        const userId = localStorage.getItem("userId");
+
+        console.log("this:", userId);
+
+        try{
+            const response = await fetch(`/playlists/getFriendsPlaylists/${userId}`);
+            const data = await response.json();
+
+            if(response.ok){
+                
+                //console.log("fpd:",  data.data.friendsPlaylists );
+                
+                this.setState({ friendsPlaylistsData: data.data.friendsPlaylists, loading: false, errorMessage: '' } , () =>{
+                    console.log("hi9", this.state.friendsPlaylistsData);
+                });
+                
+            }
+            else{
+                this.setState({errorMessage: data.message || 'Failed to load playlists'});
+            }
+        }
+        catch(err){
+            console.error('Error fetching playlists:', err);
+            this.setState({ errorMessage: 'An error occurred while fetching playlists' });
+        }
+
+
+    }
+
+
+
     fetchLikedPlaylists = async() =>{
 
         const userId = localStorage.getItem("userId");
@@ -164,7 +227,7 @@ export class HomePage extends React.Component{
     }
 
     render(){
-        const {playlistsData, loading, errorMessage, songData, likedPlaylistsData } = this.state;
+        const {playlistsData, loading, errorMessage, songData, likedPlaylistsData, allSongData, friendsPlaylistsData } = this.state;
 
         //console.log("songs: ", songData);
         return(
@@ -173,7 +236,7 @@ export class HomePage extends React.Component{
                 <div style={{ display: 'flex', flex: 1 }}>
                     <SideNavBar />
                     <div style={{ flex: 1, padding: '20px' }}>
-                        {playlistsData && songData && likedPlaylistsData? <Feed playlists = {playlistsData} userSongs = {songData} likedPlaylists = {likedPlaylistsData} recentMusicData = {recentMusicData} fetchUserSongs={this.fetchUserSongs} fetchUserPlaylists = {this.fetchUserPlaylists} fetchLikedPlaylists = {this.fetchLikedPlaylists} />: <div></div>}
+                        {playlistsData && songData && likedPlaylistsData && allSongData && friendsPlaylistsData? <Feed playlists = {playlistsData} userSongs = {songData} allSongData = {allSongData} likedPlaylists = {likedPlaylistsData} recentMusicData = {recentMusicData} fetchUserSongs={this.fetchUserSongs} fetchUserPlaylists = {this.fetchUserPlaylists} fetchLikedPlaylists = {this.fetchLikedPlaylists} friendsPlaylists = {friendsPlaylistsData} />: <div></div>}
                     </div>
                 </div>
             </div> 

@@ -32,6 +32,13 @@ export class playlistModel{
         return playlist;
     }
 
+    async getAllPlaylists(){
+
+        const playlists = await this.collection.find().toArray();
+
+        return playlists;
+    }
+
     async getUserPlaylists(userId){
         const playlists = await this.collection.find({ownerId : new ObjectId(userId)}).toArray();
 
@@ -103,5 +110,43 @@ export class playlistModel{
 
         
         return Playlist.songs || [];
+    }
+
+    async getFriendsPlaylists(friendsIds) {
+
+        if (friendsIds && friendsIds.length > 0) {
+            try {
+                
+                const allPlaylists = await Promise.all(
+                    friendsIds.map(async (friendId) => {
+                        
+                        return await this.getUserPlaylists(friendId); 
+                    })
+                );
+
+                console.log("ffff:", allPlaylists);
+    
+                
+                const flattenedPlaylists = allPlaylists.flat(); 
+
+                console.log("flat:", flattenedPlaylists );
+    
+                
+                const result = await Promise.all(
+                    flattenedPlaylists.map(async (playlist) => {
+                        return await this.getPlaylistById(playlist._id); 
+                    })
+                );
+
+                console.log("result:", result);
+    
+                return result.filter(playlist => playlist !== null); 
+            } catch (error) {
+                console.error('Error fetching friends playlists:', error);
+                return []; 
+            }
+        } else {
+            return [];
+        }
     }
 }

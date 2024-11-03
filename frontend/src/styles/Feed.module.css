@@ -40,7 +40,17 @@
     border: 1px solid #1a1a1a;
     background-color: #1e1e1e;
     width: 100%;
-    height: 200px;
+    min-height: 200px;
+    border-radius: 10px;
+    box-shadow: 2px 0 15px rgba(0, 0, 0, 0.3);
+    
+}
+
+.songsOfTheWeekContainer2{
+    border: 1px solid #1a1a1a;
+    background-color: #1e1e1e;
+    width: 100%;
+    min-height: 200px;
     border-radius: 10px;
     box-shadow: 2px 0 15px rgba(0, 0, 0, 0.3);
     
@@ -54,7 +64,7 @@
     border: 1px solid #1a1a1a;
     background-color: #1e1e1e;
     width: 100%;
-    height: 250px;
+    min-height: 250px;
     border-radius: 10px;
     box-shadow: 2px 0 15px rgba(0, 0, 0, 0.3);
     

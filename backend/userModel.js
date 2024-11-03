@@ -261,6 +261,23 @@ export class userModel{
         
     }
     
+    async getFriendsPlaylists(userId){
+        console.log("yy:", userId);
+        try{
+            const user = await this.getUserById(userId);
+
+            
+            if (user) {
+                return user.friends || []; 
+
+            } else {
+                throw new Error("User not found");
+            }
+        } catch (error) {
+            console.error("Error retrieving friends Playlists:", error);
+            throw error; 
+        }
+    }
 
 
 }
