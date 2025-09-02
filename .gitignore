@@ -13,6 +13,7 @@ node_modules/
 # Output directories
 /dist
 /build
+frontend/public/bundle.js
 
 # Logs
 logs
